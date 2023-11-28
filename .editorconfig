@@ -1,0 +1,8 @@
+[*]
+end_of_line = lf
+
+[*.py]
+profile = black
+
+[Makefile]
+indent_style = tab
