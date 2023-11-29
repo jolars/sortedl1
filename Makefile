@@ -17,7 +17,7 @@ test:
 
 .PHONY: docs
 docs:
-	sphinx-apidoc -o docs sortedl1 ;\
+	sphinx-apidoc -o docs/source sortedl1 ;\
 	cd docs ;\
 	make html
 	
