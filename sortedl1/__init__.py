@@ -1,1 +1,1 @@
-from .slope import slope
+from .estimators import Slope
