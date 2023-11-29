@@ -5,6 +5,6 @@ requires = [
     "wheel",
     "pybind11>=2.6.0",
     "scipy",
-    "sklearn",
+    "scikit-learn",
     "numpy"
 ]
