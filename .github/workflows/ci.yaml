@@ -22,10 +22,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pybind11 setuptools
+          python -m pip install pybind11 setuptools
 
       - name: Install
-        run: pip install .
+        run: python -m pip install .
 
       - name: Test
         run: python -m unittest discover
