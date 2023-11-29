@@ -3,8 +3,5 @@ requires = [
     "setuptools>=42",
     "wheel",
     "pybind11>=2.6.0",
-    "scipy",
-    "scikit-learn",
-    "numpy"
 ]
 build-backend = "setuptools.build_meta"

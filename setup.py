@@ -13,6 +13,8 @@ with open(os.path.join(package_root, "sortedl1/version.py")) as fp:
     exec(fp.read(), version)
 __version__ = version["__version__"]
 
+install_requires = ["numpy", "scipy", "scikit-learn"]
+
 ext_modules = [
     Pybind11Extension(
         "_sortedl1",
@@ -30,6 +32,7 @@ setup(
     url="https://github.com/jolars/sortedl1",
     description="Sorted L-One Penalized Estimation (SLOPE)",
     long_description="",
+    install_requires=install_requires,
     ext_modules=ext_modules,
     cmdclass={"build_ext": build_ext},
     zip_safe=False,
