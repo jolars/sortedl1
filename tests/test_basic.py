@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from numpy.random import default_rng
 
-from sortedl1 import slope
+from sortedl1 import Slope
 
 
 class TestBasicUse(unittest.TestCase):
@@ -20,9 +20,11 @@ class TestBasicUse(unittest.TestCase):
         lam = np.array([2, 1, 0.2])
         alph = np.array([1.0])
 
-        res = slope(x, y, lam, alph)
+        model = Slope(alph, lam)
 
-        np.testing.assert_array_almost_equal(res, 0)
+        res = model.fit(x, y).predict(x)
+
+        np.testing.assert_array_almost_equal(res, np.array([0.0, 1.0]))
 
 
 if __name__ == "__main__":
