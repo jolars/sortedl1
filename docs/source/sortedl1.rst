@@ -4,10 +4,10 @@ sortedl1 package
 Submodules
 ----------
 
-sortedl1.slope module
----------------------
+sortedl1.models module
+----------------------
 
-.. automodule:: sortedl1.slope
+.. automodule:: sortedl1.models
    :members:
    :undoc-members:
    :show-inheritance:
