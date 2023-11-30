@@ -32,7 +32,6 @@ jobs:
   docs:
     needs: build-and-test
     permissions:
-      contents: write
       pages: write
       id-token: write
     runs-on: ubuntu-latest
@@ -71,6 +70,8 @@ jobs:
     needs:
       - docs
       - build-and-test
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v3
