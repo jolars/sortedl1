@@ -7,4 +7,4 @@
 .. autosummary::
    :toctree: generated/
 
-   slope
+   Slope
