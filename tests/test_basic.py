@@ -18,13 +18,28 @@ class TestBasicUse(unittest.TestCase):
         y = x @ beta
 
         lam = np.array([2, 1, 0.2])
-        alph = np.array([1.0])
+        alph = np.asarray(1.0)
 
-        model = Slope(alph, lam)
+        model = Slope(lam, alph)
 
-        res = model.fit(x, y).predict(x)
+        pred = model.fit(x, y).predict(x)
 
-        np.testing.assert_array_almost_equal(res, np.array([0.0, 1.0]))
+        pred_true = np.array(
+            [
+                [0.70852434],
+                [1.64431936],
+                [0.81548688],
+                [-3.1140118],
+                [1.04592253],
+                [-1.23005169],
+                [0.92314128],
+                [-2.58331539],
+                [-0.93066588],
+                [0.63115334],
+            ]
+        )
+
+        np.testing.assert_array_almost_equal(pred, pred_true)
 
 
 if __name__ == "__main__":
