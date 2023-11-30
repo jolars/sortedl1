@@ -4,7 +4,11 @@
 #include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
 
-int
+using namespace pybind11::literals;
+
+namespace py = pybind11;
+
+pybind11::tuple
 fit_slope(const Eigen::MatrixXd x,
           const Eigen::MatrixXd y,
           Eigen::ArrayXd lambda,
@@ -12,7 +16,7 @@ fit_slope(const Eigen::MatrixXd x,
 {
   auto result = slope::slope(x, y, alpha, lambda);
 
-  return 0;
+  return py::make_tuple(result.beta0s, result.betas);
 }
 
 PYBIND11_MODULE(_sortedl1, m)

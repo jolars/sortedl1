@@ -12,7 +12,7 @@ class Slope(BaseEstimator, RegressorMixin):
     ----------
     lam : array_like
         The lambda parameter vector for the Sorted L1 Penalty
-    alph : array_like
+    alpha : array_like
         A multiplier for the Sorted L1 Penalty
 
     Attributes
@@ -21,9 +21,9 @@ class Slope(BaseEstimator, RegressorMixin):
         The estimated regression coefficients.
     """
 
-    def __init__(self, lam=None, alph=1.0):
+    def __init__(self, lam=None, alpha=1.0):
         self.lam = lam
-        self.alph = alph
+        self.alpha = alpha
 
     def fit(self, X, y):
         """
@@ -43,12 +43,21 @@ class Slope(BaseEstimator, RegressorMixin):
         """
         X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
 
-        self.X_ = X
-        self.y_ = y
+        y = y.astype(np.float64)
 
-        self.coef_ = sl1.fit_slope(
-            self.X_, self.y_, np.array(self.lam), np.array(self.alph)
-        )
+        if self.lam is None:
+            # If None, the lambda value is computed automatically in Slope
+            lam = np.array([], dtype=np.float64)
+        else:
+            lam = np.atleast_1d(self.lam).astype(np.float64)
+
+        alpha = np.atleast_1d(self.alpha).astype(np.float64)
+
+        result = sl1.fit_slope(X, y, lam, alpha)
+
+        self.intercept_ = result[0]
+        self.sparse_coef_ = result[1]
+        self.coef_ = result[1].toarray()
 
         return self
 
@@ -68,6 +77,6 @@ class Slope(BaseEstimator, RegressorMixin):
         """
         check_is_fitted(self)
 
-        X = check_array(X, accept_sparse=True, order="F")
+        X = check_array(X, accept_sparse=True)
 
         return np.dot(X, self.coef_)
