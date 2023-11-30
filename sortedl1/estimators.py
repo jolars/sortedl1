@@ -1,5 +1,6 @@
 import _sortedl1 as sl1
 import numpy as np
+from scipy import sparse
 from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
@@ -53,7 +54,12 @@ class Slope(BaseEstimator, RegressorMixin):
 
         alpha = np.atleast_1d(self.alpha).astype(np.float64)
 
-        result = sl1.fit_slope(X, y, lam, alpha)
+        if sparse.issparse(X):
+            fit_slope = sl1.fit_slope_sparse
+        else:
+            fit_slope = sl1.fit_slope_dense
+
+        result = fit_slope(X, y, lam, alpha)
 
         self.intercept_ = result[0]
         self.sparse_coef_ = result[1]
