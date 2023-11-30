@@ -1,2 +1,3 @@
 from .estimators import Slope
-from .version import __version__
+
+__version__ = "0.1.0"
