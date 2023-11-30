@@ -11,13 +11,13 @@ namespace py = pybind11;
 template<typename T>
 pybind11::tuple
 fit_slope(const T& x,
-          const Eigen::MatrixXd y,
-          Eigen::ArrayXd lambda,
-          Eigen::ArrayXd alpha,
+          const Eigen::MatrixXd& y,
+          const Eigen::ArrayXd& lambda,
+          const Eigen::ArrayXd& alpha,
           const py::dict& args)
 {
   auto objective_choice = args["objective_choice"].cast<std::string>();
-  auto intercept = args["fit_intercept"].cast<bool>();
+  auto intercept = args["intercept"].cast<bool>();
   auto standardize = args["standardize"].cast<bool>();
   auto path_length = args["path_length"].cast<int>();
   auto alpha_min_ratio = args["alpha_min_ratio"].cast<double>();
@@ -48,20 +48,20 @@ fit_slope(const T& x,
 }
 
 pybind11::tuple
-fit_slope_dense(const Eigen::MatrixXd x,
-                const Eigen::MatrixXd y,
-                Eigen::ArrayXd lambda,
-                Eigen::ArrayXd alpha,
+fit_slope_dense(const Eigen::MatrixXd& x,
+                const Eigen::MatrixXd& y,
+                const Eigen::ArrayXd& lambda,
+                const Eigen::ArrayXd& alpha,
                 const py::dict& args)
 {
   return fit_slope(x, y, alpha, lambda, args);
 }
 
 pybind11::tuple
-fit_slope_sparse(const Eigen::SparseMatrix<double> x,
-                 const Eigen::MatrixXd y,
-                 Eigen::ArrayXd lambda,
-                 Eigen::ArrayXd alpha,
+fit_slope_sparse(const Eigen::SparseMatrix<double>& x,
+                 const Eigen::MatrixXd& y,
+                 const Eigen::ArrayXd& lambda,
+                 const Eigen::ArrayXd& alpha,
                  const py::dict& args)
 {
   return fit_slope(x, y, alpha, lambda, args);
