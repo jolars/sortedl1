@@ -6,10 +6,12 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+from sortedl1 import __version__
+
 project = "sortedl1"
-copyright = "2023, Johan Larsson"
-author = "Johan Larsson"
-release = "0.1.0"
+copyright = "2023, Johan Larsson, Mathurin Massias, Quentin Klopfenstein, Jonas Wallin"
+author = "Johan Larsson, Mathurin Massias, Quentin Klopfenstein, Jonas Wallin"
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -32,7 +34,6 @@ exclude_patterns = [
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
-
 
 # -- Options for napoleon extension ------------------------------------------
 napoleon_google_docstring = True
