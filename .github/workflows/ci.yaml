@@ -75,7 +75,8 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v4
+      - uses: google-github-actions/release-please-action@v3
         with:
           release-type: python
           package-name: sortedl1
+          bump-minor-pre-major: true
