@@ -43,7 +43,7 @@ jobs:
           pip install pybind11 setuptools
 
       - name: Install
-        run: pip install .
+        run: pip install .[docs]
 
       - name: Build documentation
         run: |

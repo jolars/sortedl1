@@ -33,6 +33,12 @@ setup(
     description="Sorted L-One Penalized Estimation (SLOPE)",
     long_description="",
     install_requires=install_requires,
+    extras_require={
+        "docs": [
+            "sphinx",
+            "sphinx_rtd_theme",
+        ]
+    },
     ext_modules=ext_modules,
     cmdclass={"build_ext": build_ext},
     zip_safe=False,
