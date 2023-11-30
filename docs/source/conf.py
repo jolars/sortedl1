@@ -1,12 +1,12 @@
 import os
 import sys
 
+from sortedl1 import __version__
+
 sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-
-from sortedl1 import __version__
 
 project = "sortedl1"
 copyright = "2023, Johan Larsson, Mathurin Massias, Quentin Klopfenstein, Jonas Wallin"

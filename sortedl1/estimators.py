@@ -11,10 +11,14 @@ class Slope(BaseEstimator, RegressorMixin):
 
     Parameters
     ----------
-    lam : array_like
-        The lambda parameter vector for the Sorted L1 Penalty
-    alpha : array_like
-        A multiplier for the Sorted L1 Penalty
+    lam : array_like, optional
+        The lambda parameter vector for the Sorted L1 Penalty. Default is None.
+    alpha : array_like, optional
+        A multiplier for the Sorted L1 Penalty. Default is 1.0.
+    fit_intercept : bool, optional
+        Whether to fit an intercept term. Default is True.
+    standardize : bool, optional
+        Whether to standardize the features. Default is False.
 
     Attributes
     ----------
@@ -22,9 +26,11 @@ class Slope(BaseEstimator, RegressorMixin):
         The estimated regression coefficients.
     """
 
-    def __init__(self, lam=None, alpha=1.0):
+    def __init__(self, lam=None, alpha=1.0, fit_intercept=True, standardize=False):
         self.lam = lam
         self.alpha = alpha
+        self.fit_intercept = fit_intercept
+        self.standardize = standardize
 
     def fit(self, X, y):
         """
@@ -41,6 +47,7 @@ class Slope(BaseEstimator, RegressorMixin):
         Returns
         -------
         self : object
+            Returns self.
         """
         X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
 
@@ -59,7 +66,21 @@ class Slope(BaseEstimator, RegressorMixin):
         else:
             fit_slope = sl1.fit_slope_dense
 
-        result = fit_slope(X, y, lam, alpha)
+        args = {
+            "objective_choice": "gaussian",
+            "intercept": self.fit_intercept,
+            "standardize": self.standardize,
+            "path_length": 1,
+            "alpha_min_ratio": 1e-4,
+            "pgd_freq": 10,
+            "tol": 1e-8,
+            "max_it": 1_000_000,
+            "max_it_outer": 100,
+            "update_clusters": False,
+            "print_level": 0,
+        }
+
+        result = fit_slope(X, y, lam, alpha, args)
 
         self.intercept_ = result[0]
         self.sparse_coef_ = result[1]
