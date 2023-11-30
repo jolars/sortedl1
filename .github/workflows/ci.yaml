@@ -32,7 +32,7 @@ jobs:
   docs:
     needs: build-and-test
     permissions:
-      contents: read
+      contents: write
       pages: write
       id-token: write
     runs-on: ubuntu-latest
