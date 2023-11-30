@@ -4,10 +4,18 @@ sortedl1 package
 Submodules
 ----------
 
-sortedl1.models module
-----------------------
+sortedl1.estimators module
+--------------------------
 
-.. automodule:: sortedl1.models
+.. automodule:: sortedl1.estimators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sortedl1.version module
+-----------------------
+
+.. automodule:: sortedl1.version
    :members:
    :undoc-members:
    :show-inheritance:
