@@ -21,8 +21,5 @@ include_directories(${CMAKE_SOURCE_DIR}/external)
 python_add_library(_sortedl1 MODULE src/main.cpp WITH_SOABI)
 target_link_libraries(_sortedl1 PRIVATE pybind11::headers)
 
-# This is passing in the version as a define just as an example
-target_compile_definitions(_sortedl1 PRIVATE VERSION_INFO=${PROJECT_VERSION})
-
 # The install directory is the output (wheel) directory
-install(TARGETS _sortedl1 DESTINATION scikit_build_example)
+install(TARGETS _sortedl1 DESTINATION sortedl1)
