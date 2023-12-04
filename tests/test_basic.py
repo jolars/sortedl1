@@ -18,7 +18,7 @@ class TestBasicUse(unittest.TestCase):
         y = x @ beta
 
         lam = np.array([2, 1, 0.2])
-        alpha = np.asarray(1.0)
+        alpha = 1.0
 
         model = Slope(lam, alpha, standardize=True)
 
