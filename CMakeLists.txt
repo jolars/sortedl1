@@ -14,6 +14,8 @@ project(
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
+include_directories(${CMAKE_SOURCE_DIR}/external)
+
 # Add a library using FindPython's tooling (pybind11 also provides a helper like
 # this)
 python_add_library(_sortedl1 MODULE src/main.cpp WITH_SOABI)
