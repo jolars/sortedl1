@@ -177,6 +177,10 @@ slope(const T& x,
 
   Clusters clusters(beta);
 
+  if (path_length > 1) {
+    throw std::runtime_error("Path length must be greater than 1");
+  }
+
   // Regularization path loop
   for (int path_step = 0; path_step < path_length; ++path_step) {
     if (print_level > 0) {
@@ -317,7 +321,7 @@ slope(const T& x,
   Eigen::SparseMatrix<double> betas(p, path_length);
   betas.setFromTriplets(beta_triplets.begin(), beta_triplets.end());
 
-  return { beta0s, betas, primals };
+  return { beta0s, betas, primals, lambda, alpha };
 }
 
 } // namespace slope

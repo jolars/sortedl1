@@ -10,7 +10,7 @@ class TestBasicUse(unittest.TestCase):
     def test_simple_problem(self):
         n = 10
         p = 3
-        rng = default_rng(9)
+        rng = default_rng(4)
         x = rng.standard_normal((n, p))
 
         beta = np.array([1.0, 2, -0.9])
@@ -18,28 +18,17 @@ class TestBasicUse(unittest.TestCase):
         y = x @ beta
 
         lam = np.array([2, 1, 0.2])
-        alph = np.asarray(1.0)
+        alpha = np.asarray(1.0)
 
-        model = Slope(lam, alph)
+        model = Slope(lam, alpha, standardize=True)
 
-        pred = model.fit(x, y).predict(x)
+        model.fit(x, y)
 
-        pred_true = np.array(
-            [
-                [0.70852434],
-                [1.64431936],
-                [0.81548688],
-                [-3.1140118],
-                [1.04592253],
-                [-1.23005169],
-                [0.92314128],
-                [-2.58331539],
-                [-0.93066588],
-                [0.63115334],
-            ]
-        )
+        coef = model.coef_
 
-        np.testing.assert_array_almost_equal(pred, pred_true)
+        coef_true = np.array([[-0.16031162], [0.1606755], [-0.12518555]])
+
+        np.testing.assert_array_almost_equal(coef, coef_true)
 
 
 if __name__ == "__main__":

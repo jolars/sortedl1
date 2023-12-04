@@ -9,17 +9,30 @@ project(
   VERSION ${SKBUILD_PROJECT_VERSION}
   LANGUAGES CXX)
 
+set(PYBIND11_NEWPYTHON ON)
+
 # Find the module development requirements (requires FindPython from 3.17 or
-# scikit-build-core's built-in backport)
-find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
+# scikit-build-core's built-in backport) find_package(Python REQUIRED COMPONENTS
+# Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/external)
 
 # Add a library using FindPython's tooling (pybind11 also provides a helper like
-# this)
-python_add_library(_sortedl1 MODULE src/main.cpp WITH_SOABI)
-target_link_libraries(_sortedl1 PRIVATE pybind11::headers)
+# this) python_add_library(_sortedl1 MODULE src/main.cpp WITH_SOABI)
+# target_link_libraries(_sortedl1 PRIVATE pybind11::headers)
+#
+
+pybind11_add_module(
+  _sortedl1
+  src/main.cpp
+  src/slope/qnorm.cpp
+  src/slope/objectives.cpp
+  src/slope/clusters.cpp
+  src/slope/regularization_sequence.cpp
+  src/slope/slope_threshold.cpp
+  src/slope/sorted_l1_norm.cpp
+  src/slope/standardize.cpp)
 
 # The install directory is the output (wheel) directory
-install(TARGETS _sortedl1 DESTINATION sortedl1)
+install(TARGETS _sortedl1 LIBRARY DESTINATION .)

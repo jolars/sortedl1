@@ -2,6 +2,7 @@
 #include <Eigen/Core>
 #include <Eigen/LU>
 #include <pybind11/eigen.h>
+#include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 
 using namespace pybind11::literals;
@@ -28,6 +29,10 @@ fit_slope(const T& x,
   auto update_clusters = args["update_clusters"].cast<bool>();
   auto print_level = args["print_level"].cast<int>();
 
+  for (int i = 0; i < alpha.size(); ++i) {
+    std::cout << alpha(i) << std::endl;
+  }
+
   auto result = slope::slope(x,
                              y,
                              alpha,
@@ -44,31 +49,45 @@ fit_slope(const T& x,
                              update_clusters,
                              print_level);
 
-  return py::make_tuple(result.beta0s, result.betas);
+  auto beta0s = result.beta0s;
+
+  // for (int i = 0; i < beta0s.rows(); ++i) {
+  //   for (int j = 0; j < beta0s.cols(); ++j) {
+  //     // std::cout << beta0s.coeff(i, j) << std::endl;
+  //     py::print(beta0s.coeff(i, j));
+  //   }
+  // }
+
+  return py::make_tuple(
+    result.beta0s, result.betas, result.lambda, result.alpha);
 }
 
 pybind11::tuple
 fit_slope_dense(const Eigen::MatrixXd& x,
                 const Eigen::MatrixXd& y,
-                const Eigen::ArrayXd& lambda,
-                const Eigen::ArrayXd& alpha,
+                Eigen::ArrayXd lambda,
+                Eigen::ArrayXd alpha,
                 const py::dict& args)
 {
-  return fit_slope(x, y, alpha, lambda, args);
+  return fit_slope(x, y, lambda, alpha, args);
 }
 
 pybind11::tuple
 fit_slope_sparse(const Eigen::SparseMatrix<double>& x,
                  const Eigen::MatrixXd& y,
-                 const Eigen::ArrayXd& lambda,
-                 const Eigen::ArrayXd& alpha,
+                 Eigen::ArrayXd lambda,
+                 Eigen::ArrayXd alpha,
                  const py::dict& args)
 {
-  return fit_slope(x, y, alpha, lambda, args);
+  return fit_slope(x, y, lambda, alpha, args);
 }
 
 PYBIND11_MODULE(_sortedl1, m)
 {
-  m.def("fit_slope_dense", &fit_slope_dense);
+  // m.def("fit_slope_dense", &fit_slope_dense);
+  m.def(
+    "fit_slope_dense",
+    &fit_slope_dense,
+    py::call_guard<py::scoped_ostream_redirect, py::scoped_estream_redirect>());
   m.def("fit_slope_sparse", &fit_slope_sparse);
 }
