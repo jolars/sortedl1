@@ -1,3 +1,41 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "pybind11>=2.6.0"]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core>=0.3.3", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "sortedl1"
+description = "Sorted L-On Penalized Estimation"
+readme = "README.md"
+authors = [
+  { name = "Johan Larsson", email = "johanlarsson@outlook.com" },
+  { name = "Mathurin Massias" },
+  { name = "Quentin Klopfenstein" },
+  { name = "Jonas Wallin" },
+]
+requires-python = ">=3.7"
+lincense_files = ["LICENSE"]
+dependencies = ["numpy>=1.12", "scikit-learn>=1.0", "scipy>=0.18.0"]
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://jolars.github.io/sortedl1/"
+Source = "https://github.com/jolars/sortedl1"
+
+[project.optional-dependencies]
+docs = ["sphinx", "sphinx_rtd_theme"]
+
+[tool.scikit-build]
+wheel.expand-macos-universal-tags = true
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "sortedl1/__init__.py"
