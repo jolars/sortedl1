@@ -33,6 +33,7 @@ Source = "https://github.com/jolars/sortedl1"
 docs = ["sphinx", "sphinx_rtd_theme"]
 
 [tool.scikit-build]
+minimum-version = "0.5"
 wheel.expand-macos-universal-tags = true
 wheel.license-files = ["LICENSE"]
 
