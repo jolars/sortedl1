@@ -13,7 +13,6 @@ authors = [
   { name = "Jonas Wallin" },
 ]
 requires-python = ">=3.7"
-license_files = ["LICENSE"]
 dependencies = ["numpy>=1.12", "scikit-learn>=1.0", "scipy>=0.18.0"]
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
@@ -35,6 +34,7 @@ docs = ["sphinx", "sphinx_rtd_theme"]
 
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true
+wheel.license-files = ["LICENSE"]
 
 [tool.scikit-build.metadata.version]
 provider = "scikit_build_core.metadata.regex"
