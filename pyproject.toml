@@ -13,7 +13,7 @@ authors = [
   { name = "Jonas Wallin" },
 ]
 requires-python = ">=3.7"
-lincense_files = ["LICENSE"]
+license_files = ["LICENSE"]
 dependencies = ["numpy>=1.12", "scikit-learn>=1.0", "scipy>=0.18.0"]
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
