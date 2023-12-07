@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Various utility functions
+ */
+
 #pragma once
 
 #include <algorithm> // std::sort
@@ -7,6 +12,22 @@
 
 namespace slope {
 
+/**
+ * Sorts the elements in a container in ascending or descending order.
+ *
+ * This function sorts the elements in the container `v` in either ascending or
+ * descending order, depending on the value of the `descending` parameter.
+ *
+ * @tparam T The type of the container.
+ * @param v The container to be sorted.
+ * @param descending Flag indicating whether to sort in descending order
+ * (default is ascending order).
+ *
+ * @note The elements in the container must be comparable using the `<` and `>`
+ * operators.
+ *
+ * @see std::sort
+ */
 template<typename T>
 void
 sort(T& v, const bool descending = false)
@@ -18,6 +39,21 @@ sort(T& v, const bool descending = false)
   }
 }
 
+/**
+ * Sorts the elements of a vector and returns the indices of the sorted
+ * elements.
+ *
+ * This function sorts the elements of a vector in ascending or descending order
+ * and returns the indices of the sorted elements. The sorting is done using the
+ * std::sort function from the C++ standard library.
+ *
+ * @tparam T The type of the vector elements.
+ * @param v The vector to be sorted.
+ * @param descending Flag indicating whether to sort in descending order.
+ * Default is false.
+ * @return A vector of indices representing the sorted order of the elements in
+ * the input vector.
+ */
 template<typename T>
 std::vector<int>
 sortIndex(T& v, const bool descending = false)
@@ -36,23 +72,56 @@ sortIndex(T& v, const bool descending = false)
   return idx;
 }
 
+/**
+ * Permutes the elements of a container according to the given indices.
+ *
+ * This function takes a container of values and permutes its elements according
+ * to the given indices. The indices specify the new order of the elements in
+ * the container.
+ *
+ * @tparam T The type of the container.
+ * @param values The container of values to be permuted.
+ * @param ind The vector of indices specifying the new order of the elements.
+ */
 template<typename T>
 void
 permute(T& values, const std::vector<int>& ind)
 {
+  /**
+   * @brief The container to store the permuted values.
+   */
   T out(values.size());
 
+  /**
+   * @brief Permute the values according to the given indices.
+   */
   for (int i = 0; i < values.size(); ++i)
     out[i] = std::move(values[ind[i]]);
 
+  /**
+   * @brief Assign the permuted values back to the original container.
+   */
   values = std::move(out);
 }
 
+/**
+ * Inverse permutes the elements of a container based on the given
+ * indices.
+ *
+ * This function takes a container of values and a vector of indices and
+ * rearranges the elements of the container according to the indices. The
+ * resulting container will have the elements in the order specified by the
+ * indices.
+ *
+ * @tparam T The type of the container.
+ * @param values The container of values to be permuted.
+ * @param ind The vector of indices specifying the new order of the elements.
+ */
 template<typename T>
 void
 inversePermute(T& values, const std::vector<int>& ind)
 {
-  T out(values.size());
+  T out(values.size()); /**< The resulting container after permutation. */
 
   for (int i = 0; i < values.size(); ++i)
     out[ind[i]] = std::move(values[i]);
@@ -60,20 +129,27 @@ inversePermute(T& values, const std::vector<int>& ind)
   values = std::move(out);
 }
 
+/**
+ * Moves a range of elements within a vector.
+ *
+ * This function moves a range of elements within a vector from one position to
+ * another. The elements are moved in a way that the order is preserved.
+ *
+ * @tparam T The type of elements in the vector.
+ * @param v The vector containing the elements.
+ * @param from The starting index of the range to be moved.
+ * @param to The ending index of the range to be moved.
+ * @param size The size of the range to be moved.
+ */
 template<typename T>
 void
 move_elements(std::vector<T>& v, const int from, const int to, const int size)
 {
-  // if (from > to)
-  //   std::rotate(v.rend() - from - size, v.rend() - from, v.rend() - to);
-  // else
-  //   std::rotate(
-  //     v.begin() + from, v.begin() + from + size, v.begin() + to + size);
-
   if (from > to) {
     std::rotate(v.begin() + to, v.begin() + from, v.begin() + from + size);
   } else {
     std::rotate(v.begin() + from, v.begin() + from + size, v.begin() + to + 1);
   }
 }
-}
+
+} // namespace slope

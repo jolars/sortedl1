@@ -1,51 +1,63 @@
+/**
+ * @file
+ * @brief An implementation of a proximal gradient descent step
+ */
+
 #pragma once
 
 #include "helpers.h"
+#include "math.h"
+#include "parameters.h"
 #include "sorted_l1_norm.h"
 #include <Eigen/Dense>
 #include <iostream>
 
 namespace slope {
+
+/**
+ * @brief Performs proximal gradient descent with line search.
+ *
+ * This function updates the beta values using the proximal gradient descent
+ * algorithm with line search. It also updates the residual, learning rate, and
+ * other variables as necessary. It assumes that the gradient has already been
+ * computed.
+ *
+ * @tparam T The type of the input data.
+ * @param beta0 The intercept value.
+ * @param beta The coefficient vector.
+ * @param residual The residual vector.
+ * @param learning_rate The learning rate.
+ * @param gradient The gradient vector.
+ * @param x The input data matrix.
+ * @param w The weight vector.
+ * @param z The response vector.
+ * @param sl1_norm The sorted L1 norm object.
+ * @param x_centers The center values of the input data.
+ * @param x_scales The scale values of the input data.
+ * @param g_old The previous value of the objective function.
+ * @param params The slope parameters.
+ */
 template<typename T>
 void
 proximalGradientDescent(double& beta0,
                         Eigen::VectorXd& beta,
                         Eigen::VectorXd& residual,
                         double& learning_rate,
+                        const Eigen::VectorXd& gradient,
                         const T& x,
                         const Eigen::VectorXd& w,
                         const Eigen::VectorXd& z,
                         const SortedL1Norm& sl1_norm,
                         const Eigen::VectorXd& x_centers,
                         const Eigen::VectorXd& x_scales,
-                        double g_old,
-                        bool intercept,
-                        bool standardize,
-                        double learning_rate_decr,
-                        int print_level)
+                        const double g_old,
+                        const SlopeParameters& params)
 {
   const int n = x.rows();
   const int p = x.cols();
 
-  Eigen::VectorXd gradient(p);
-  Eigen::VectorXd weighted_residual = residual.cwiseProduct(w);
-
-  if (standardize) {
-    double wr_sum = weighted_residual.sum();
-    for (int j = 0; j < p; ++j) {
-      gradient(j) = -(x.col(j).dot(weighted_residual) - x_centers(j) * wr_sum) /
-                    (x_scales(j) * n);
-    }
-  } else {
-    gradient = -(x.transpose() * weighted_residual) / n;
-  }
-
-  if (print_level > 3) {
-    printContents(gradient, "        gradient (sub problem)");
-  }
-
   // Proximal gradient descent with line search
-  if (print_level > 2) {
+  if (params.print_level > 2) {
     std::cout << "        Starting line search" << std::endl;
   }
 
@@ -56,14 +68,14 @@ proximalGradientDescent(double& beta0,
 
     Eigen::VectorXd beta_diff = beta - beta_old;
 
-    if (standardize) {
+    if (params.standardize) {
       residual = z - x * beta.cwiseQuotient(x_scales);
       residual.array() += x_centers.cwiseQuotient(x_scales).dot(beta);
     } else {
       residual = z - x * beta;
     }
 
-    if (intercept) {
+    if (params.intercept) {
       beta0 = residual.dot(w) / w.sum();
       residual.array() -= beta0;
     }
@@ -75,7 +87,7 @@ proximalGradientDescent(double& beta0,
     if (q >= g * (1 - 1e-12)) {
       break;
     } else {
-      learning_rate *= learning_rate_decr;
+      learning_rate *= params.learning_rate_decr;
     }
   }
 }

@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief An implementation of the quantile function for the standard normal
+ * distribution
+ */
+
 #include <array>
 #include <cmath>
 #include <sstream>
@@ -5,7 +11,7 @@
 namespace slope {
 
 /**
- * Computes the quantile of a standard normal distribution using the
+ * @brief Computes the quantile of a standard normal distribution using the
  * Beasley-Springer-Moro algorithm.
  *
  * @param p Probability value

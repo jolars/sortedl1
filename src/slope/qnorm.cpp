@@ -1,11 +1,23 @@
 #include <array>
 #include <cmath>
+#include <limits>
+#include <stdexcept>
 
 namespace slope {
 
 double
 normalQuantile(const double p)
 {
+  if (p < 0 || p > 1) {
+    throw std::out_of_range("p must be in the range [0, 1]");
+  }
+
+  if (p == 0) {
+    return -std::numeric_limits<double>::infinity();
+  } else if (p == 1) {
+    return std::numeric_limits<double>::infinity();
+  }
+
   // Coefficients in rational approximations
   const std::array<double, 6> a = {
     -3.969683028665376e+01, 2.209460984245205e+02,  -2.759285104469687e+02,
@@ -30,7 +42,7 @@ normalQuantile(const double p)
   const double plow = 0.02425;
   const double phigh = 1 - plow;
 
-  // Rational approximations for lower region:
+  // Rational approximations for lower region
   if (p < plow) {
     double q = std::sqrt(-2 * std::log(p));
 
@@ -38,7 +50,7 @@ normalQuantile(const double p)
             c[5]) /
            ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
   }
-  // Rational approximations for upper region:
+  // Rational approximations for upper region
   if (phigh < p) {
     double q = std::sqrt(-2 * std::log(1 - p));
 
@@ -47,9 +59,9 @@ normalQuantile(const double p)
            ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
   }
 
-  // Rational approximations for central region:
-  double q = p - 0.5;
-  double r = q * q;
+  // Rational approximations for central region
+  const double q = p - 0.5;
+  const double r = q * q;
 
   return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) *
          q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);

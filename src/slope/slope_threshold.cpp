@@ -1,10 +1,9 @@
 #include "slope_threshold.h"
 #include "math.h"
-#include <vector>
 
 namespace slope {
 
-ThresholdingResults
+std::tuple<double, int>
 slopeThreshold(const double x,
                const int j,
                const Eigen::ArrayXd lambdas,

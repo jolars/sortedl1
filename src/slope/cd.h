@@ -1,6 +1,13 @@
+/**
+ * @file
+ * @brief An implementation of the coordinate descent step in the hybrid
+ * algorithm for solving SLOPE.
+ */
+
 #pragma once
 
 #include "clusters.h"
+#include "parameters.h"
 #include "slope_threshold.h"
 #include "sorted_l1_norm.h"
 #include <Eigen/Core>
@@ -8,6 +15,26 @@
 
 namespace slope {
 
+/**
+ * Coordinate Descent Step
+ *
+ * This function takes a coordinate descent step in the hybrid CD/PGD algorithm
+ * for SLOPE.
+ *
+ * @tparam T The type of the design matrix. This can be either a dense or
+ * sparse.
+ * @param beta0 The intercept
+ * @param beta The coefficients
+ * @param residual The residual vector
+ * @param clusters The cluster information
+ * @param x The design matrix
+ * @param w The weight vector
+ * @param z The response vector
+ * @param sl1_norm The sorted L1 norm object
+ * @param x_centers The center values of the data matrix columns
+ * @param x_scales The scale values of the data matrix columns
+ * @param params The SLOPE parameters
+ */
 template<typename T>
 void
 coordinateDescent(double& beta0,
@@ -20,10 +47,7 @@ coordinateDescent(double& beta0,
                   const SortedL1Norm& sl1_norm,
                   const Eigen::VectorXd& x_centers,
                   const Eigen::VectorXd& x_scales,
-                  bool intercept,
-                  bool standardize,
-                  bool update_clusters,
-                  int print_level)
+                  const SlopeParameters& params)
 {
   using namespace Eigen;
 
@@ -51,7 +75,7 @@ coordinateDescent(double& beta0,
       double s_k = sign(beta(k));
       s.emplace_back(s_k);
 
-      if (standardize) {
+      if (params.standardize) {
         gradient_j = -s_k *
                      (x.col(k).cwiseProduct(w).dot(residual) -
                       w.dot(residual) * x_centers(k)) /
@@ -78,7 +102,7 @@ coordinateDescent(double& beta0,
         double s_k = sign(beta(k));
         s.emplace_back(s_k);
 
-        if (standardize) {
+        if (params.standardize) {
           x_s += x.col(k) * (s_k / x_scales(k));
           x_s.array() -= x_centers(k) * s_k / x_scales(k);
         } else {
@@ -90,14 +114,11 @@ coordinateDescent(double& beta0,
       gradient_j = -x_s.cwiseProduct(w).dot(residual) / n;
     }
 
-    auto thresholding_results =
+    auto [c_tilde, new_index] =
       slopeThreshold(c_old - gradient_j / hessian_j,
                      j,
-                     sl1_norm.lambda * sl1_norm.getAlpha() / hessian_j,
+                     sl1_norm.getLambdaRef() * sl1_norm.getAlpha() / hessian_j,
                      clusters);
-
-    double c_tilde = thresholding_results.value;
-    int new_index = thresholding_results.new_index;
 
     auto s_it = s.cbegin();
     auto c_it = clusters.cbegin(j);
@@ -111,7 +132,7 @@ coordinateDescent(double& beta0,
       if (cluster_size == 1) {
         int k = *clusters.cbegin(j);
 
-        if (standardize) {
+        if (params.standardize) {
           residual += x.col(k) * (s[0] * c_diff / x_scales(k));
           residual.array() -= x_centers(k) * s[0] * c_diff / x_scales(k);
         } else {
@@ -122,13 +143,13 @@ coordinateDescent(double& beta0,
       }
     }
 
-    if (update_clusters) {
+    if (params.update_clusters) {
       clusters.update(j, new_index, std::abs(c_tilde));
     } else {
       clusters.setCoeff(j, std::abs(c_tilde));
     }
 
-    if (intercept) {
+    if (params.intercept) {
       double beta0_update = residual.dot(w) / w.sum();
       residual.array() -= beta0_update;
       beta0 += beta0_update;

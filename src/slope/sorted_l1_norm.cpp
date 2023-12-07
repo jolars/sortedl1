@@ -38,7 +38,7 @@ SortedL1Norm::prox(const Eigen::VectorXd& beta, const double scale) const
   for (int i = 0; i < p; i++) {
     idx_i[k] = i;
     idx_j[k] = i;
-    s[k] = beta_copy(i) - lambda[i] * alpha * scale;
+    s[k] = beta_copy(i) - this->lambda(i) * this->alpha * scale;
     w[k] = s[k];
 
     while ((k > 0) && (w[k - 1] <= w[k])) {
@@ -76,12 +76,32 @@ SortedL1Norm::getAlpha() const
   return alpha;
 }
 
-Eigen::ArrayXd
-SortedL1Norm::dualNorm(const Eigen::VectorXd& a) const
+void
+SortedL1Norm::setLambda(const Eigen::ArrayXd& new_lambda)
 {
-  Eigen::ArrayXd a_abs = a.array().abs();
-  sort(a_abs, true);
-  return cumSum(a_abs);
+  lambda = new_lambda;
+}
+
+Eigen::ArrayXd
+SortedL1Norm::getLambda() const
+{
+  return lambda;
+}
+
+const Eigen::ArrayXd&
+SortedL1Norm::getLambdaRef() const
+{
+  return lambda;
+}
+
+double
+SortedL1Norm::dualNorm(const Eigen::VectorXd& gradient) const
+{
+  Eigen::ArrayXd abs_gradient = gradient.array().abs();
+  sort(abs_gradient, true);
+
+  return (cumSum(abs_gradient) / (this->alpha * cumSum(this->lambda)))
+    .maxCoeff();
 }
 
 } // namspace slope

@@ -66,21 +66,21 @@ class Slope(BaseEstimator, RegressorMixin):
         else:
             fit_slope = fit_slope_dense
 
-        args = {
-            "objective_choice": "gaussian",
+        params = {
+            "objective": "gaussian",
             "intercept": self.fit_intercept,
             "standardize": self.standardize,
             "path_length": 1,
-            "alpha_min_ratio": 1e-4,
+            "alpha_min_ratio": -1,
             "pgd_freq": 10,
-            "tol": 1e-8,
-            "max_it": 1_000_000,
-            "max_it_outer": 100,
+            "tol": 1e-4,
+            "max_it": 1_000_00,
+            "max_it_outer": 30,
             "update_clusters": False,
             "print_level": 0,
         }
 
-        result = fit_slope(X, y, lam, alpha, args)
+        result = fit_slope(X, y, lam, alpha, params)
 
         self.intercept_ = result[0]
         self.sparse_coef_ = result[1]

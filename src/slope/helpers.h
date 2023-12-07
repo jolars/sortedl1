@@ -1,9 +1,23 @@
+/**
+ * @internal
+ * @file
+ * @brief Internal helper functions for printing and more
+ */
+
 #pragma once
 
 #include <Eigen/Core>
 #include <iostream>
+#include <string>
 
-// a template that iterates over a container called x
+/**
+ * @internal
+ * Prints the contents of a container to the standard output.
+ *
+ * @tparam T The type of the container.
+ * @param x The container to print.
+ * @param what An optional string to prefix the output with.
+ */
 template<typename T>
 void
 printContents(const T& x, const std::string what = "")
@@ -19,3 +33,14 @@ printContents(const T& x, const std::string what = "")
 
   std::cout << std::endl;
 }
+
+/**
+ * @internal
+ * @brief This function takes an integer level and returns a string of spaces
+ *        that represents the indentation level.
+ *
+ * @param level The indentation level to be represented.
+ * @return std::string A string of spaces representing the indentation level.
+ */
+std::string
+indent(const int level);

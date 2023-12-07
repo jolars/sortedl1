@@ -1,3 +1,4 @@
+#include "slope/parameters.h"
 #include "slope/slope.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
@@ -17,46 +18,21 @@ fit_slope(const T& x,
           const Eigen::ArrayXd& alpha,
           const py::dict& args)
 {
-  auto objective_choice = args["objective_choice"].cast<std::string>();
-  auto intercept = args["intercept"].cast<bool>();
-  auto standardize = args["standardize"].cast<bool>();
-  auto path_length = args["path_length"].cast<int>();
-  auto alpha_min_ratio = args["alpha_min_ratio"].cast<double>();
-  auto pgd_freq = args["pgd_freq"].cast<int>();
-  auto tol = args["tol"].cast<double>();
-  auto max_it = args["max_it"].cast<int>();
-  auto max_it_outer = args["max_it_outer"].cast<int>();
-  auto update_clusters = args["update_clusters"].cast<bool>();
-  auto print_level = args["print_level"].cast<int>();
+  slope::SlopeParameters params;
 
-  for (int i = 0; i < alpha.size(); ++i) {
-    std::cout << alpha(i) << std::endl;
-  }
+  params.intercept = args["intercept"].cast<bool>();
+  params.standardize = args["standardize"].cast<bool>();
+  params.update_clusters = args["update_clusters"].cast<bool>();
+  params.alpha_min_ratio = args["alpha_min_ratio"].cast<double>();
+  params.objective = args["objective"].cast<std::string>();
+  params.path_length = args["path_length"].cast<int>();
+  params.pgd_freq = args["pgd_freq"].cast<int>();
+  params.tol = args["tol"].cast<double>();
+  params.max_it = args["max_it"].cast<int>();
+  params.max_it_outer = args["max_it_outer"].cast<int>();
+  params.print_level = args["print_level"].cast<int>();
 
-  auto result = slope::slope(x,
-                             y,
-                             alpha,
-                             lambda,
-                             objective_choice,
-                             intercept,
-                             standardize,
-                             path_length,
-                             alpha_min_ratio,
-                             pgd_freq,
-                             tol,
-                             max_it,
-                             max_it_outer,
-                             update_clusters,
-                             print_level);
-
-  auto beta0s = result.beta0s;
-
-  // for (int i = 0; i < beta0s.rows(); ++i) {
-  //   for (int j = 0; j < beta0s.cols(); ++j) {
-  //     // std::cout << beta0s.coeff(i, j) << std::endl;
-  //     py::print(beta0s.coeff(i, j));
-  //   }
-  // }
+  auto result = slope::slope(x, y, alpha, lambda, params);
 
   return py::make_tuple(
     result.beta0s, result.betas, result.lambda, result.alpha);
@@ -85,9 +61,6 @@ fit_slope_sparse(const Eigen::SparseMatrix<double>& x,
 PYBIND11_MODULE(_sortedl1, m)
 {
   // m.def("fit_slope_dense", &fit_slope_dense);
-  m.def(
-    "fit_slope_dense",
-    &fit_slope_dense,
-    py::call_guard<py::scoped_ostream_redirect, py::scoped_estream_redirect>());
+  m.def("fit_slope_dense", &fit_slope_dense);
   m.def("fit_slope_sparse", &fit_slope_sparse);
 }
