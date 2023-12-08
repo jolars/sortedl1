@@ -21,6 +21,10 @@ class Slope(BaseEstimator, RegressorMixin):
         Whether to fit an intercept term. Default is True.
     standardize : bool, optional
         Whether to standardize the features. Default is False.
+    max_iter : int, optional
+        Maximum number of iterations for the inner loop.
+    tol : float, optional
+        Tolerance for the stopping criterion.
 
     Attributes
     ----------
@@ -28,11 +32,21 @@ class Slope(BaseEstimator, RegressorMixin):
         The estimated regression coefficients.
     """
 
-    def __init__(self, lam=None, alpha=1.0, fit_intercept=True, standardize=False):
+    def __init__(
+        self,
+        lam=None,
+        alpha=1.0,
+        fit_intercept=True,
+        standardize=False,
+        max_iter=100_000,
+        tol=1e-4,
+    ):
         self.lam = lam
         self.alpha = alpha
         self.fit_intercept = fit_intercept
         self.standardize = standardize
+        self.max_iter = max_iter
+        self.tol = tol
 
     def fit(self, X, y):
         """
@@ -75,9 +89,9 @@ class Slope(BaseEstimator, RegressorMixin):
             "path_length": 1,
             "alpha_min_ratio": -1,
             "pgd_freq": 10,
-            "tol": 1e-4,
-            "max_it": 1_000_00,
-            "max_it_outer": 30,
+            "tol": self.tol,
+            "max_it": self.max_iter,
+            "max_it_outer": 2,
             "update_clusters": False,
             "print_level": 0,
         }
