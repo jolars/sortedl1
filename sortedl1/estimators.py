@@ -14,13 +14,13 @@ class Slope(BaseEstimator, RegressorMixin):
     Parameters
     ----------
     lam : array_like, optional
-        The lambda parameter vector for the Sorted L1 Penalty. Default is None.
+        The lambda parameter vector for the Sorted L1 Penalty.
     alpha : array_like, optional
-        A multiplier for the Sorted L1 Penalty. Default is 1.0.
+        A multiplier for the Sorted L1 Penalty.
     fit_intercept : bool, optional
-        Whether to fit an intercept term. Default is True.
+        Whether to fit an intercept term.
     standardize : bool, optional
-        Whether to standardize the features. Default is False.
+        Whether to standardize the features.
     max_iter : int, optional
         Maximum number of iterations for the inner loop.
     tol : float, optional
