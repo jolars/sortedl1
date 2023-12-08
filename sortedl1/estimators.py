@@ -28,8 +28,14 @@ class Slope(BaseEstimator, RegressorMixin):
 
     Attributes
     ----------
+    intercept_ : float
+        The estimated intercept.
     coef_ : ndarray
-        The estimated regression coefficients.
+        The estimated regression coefficients in a sparse format.
+    sparse_coef_ : scipy.sparse.csc_matrix
+        The estimated regression coefficients in a dense format.
+    lambda_ : ndarray
+        The lambda parameter vector for the Sorted L1 Penalty.
     """
 
     def __init__(
