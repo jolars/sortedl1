@@ -47,3 +47,14 @@ CMAKE_CXX_STANDARD_REQUIRED = "ON"
 [tool.scikit-build.metadata.version]
 provider = "scikit_build_core.metadata.regex"
 input = "sortedl1/__init__.py"
+
+[tool.ruff.lint]
+extend-select = [
+  "I",  # sorting
+  "UP", # pyupgrade
+  "D",  # pydocstyle
+  "B",  # flake8 bugbear
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
