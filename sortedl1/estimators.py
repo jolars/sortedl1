@@ -1,3 +1,5 @@
+"""Estimators for SLOPE."""
+
 import numpy as np
 from _sortedl1 import fit_slope_dense, fit_slope_sparse
 from scipy import sparse
@@ -7,7 +9,7 @@ from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
 class Slope(BaseEstimator, RegressorMixin):
     """
-    Sorted L-One Penalized Estimation
+    Sorted L-One Penalized Estimation.
 
     Parameters
     ----------
