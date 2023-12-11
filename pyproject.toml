@@ -4,6 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "sortedl1"
+version = "0.1.0"
 description = "Sorted L-On Penalized Estimation"
 readme = "README.md"
 authors = [
@@ -23,7 +24,6 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
 ]
-dynamic = ["version"]
 
 [project.urls]
 Homepage = "https://jolars.github.io/sortedl1/"
@@ -43,10 +43,6 @@ sdist.exclude = [".github"]
 [tool.scikit-build.cmake.define]
 CMAKE_CXX_STANDARD = "17"
 CMAKE_CXX_STANDARD_REQUIRED = "ON"
-
-[tool.scikit-build.metadata.version]
-provider = "scikit_build_core.metadata.regex"
-input = "sortedl1/__init__.py"
 
 [tool.ruff.lint]
 extend-select = [
