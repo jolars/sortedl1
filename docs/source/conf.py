@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
 ]
@@ -31,11 +32,15 @@ exclude_patterns = [
     ".DS_Store",
 ]
 
+master_doc = "index"
+exclude_patterns = ["_build"]
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "furo"
 html_static_path = ["_static"]
+html_logo = "_static/slope-horizontal.svg"
 
 # -- Options for napoleon extension ------------------------------------------
 napoleon_google_docstring = True
@@ -52,3 +57,11 @@ napoleon_use_rtype = True
 napoleon_preprocess_types = False
 napoleon_type_aliases = None
 napoleon_attr_annotations = True
+
+# - Intersphinx
+intersphinx_mapping = {
+    # 'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+    # 'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
+    # 'matplotlib': ('https://matplotlib.org/', None),
+    "sklearn": ("http://scikit-learn.org/stable", None),
+}

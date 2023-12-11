@@ -1,6 +1,6 @@
-# sortedl1
+# sortedl1 <a href="https://jolars.github.io/sortedl1/"><img src='docs/source/_static/slope-square.svg' align="right" height="139" /></a>
 
-**sortedl1** is a python package for Sorted L-One Penalized Estimation.
+**sortedl1** is a python package for Sorted L-One Penalized Estimation (SLOPE).
 
 ## Installing
 

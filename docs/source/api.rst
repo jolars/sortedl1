@@ -1,6 +1,13 @@
-###############
- API Reference
-###############
+.. _api_documentation:
+
+=================
+API Documentation
+=================
+
+.. currentmodule:: sortedl1
+
+Estimators
+==========
 
 .. currentmodule:: sortedl1
 
@@ -8,3 +15,4 @@
    :toctree: generated/
 
    Slope
+
