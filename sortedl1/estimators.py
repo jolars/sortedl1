@@ -36,6 +36,12 @@ class Slope(BaseEstimator, RegressorMixin):
         The estimated regression coefficients in a dense format.
     lambda_ : ndarray
         The lambda parameter vector for the Sorted L1 Penalty.
+    lambda_ : float
+        The value of alpha used.
+    n_iter_ : int
+        The total number of iterations from the inner loop.
+    n_features_in_ : int
+        The number of features seen by the estimator.
     """
 
     def __init__(
