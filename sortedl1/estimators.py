@@ -104,7 +104,7 @@ class Slope(BaseEstimator, RegressorMixin):
 
         result = fit_slope(X, y, lam, alpha, params)
 
-        self.intercept_ = result[0]
+        self.intercept_ = result[0][0]
         self.sparse_coef_ = result[1]
         self.coef_ = result[1].toarray()
         self.lambda_ = result[2]
