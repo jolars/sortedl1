@@ -36,7 +36,8 @@ fit_slope(const T& x,
   return py::make_tuple(model.getIntercepts(),
                         model.getCoefs(),
                         model.getLambda(),
-                        model.getAlpha());
+                        model.getAlpha(),
+                        model.getTotalIterations());
 }
 
 pybind11::tuple

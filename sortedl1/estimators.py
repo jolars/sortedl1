@@ -109,6 +109,8 @@ class Slope(BaseEstimator, RegressorMixin):
         self.coef_ = result[1].toarray()
         self.lambda_ = result[2]
         self.alpha_ = result[3]
+        self.n_iter_ = result[4]
+        self.n_features_in_ = X.shape[1]
 
         return self
 
@@ -130,4 +132,5 @@ class Slope(BaseEstimator, RegressorMixin):
 
         X = check_array(X, accept_sparse=True)
 
-        return np.dot(X, self.coef_)
+        pred = X @ self.coef_ + self.intercept_
+        return np.ravel(pred)
