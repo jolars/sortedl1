@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/jolars/sortedl1/compare/v0.2.0...v0.2.1) (2023-12-11)
+
+
+### Documentation
+
+* add authors to sphinx docs too ([db8bc88](https://github.com/jolars/sortedl1/commit/db8bc8860ca25abefea368ed60311a8bcb72c006))
+* document all authors ([7124713](https://github.com/jolars/sortedl1/commit/7124713dad90fb0a21692e829f238a08c5baada6))
+* fix keyword ([1597d21](https://github.com/jolars/sortedl1/commit/1597d214973174c951f7f4c9cb9ee746e370a6a2))
+
 ## [0.2.0](https://github.com/jolars/sortedl1/compare/v0.1.0...v0.2.0) (2023-12-11)
 
 
