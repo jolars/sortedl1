@@ -14,8 +14,8 @@ project(
 set(PYBIND11_NEWPYTHON ON)
 
 # Find the module development requirements (requires FindPython from 3.17 or
-# scikit-build-core's built-in backport) find_package(Python REQUIRED COMPONENTS
-# Interpreter Development.Module)
+# scikit-build-core's built-in backport)
+find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/external)
