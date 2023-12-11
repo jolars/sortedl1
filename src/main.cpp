@@ -60,7 +60,6 @@ fit_slope_sparse(const Eigen::SparseMatrix<double>& x,
 
 PYBIND11_MODULE(_sortedl1, m)
 {
-  // m.def("fit_slope_dense", &fit_slope_dense);
   m.def("fit_slope_dense", &fit_slope_dense);
   m.def("fit_slope_sparse", &fit_slope_sparse);
 }
