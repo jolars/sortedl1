@@ -7,6 +7,15 @@ all: install
 install:
 	pip install -e .
 
+.PHONY: build
+build:
+	rm -rf dist
+	python -m build
+
+.PHONY: test-pypi
+test-pypi:
+	python -m twine upload --repository testpypi dist/*
+
 .PHONY: clean
 clean:
 	rm -rf src/*.o src/*.so
