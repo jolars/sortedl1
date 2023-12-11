@@ -10,7 +10,7 @@ sortedl1 is currently only available on github. To install it, run
 pip install -U git+https://github.com/jolars/sortedl1
 ```
 
-# Usage
+## Usage
 
 Estimators in **sortedl1** are compatible with the scikit-learn interface.
 
