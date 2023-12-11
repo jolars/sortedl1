@@ -28,11 +28,6 @@ class TestBasicUse(unittest.TestCase):
         """
         Tests a simple problem using the Slope model.
 
-        This method generates a random dataset using the numpy random module,
-        creates a Slope model with specific parameters, fits the model to the
-        generated data, and then checks if the model's coefficients are almost
-        equal to the expected coefficients.
-
         Parameters
         ----------
         None
@@ -62,6 +57,31 @@ class TestBasicUse(unittest.TestCase):
         coef_true = np.array([[-0.16031162], [0.1606755], [-0.12518555]])
 
         np.testing.assert_array_almost_equal(coef, coef_true)
+
+    def test_failing_problem(self):
+        """
+        Test a problem with automatic lambda selection.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        n = 100
+        p = 3
+
+        seed = 31
+        rng = default_rng(seed)
+
+        x = rng.standard_normal((n, p))
+        beta = rng.standard_normal(p)
+        y = x @ beta + rng.standard_normal(n)
+
+        model = Slope(alpha=1.0)
+        model.fit(x, y)
 
 
 if __name__ == "__main__":
