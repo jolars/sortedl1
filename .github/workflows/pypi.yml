@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   release:
     types:
-      - published
+      - released
 
 jobs:
   build_wheels:
@@ -43,7 +43,6 @@ jobs:
     environment: pypi
     permissions:
       id-token: write
-    if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - uses: actions/download-artifact@v3
         with:
