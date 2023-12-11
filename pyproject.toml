@@ -13,6 +13,12 @@ authors = [
   { name = "Mathurin Massias" },
   { name = "Quentin Klopfenstein" },
   { name = "Jonas Wallin" },
+  { name = "Malgorzata Bogdan" },
+  { name = "Ewout van den Berg" },
+  { name = "Chiarai Sabatti" },
+  { name = "Emmanuel Candes" },
+  { name = "Evan Patterson" },
+  { name = "Weijie Su" },
 ]
 license = { file = "LICENSE" }
 keywords = ["statistics", "machine-learning"]
