@@ -41,8 +41,8 @@ fit_slope(const T& x,
 pybind11::tuple
 fit_slope_dense(const Eigen::MatrixXd& x,
                 const Eigen::MatrixXd& y,
-                Eigen::ArrayXd lambda,
-                Eigen::ArrayXd alpha,
+                const Eigen::ArrayXd& lambda,
+                const Eigen::ArrayXd& alpha,
                 const py::dict& args)
 {
   return fit_slope(x, y, lambda, alpha, args);
@@ -51,8 +51,8 @@ fit_slope_dense(const Eigen::MatrixXd& x,
 pybind11::tuple
 fit_slope_sparse(const Eigen::SparseMatrix<double>& x,
                  const Eigen::MatrixXd& y,
-                 Eigen::ArrayXd lambda,
-                 Eigen::ArrayXd alpha,
+                 const Eigen::ArrayXd& lambda,
+                 const Eigen::ArrayXd& alpha,
                  const py::dict& args)
 {
   return fit_slope(x, y, lambda, alpha, args);
