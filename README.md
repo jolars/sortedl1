@@ -20,6 +20,7 @@ from numpy.random import default_rng
 
 from sortedl1 import Slope
 
+# Generate some random data
 n = 100
 p = 3
 
@@ -30,9 +31,11 @@ x = rng.standard_normal((n, p))
 beta = rng.standard_normal(p)
 y = x @ beta + rng.standard_normal(n)
 
-model = Slope()
+# Fit the model
+model = Slope(alpha=0.1)
 model.fit(x, y)
 
+# Print the coefficients
 print(model.coef_)
 ```
 
