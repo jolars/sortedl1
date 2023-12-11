@@ -1,6 +1,6 @@
-################
- Main Functions
-################
+###############
+ API Reference
+###############
 
 .. currentmodule:: sortedl1
 

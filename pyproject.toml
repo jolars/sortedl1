@@ -30,7 +30,7 @@ Homepage = "https://jolars.github.io/sortedl1/"
 Source = "https://github.com/jolars/sortedl1"
 
 [project.optional-dependencies]
-docs = ["sphinx", "furo"]
+docs = ["sphinx", "furo", "sphinx-copybutton"]
 
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"

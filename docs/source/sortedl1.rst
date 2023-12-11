@@ -1,27 +1,23 @@
-sortedl1 package
-================
+##################
+ sortedl1 package
+##################
 
-Submodules
-----------
+************
+ Submodules
+************
 
-sortedl1.estimators module
---------------------------
+****************************
+ sortedl1.estimators module
+****************************
 
 .. automodule:: sortedl1.estimators
    :members:
    :undoc-members:
    :show-inheritance:
 
-sortedl1.version module
------------------------
-
-.. automodule:: sortedl1.version
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
+*****************
+ Module contents
+*****************
 
 .. automodule:: sortedl1
    :members:

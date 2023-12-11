@@ -20,12 +20,13 @@ docs:
 	sphinx-apidoc -o docs/source sortedl1 ;\
 	cd docs ;\
 	make html
+
+.PHONY: autodoc
+autodoc:
+	sphinx-autobuild docs/source docs/build
 	
 .PHONY: update-libslope
 update-libslope:
 	@mkdir -p tmp
 	@curl -L $(LIBSLOPE_RELEASE) | tar -xz --strip-components=1 -C tmp
-	@rm -rf src/slope
-	@cp -ri tmp/src/slope src/
-	@rm -rf tmp
-
+	@rm -rf src/slope @cp -ri tmp/src/slope src/ @rm -rf tmp
