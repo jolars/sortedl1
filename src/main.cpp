@@ -1,4 +1,3 @@
-#include "slope/parameters.h"
 #include "slope/slope.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
@@ -18,24 +17,26 @@ fit_slope(const T& x,
           const Eigen::ArrayXd& alpha,
           const py::dict& args)
 {
-  slope::SlopeParameters params;
+  slope::Slope model;
 
-  params.intercept = args["intercept"].cast<bool>();
-  params.standardize = args["standardize"].cast<bool>();
-  params.update_clusters = args["update_clusters"].cast<bool>();
-  params.alpha_min_ratio = args["alpha_min_ratio"].cast<double>();
-  params.objective = args["objective"].cast<std::string>();
-  params.path_length = args["path_length"].cast<int>();
-  params.pgd_freq = args["pgd_freq"].cast<int>();
-  params.tol = args["tol"].cast<double>();
-  params.max_it = args["max_it"].cast<int>();
-  params.max_it_outer = args["max_it_outer"].cast<int>();
-  params.print_level = args["print_level"].cast<int>();
+  model.setIntercept(args["intercept"].cast<bool>());
+  model.setStandardize(args["standardize"].cast<bool>());
+  model.setUpdateClusters(args["update_clusters"].cast<bool>());
+  model.setAlphaMinRatio(args["alpha_min_ratio"].cast<double>());
+  model.setObjective(args["objective"].cast<std::string>());
+  model.setPathLength(args["path_length"].cast<int>());
+  model.setPgdFreq(args["pgd_freq"].cast<int>());
+  model.setTol(args["tol"].cast<double>());
+  model.setMaxIt(args["max_it"].cast<int>());
+  model.setMaxItOuter(args["max_it_outer"].cast<int>());
+  model.setPrintLevel(args["print_level"].cast<int>());
 
-  auto result = slope::slope(x, y, alpha, lambda, params);
+  model.fit(x, y, alpha, lambda);
 
-  return py::make_tuple(
-    result.beta0s, result.betas, result.lambda, result.alpha);
+  return py::make_tuple(model.getIntercepts(),
+                        model.getCoefs(),
+                        model.getLambda(),
+                        model.getAlpha());
 }
 
 pybind11::tuple

@@ -7,7 +7,6 @@
 #pragma once
 
 #include "clusters.h"
-#include "parameters.h"
 #include "slope_threshold.h"
 #include "sorted_l1_norm.h"
 #include <Eigen/Core>
@@ -26,14 +25,22 @@ namespace slope {
  * @param beta0 The intercept
  * @param beta The coefficients
  * @param residual The residual vector
- * @param clusters The cluster information
+ * @param clusters The cluster information, stored in a Cluster object.
  * @param x The design matrix
  * @param w The weight vector
  * @param z The response vector
  * @param sl1_norm The sorted L1 norm object
  * @param x_centers The center values of the data matrix columns
  * @param x_scales The scale values of the data matrix columns
- * @param params The SLOPE parameters
+ * @param intercept Shuold an intervept be fit?
+ * @param standardize Flag indicating whether to standardize the data matrix
+ * columns
+ * @param update_clusters Flag indicating whether to update the cluster
+ * information
+ * @param print_level The level of verbosity for printing debug information
+ *
+ * @see Clusters
+ * @see SortedL1Norm
  */
 template<typename T>
 void
@@ -47,7 +54,10 @@ coordinateDescent(double& beta0,
                   const SortedL1Norm& sl1_norm,
                   const Eigen::VectorXd& x_centers,
                   const Eigen::VectorXd& x_scales,
-                  const SlopeParameters& params)
+                  const bool intercept,
+                  const bool standardize,
+                  const bool update_clusters,
+                  const int print_level)
 {
   using namespace Eigen;
 
@@ -75,7 +85,7 @@ coordinateDescent(double& beta0,
       double s_k = sign(beta(k));
       s.emplace_back(s_k);
 
-      if (params.standardize) {
+      if (standardize) {
         gradient_j = -s_k *
                      (x.col(k).cwiseProduct(w).dot(residual) -
                       w.dot(residual) * x_centers(k)) /
@@ -102,7 +112,7 @@ coordinateDescent(double& beta0,
         double s_k = sign(beta(k));
         s.emplace_back(s_k);
 
-        if (params.standardize) {
+        if (standardize) {
           x_s += x.col(k) * (s_k / x_scales(k));
           x_s.array() -= x_centers(k) * s_k / x_scales(k);
         } else {
@@ -132,7 +142,7 @@ coordinateDescent(double& beta0,
       if (cluster_size == 1) {
         int k = *clusters.cbegin(j);
 
-        if (params.standardize) {
+        if (standardize) {
           residual += x.col(k) * (s[0] * c_diff / x_scales(k));
           residual.array() -= x_centers(k) * s[0] * c_diff / x_scales(k);
         } else {
@@ -143,13 +153,13 @@ coordinateDescent(double& beta0,
       }
     }
 
-    if (params.update_clusters) {
+    if (update_clusters) {
       clusters.update(j, new_index, std::abs(c_tilde));
     } else {
       clusters.setCoeff(j, std::abs(c_tilde));
     }
 
-    if (params.intercept) {
+    if (intercept) {
       double beta0_update = residual.dot(w) / w.sum();
       residual.array() -= beta0_update;
       beta0 += beta0_update;

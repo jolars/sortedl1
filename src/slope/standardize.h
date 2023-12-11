@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "parameters.h"
 #include <Eigen/Sparse>
 
 namespace slope {
@@ -23,7 +22,7 @@ namespace slope {
  */
 template<typename T>
 std::tuple<Eigen::VectorXd, Eigen::VectorXd>
-standardize(const T& x, const bool standardize)
+computeCentersAndScales(const T& x, const bool standardize)
 {
   const int n = x.rows();
   const int p = x.cols();
@@ -67,7 +66,8 @@ standardize(const T& x, const bool standardize)
  * @param beta The vector of coefficients.
  * @param x_centers The vector of center values.
  * @param x_scales The vector of scale factors.
- * @param params The slope parameters.
+ * @param intercept Should an intercept be fit?
+ * @param standardize Is the design matrix standardized?
  * @return A tuple containing the rescaled intercept and coefficients.
  *
  * @note The input vectors `beta`, `x_centers`, and `x_scales` must have the
@@ -81,6 +81,7 @@ rescaleCoefficients(double beta0,
                     Eigen::VectorXd beta,
                     const Eigen::VectorXd& x_centers,
                     const Eigen::VectorXd& x_scales,
-                    const SlopeParameters& params);
+                    const bool intercept,
+                    const bool standardize);
 
 } // namespace slope

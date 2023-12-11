@@ -7,7 +7,6 @@
 
 #include "helpers.h"
 #include "math.h"
-#include "parameters.h"
 #include "sorted_l1_norm.h"
 #include <Eigen/Dense>
 #include <iostream>
@@ -35,7 +34,12 @@ namespace slope {
  * @param x_centers The center values of the input data.
  * @param x_scales The scale values of the input data.
  * @param g_old The previous value of the objective function.
- * @param params The slope parameters.
+ * @param intercept Flag indicating whether to include an intercept term.
+ * @param standardize Flag indicating whether to standardize the input data.
+ * @param learning_rate_decr The learning rate decrement factor.
+ * @param print_level The level of verbosity for printing progress.
+ *
+ * @see SortedL1Norm
  */
 template<typename T>
 void
@@ -51,13 +55,16 @@ proximalGradientDescent(double& beta0,
                         const Eigen::VectorXd& x_centers,
                         const Eigen::VectorXd& x_scales,
                         const double g_old,
-                        const SlopeParameters& params)
+                        const bool intercept,
+                        const bool standardize,
+                        const double learning_rate_decr,
+                        const int print_level)
 {
   const int n = x.rows();
   const int p = x.cols();
 
   // Proximal gradient descent with line search
-  if (params.print_level > 2) {
+  if (print_level > 2) {
     std::cout << "        Starting line search" << std::endl;
   }
 
@@ -68,14 +75,14 @@ proximalGradientDescent(double& beta0,
 
     Eigen::VectorXd beta_diff = beta - beta_old;
 
-    if (params.standardize) {
+    if (standardize) {
       residual = z - x * beta.cwiseQuotient(x_scales);
       residual.array() += x_centers.cwiseQuotient(x_scales).dot(beta);
     } else {
       residual = z - x * beta;
     }
 
-    if (params.intercept) {
+    if (intercept) {
       beta0 = residual.dot(w) / w.sum();
       residual.array() -= beta0;
     }
@@ -87,7 +94,7 @@ proximalGradientDescent(double& beta0,
     if (q >= g * (1 - 1e-12)) {
       break;
     } else {
-      learning_rate *= params.learning_rate_decr;
+      learning_rate *= learning_rate_decr;
     }
   }
 }
