@@ -7,17 +7,21 @@ name = "sortedl1"
 version = "0.1.0"
 description = "Sorted L-On Penalized Estimation"
 readme = "README.md"
+maintainers = [{ name = "Johan Larsson", email = "johanlarsson@outlook.com" }]
 authors = [
   { name = "Johan Larsson", email = "johanlarsson@outlook.com" },
   { name = "Mathurin Massias" },
   { name = "Quentin Klopfenstein" },
   { name = "Jonas Wallin" },
 ]
+license = { file = "LICENSE" }
+keywords = ["statistics", "machine learning"]
 requires-python = ">=3.7"
 dependencies = ["numpy>=1.12", "scikit-learn>=1.0", "scipy>=0.18.0"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
   "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Operating System :: POSIX :: Linux",
   "Programming Language :: C++",
@@ -32,8 +36,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://jolars.github.io/sortedl1/"
-Source = "https://github.com/jolars/sortedl1"
+homepage = "https://github.com/jolars/sortedl1"
+documentation = "https://jolars.github.io/sortedl1/"
+changelog = "https://github.com/jolars/sortedl1/blob/main/CHANGELOG.md"
+tracker = "https://github.com/jolars/sortedl1/issues"
 
 [project.optional-dependencies]
 docs = ["sphinx", "furo", "sphinx-copybutton"]
