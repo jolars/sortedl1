@@ -8,16 +8,16 @@
 
 ## Installing
 
-The current release can be isntalled from PyPI by running
+The current release can be installed from PyPI by running
 
 ```python
-pip install -U git+https://github.com/jolars/sortedl1
+pip install sortedl1
 ```
 
 You can also install the latest development version via pip by calling
 
 ```python
-pip install -U git+https://github.com/jolars/sortedl1
+pip install git+https://github.com/jolars/sortedl1
 ```
 
 Alternatively, you can clone the repository and install the package locally by running
