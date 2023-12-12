@@ -10,9 +10,9 @@ readme = "README.md"
 maintainers = [{ name = "Johan Larsson", email = "johanlarsson@outlook.com" }]
 authors = [
   { name = "Johan Larsson", email = "johanlarsson@outlook.com" },
-  { name = "Mathurin Massias" },
+  { name = "Mathurin Massias", email = "mathurin.massias@gmail.com" },
   { name = "Quentin Klopfenstein" },
-  { name = "Jonas Wallin" },
+  { name = "Jonas Wallin", email = "jonas.wallin@stat.lu.se" },
   { name = "Malgorzata Bogdan" },
   { name = "Ewout van den Berg" },
   { name = "Chiarai Sabatti" },
