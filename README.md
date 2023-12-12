@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/jolars/sortedl1/actions/workflows/ci.yaml/badge.svg)](https://github.com/jolars/sortedl1/actions/workflows/ci.yaml)
 [![PyPI version](https://badge.fury.io/py/sortedl1.svg)](https://badge.fury.io/py/sortedl1)
+[![codecov](https://codecov.io/gh/jolars/sortedl1/graph/badge.svg?token=tMVGB2LHcM)](https://codecov.io/gh/jolars/sortedl1)
 
 **sortedl1** is a python package for Sorted L-One Penalized Estimation (SLOPE).
 
