@@ -59,17 +59,11 @@ jobs:
           cd docs
           make html
 
-      - name: Setup pages
-        uses: actions/configure-pages@v3
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+      - name: Deploy to GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: "docs/build/html/"
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+          folder: "docs/build/html/"
+          target-folder: "dev"
   release:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
