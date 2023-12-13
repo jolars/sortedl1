@@ -13,3 +13,4 @@
    :caption: Contents:
 
    api
+   changelog
