@@ -61,6 +61,8 @@ print(model.coef_)
 
 The backbone of the package is written in C++ and developed in a separate repository at <https://github.com/jolars/libslope>. So if you have any issues with the package other than such that are specific to the python interface, please report them there. But feel free to request features here.
 
+When writing commit messages, please use the [conventional commits format](https://www.conventionalcommits.org/en/v1.0.0/).
+
 ## Versioning
 
-SLOPE uses [semantic versioning](https://semver.org).
+sortedl1 uses [semantic versioning](https://semver.org).
