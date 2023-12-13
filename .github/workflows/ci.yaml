@@ -33,7 +33,6 @@ jobs:
   release:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
-      - docs
       - build-and-test
     permissions:
       contents: write
