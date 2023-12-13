@@ -1,6 +1,10 @@
 name: CI
 on: [push, pull_request]
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -30,9 +34,34 @@ jobs:
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  docs:
+    needs: build-and-test
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pybind11 setuptools
+
+      - name: Install
+        run: pip install .[docs]
+
+      - name: Build documentation
+        run: |
+          sphinx-apidoc -o docs/source sortedl1
+          cd docs
+          make html
   release:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
+      - docs
       - build-and-test
     permissions:
       contents: write
