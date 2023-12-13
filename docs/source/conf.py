@@ -18,8 +18,8 @@ release = __version__
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
@@ -43,22 +43,6 @@ html_theme = "furo"
 html_static_path = ["_static"]
 html_logo = "_static/slope-horizontal.svg"
 
-# -- Options for napoleon extension ------------------------------------------
-napoleon_google_docstring = True
-napoleon_numpy_docstring = True
-napoleon_include_init_with_doc = False
-napoleon_include_private_with_doc = False
-napoleon_include_special_with_doc = True
-napoleon_use_admonition_for_examples = False
-napoleon_use_admonition_for_notes = False
-napoleon_use_admonition_for_references = False
-napoleon_use_ivar = False
-napoleon_use_param = True
-napoleon_use_rtype = True
-napoleon_preprocess_types = False
-napoleon_type_aliases = None
-napoleon_attr_annotations = True
-
 # - Intersphinx
 intersphinx_mapping = {
     # 'numpy': ('https://docs.scipy.org/doc/numpy/', None),
@@ -66,3 +50,6 @@ intersphinx_mapping = {
     # 'matplotlib': ('https://matplotlib.org/', None),
     "sklearn": ("http://scikit-learn.org/stable", None),
 }
+
+# Myst
+myst_enable_extensions = ["colon_fence", "deflist", "fieldlist"]

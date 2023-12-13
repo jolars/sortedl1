@@ -32,7 +32,7 @@ docs:
 
 .PHONY: autodoc
 autodoc:
-	sphinx-autobuild docs/source docs/build
+	sphinx-autobuild docs/source docs/build --watch sortedl1
 	
 .PHONY: update-libslope
 update-libslope:

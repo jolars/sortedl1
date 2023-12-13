@@ -1,17 +1,16 @@
-.. _api_documentation:
+# API Documentation
 
-=================
-API Documentation
-=================
-
+```{eval-rst}
 .. currentmodule:: sortedl1
+```
 
-Estimators
-==========
+## Estimators
 
+```{eval-rst}
 .. currentmodule:: sortedl1
 
 .. autosummary::
    :toctree: generated/
 
     Slope
+```
