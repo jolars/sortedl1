@@ -4,7 +4,7 @@ Estimators in **sortedl1** are compatible with the scikit-learn interface. Here 
 
 We start by generating the data.
 
-```python
+```{testcode}
 import numpy as np
 from numpy.random import default_rng
 
@@ -24,15 +24,19 @@ y = x @ beta + rng.standard_normal(n)
 
 Next, we create the estimator by calling `Slope()` with all the desired parameters.
 
-```python
+```{testcode}
 model = Slope(alpha=0.1)
 ```
 
 Finally, we fit the model to the data and inspect the coefficients.
 
-```python
+```{testcode}
 model.fit(x, y)
-
-# Print the coefficients
 print(model.coef_)
+```
+
+```{testoutput}
+[[-1.12654445]
+ [ 0.9238887 ]
+ [-1.7007892 ]]
 ```
