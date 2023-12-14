@@ -91,11 +91,6 @@ class Slope(BaseEstimator, RegressorMixin):
 
         alpha = np.atleast_1d(self.alpha).astype(np.float64)
 
-        if sparse.issparse(X):
-            fit_slope = fit_slope_sparse
-        else:
-            fit_slope = fit_slope_dense
-
         params = {
             "objective": "gaussian",
             "intercept": self.fit_intercept,
@@ -110,6 +105,7 @@ class Slope(BaseEstimator, RegressorMixin):
             "print_level": 0,
         }
 
+        fit_slope = fit_slope_sparse if sparse.issparse(X) else fit_slope_dense
         result = fit_slope(X, y, lam, alpha, params)
 
         self.intercept_ = result[0][0]
