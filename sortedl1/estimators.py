@@ -1,3 +1,4 @@
+"""Scikit-learn compatible estimators for SLOPE."""
 import numpy as np
 from _sortedl1 import fit_slope_dense, fit_slope_sparse
 from scipy import sparse
