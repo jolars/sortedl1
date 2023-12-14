@@ -3,15 +3,11 @@ import sys
 
 from sortedl1 import __version__
 
-# sys.path.insert(0, os.path.abspath("../.."))
-
-
 sys.path.insert(0, os.path.abspath("sphinxext"))
 
 from github_link import make_linkcode_resolve
 
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+# Project information
 
 project = "sortedl1"
 copyright = "2023, Johan Larsson, Mathurin Massias, Quentin Klopfenstein, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiarai Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su"
@@ -46,14 +42,17 @@ html_static_path = ["_static"]
 html_logo = "_static/slope-horizontal.svg"
 
 # Intersphinx
+
 intersphinx_mapping = {
     "sklearn": ("https://scikit-learn.org/stable", None),
 }
 
 # Myst
+
 myst_enable_extensions = ["colon_fence", "deflist", "fieldlist"]
 
 # Linkcode
+
 linkcode_resolve = make_linkcode_resolve(
     "sortedl1",
     (
