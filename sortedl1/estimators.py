@@ -1,6 +1,9 @@
 """Scikit-learn compatible estimators for SLOPE."""
+from __future__ import annotations
+
 import numpy as np
 from _sortedl1 import fit_slope_dense, fit_slope_sparse
+from numpy.typing import ArrayLike
 from scipy import sparse
 from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
@@ -12,15 +15,15 @@ class Slope(BaseEstimator, RegressorMixin):
 
     Parameters
     ----------
-    lam : array_like, optional
+    lam :
         The lambda parameter vector for the Sorted L1 Penalty.
-    alpha : array_like, optional
+    alpha :
         A multiplier for the Sorted L1 Penalty.
-    fit_intercept : bool, optional
+    fit_intercept :
         Whether to fit an intercept term.
-    standardize : bool, optional
+    standardize :
         Whether to standardize the features.
-    max_iter : int, optional
+    max_iter :
         Maximum number of iterations for the inner loop.
     tol :
         Tolerance for the stopping criterion.
@@ -43,12 +46,12 @@ class Slope(BaseEstimator, RegressorMixin):
 
     def __init__(
         self,
-        lam=None,
-        alpha=1.0,
-        fit_intercept=True,
-        standardize=False,
-        max_iter=100_000,
-        tol=1e-4,
+        lam: None | ArrayLike = None,
+        alpha: float = 1.0,
+        fit_intercept: bool = True,
+        standardize: bool = False,
+        max_iter: int = 100_000,
+        tol: float = 1e-4,
     ):
         self.lam = lam
         self.alpha = alpha
@@ -57,16 +60,16 @@ class Slope(BaseEstimator, RegressorMixin):
         self.max_iter = max_iter
         self.tol = tol
 
-    def fit(self, X, y):
+    def fit(self, X: ArrayLike, y: ArrayLike):
         """
         Fit the model according to the given training data.
 
         Parameters
         ----------
-        X : array_like, shape (n_samples, n_features)
+        X :
             Training vector, where n_samples is the number of samples and
             n_features is the number of features.
-        y : array_like, shape (n_samples,)
+        y :
             Target vector relative to X.
 
         Returns
@@ -76,7 +79,7 @@ class Slope(BaseEstimator, RegressorMixin):
         """
         X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
 
-        y = y.astype(np.float64)
+        y = np.atleast_1d(y).astype(np.float64)
 
         if self.lam is None:
             # If None, the lambda value is computed automatically in Slope
@@ -109,17 +112,17 @@ class Slope(BaseEstimator, RegressorMixin):
         self.lambda_ = result[2]
         self.alpha_ = result[3]
         self.n_iter_ = result[4]
-        self.n_features_in_ = X.shape[1]
+        self.n_features_in_ = np.shape(X)[1]
 
         return self
 
-    def predict(self, X):
+    def predict(self, X: ArrayLike) -> np.ndarray:
         """
-        Predict using the linear model.
+        Generate predictions for new data.
 
         Parameters
         ----------
-        X : array_like, shape (n_samples, n_features)
+        X :
             Samples.
 
         Returns
