@@ -39,11 +39,6 @@ class Slope(BaseEstimator, RegressorMixin):
         The total number of iterations from the inner loop.
     n_features_in_ : int
         The number of features seen by the estimator.
-
-    Examples
-    --------
-    >>> print("Hello, world!")
-    Hello, world!
     """
 
     def __init__(
