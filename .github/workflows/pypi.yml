@@ -71,7 +71,6 @@ jobs:
 
       - name: Build documentation
         run: |
-          sphinx-apidoc -o docs/source sortedl1
           cd docs
           make html
 
