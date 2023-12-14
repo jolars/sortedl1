@@ -23,11 +23,13 @@ clean:
 .PHONY: test
 test:
 	python -m unittest discover
+	cd docs ;\
+		make doctest
 
 .PHONY: docs
 docs:
-	sphinx-apidoc -o docs/source sortedl1 ;\
 	cd docs ;\
+	make clean ;\
 	make html
 
 .PHONY: autodoc

@@ -53,6 +53,7 @@ tracker = "https://github.com/jolars/sortedl1/issues"
 
 [project.optional-dependencies]
 docs = ["sphinx", "furo", "sphinx-copybutton", "myst-parser"]
+tests = ["sphinx"]
 
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"
