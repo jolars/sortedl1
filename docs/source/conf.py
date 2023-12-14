@@ -3,7 +3,12 @@ import sys
 
 from sortedl1 import __version__
 
-sys.path.insert(0, os.path.abspath("../.."))
+# sys.path.insert(0, os.path.abspath("../.."))
+
+
+sys.path.insert(0, os.path.abspath("sphinxext"))
+
+from github_link import make_linkcode_resolve
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -11,11 +16,9 @@ sys.path.insert(0, os.path.abspath("../.."))
 project = "sortedl1"
 copyright = "2023, Johan Larsson, Mathurin Massias, Quentin Klopfenstein, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiarai Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su"
 author = "Johan Larsson, Mathurin Massias, Quentin Klopfenstein, Jonas Wallin, Malgorzata Bogdan, Ewout van den Berg, Chiarai Sabatti, Emmanuel Candes, Evan Patterson, Weijie Su"
-
 release = __version__
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+# General configuration
 
 extensions = [
     "sphinx.ext.autosummary",
@@ -25,6 +28,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "myst_parser",
+    "sphinx.ext.linkcode",
 ]
 templates_path = ["_templates"]
 exclude_patterns = [
@@ -32,24 +36,29 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
 ]
-
 master_doc = "index"
 exclude_patterns = ["_build"]
 
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+# Options for HTML output
 
 html_theme = "furo"
 html_static_path = ["_static"]
 html_logo = "_static/slope-horizontal.svg"
 
-# - Intersphinx
+# Intersphinx
 intersphinx_mapping = {
-    # 'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    # 'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
-    # 'matplotlib': ('https://matplotlib.org/', None),
-    "sklearn": ("http://scikit-learn.org/stable", None),
+    "sklearn": ("https://scikit-learn.org/stable", None),
 }
 
 # Myst
 myst_enable_extensions = ["colon_fence", "deflist", "fieldlist"]
+
+# Linkcode
+linkcode_resolve = make_linkcode_resolve(
+    "sortedl1",
+    (
+        "https://github.com/jolars/"
+        "sortedl1/blob/{revision}/"
+        "{package}/{path}#L{lineno}"
+    ),
+)
