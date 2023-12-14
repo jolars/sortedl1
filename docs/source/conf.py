@@ -61,3 +61,7 @@ linkcode_resolve = make_linkcode_resolve(
         "{package}/{path}#L{lineno}"
     ),
 )
+
+# Napoleon
+
+napoleon_use_ivar = True
