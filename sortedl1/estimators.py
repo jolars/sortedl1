@@ -60,7 +60,7 @@ class Slope(BaseEstimator, RegressorMixin):
         self.max_iter = max_iter
         self.tol = tol
 
-    def fit(self, X: ArrayLike, y: ArrayLike):
+    def fit(self, X: np.ndarray | sparse.csc_array, y: ArrayLike):
         """
         Fit the model according to the given training data.
 
@@ -112,11 +112,11 @@ class Slope(BaseEstimator, RegressorMixin):
         self.lambda_ = result[2]
         self.alpha_ = result[3]
         self.n_iter_ = result[4]
-        self.n_features_in_ = np.shape(X)[1]
+        self.n_features_in_ = X.shape[1]
 
         return self
 
-    def predict(self, X: ArrayLike) -> np.ndarray:
+    def predict(self, X: ArrayLike | sparse.sparray) -> np.ndarray:
         """
         Generate predictions for new data.
 

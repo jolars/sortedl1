@@ -56,6 +56,7 @@ html_logo = "_static/slope-horizontal.svg"
 intersphinx_mapping = {
     "sklearn": ("https://scikit-learn.org/stable", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
 }
 
 # Myst

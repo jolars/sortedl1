@@ -1,7 +1,7 @@
 """Basic tests for the sortedl1 package."""
 import numpy as np
 from numpy.random import default_rng
-from scipy.sparse import random
+from scipy.sparse import csc_array, random
 
 from sortedl1 import Slope
 
@@ -37,7 +37,7 @@ def test_simple_sparse_problem():
     p = 3
 
     rng = np.random.default_rng(4)
-    x = random(n, p, density=0.5, random_state=rng)
+    x = csc_array(random(n, p, density=0.5, random_state=rng))
     beta = np.array([1.0, 2, -0.9])
     y = x @ beta
 
