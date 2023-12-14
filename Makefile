@@ -22,7 +22,7 @@ clean:
 
 .PHONY: test
 test:
-	python -m unittest discover
+	pytest
 	cd docs ;\
 		make doctest
 
