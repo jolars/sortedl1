@@ -3,6 +3,7 @@ import sys
 
 from sortedl1 import __version__
 
+sys.path.insert(0, os.path.abspath("../.."))
 sys.path.insert(0, os.path.abspath("sphinxext"))
 
 from github_link import make_linkcode_resolve
@@ -29,11 +30,19 @@ extensions = [
 templates_path = ["_templates"]
 exclude_patterns = [
     "_build",
+    "_templates",
     "Thumbs.db",
     ".DS_Store",
 ]
 master_doc = "index"
 exclude_patterns = ["_build"]
+
+templates_path = ["_templates"]
+
+# Autosummary
+
+autosummary_generate = True
+autosummary_imported_members = True
 
 # Options for HTML output
 
@@ -64,4 +73,5 @@ linkcode_resolve = make_linkcode_resolve(
 
 # Napoleon
 
+napoleon_google_docstring = False
 napoleon_use_ivar = True

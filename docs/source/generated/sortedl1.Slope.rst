@@ -4,16 +4,18 @@
 .. currentmodule:: sortedl1
 
 .. autoclass:: Slope
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
 
    
-   .. automethod:: __init__
-
    
    .. rubric:: Methods
 
    .. autosummary::
+      :nosignatures:
    
-      ~Slope.__init__
       ~Slope.fit
       ~Slope.get_metadata_routing
       ~Slope.get_params
