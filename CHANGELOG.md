@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.2.2](https://github.com/jolars/sortedl1/compare/v0.2.1...v0.2.2) (2023-12-14)
+
+
+### Reverts
+
+* "ci: build documentation once through ci to have something on the page" ([118a416](https://github.com/jolars/sortedl1/commit/118a4163532ed785bf263cecb108db1bff84a61c))
+
+
+### Documentation
+
+* add changelog to docs ([defdaae](https://github.com/jolars/sortedl1/commit/defdaae7c4eab97fb505d6cb7f06161fdf957459))
+* add codecov badge to readme ([7ac3148](https://github.com/jolars/sortedl1/commit/7ac3148256784894318e6942be9d62e48d1d71c3))
+* add file-level docstring from estimators.py ([fa98821](https://github.com/jolars/sortedl1/commit/fa98821970d20b1bdf9f911c01e8128e1738e71f))
+* add logos and fix duplicate documentation ([50b29eb](https://github.com/jolars/sortedl1/commit/50b29eb44ffb2a51f23762582d6913f1ca872181))
+* add source code link in docs ([4b61204](https://github.com/jolars/sortedl1/commit/4b61204777a714a20b59e68de3ad362085623f72))
+* don't use sphinx-apidoc ([4c168ac](https://github.com/jolars/sortedl1/commit/4c168ac42fa1c2a182bccfb4ddfa019baee6aa10))
+* fix autosummary documentation ([87d5cf3](https://github.com/jolars/sortedl1/commit/87d5cf3e0989362858a4860686ed446bc46afe4c))
+* fix SLOPE -&gt; sortedl1, and write about convcommits ([15c1166](https://github.com/jolars/sortedl1/commit/15c1166a750612fd2cfbe75ee3bc6ed9c0db5d52))
+* fix typo and pip instructions ([4e78858](https://github.com/jolars/sortedl1/commit/4e78858db7c23d2e2a59eeb4afc025a2eac929c2))
+* specify main branch for badge in readme ([abdc18e](https://github.com/jolars/sortedl1/commit/abdc18ec1266a24f4cd4ec2e954d6f7b1348762f))
+* update logo ([7ad646c](https://github.com/jolars/sortedl1/commit/7ad646c42aaf8ea7a5d1f7e579e0c6724b02dab2))
+* update readme with badges and pypi info ([c3edd6e](https://github.com/jolars/sortedl1/commit/c3edd6eaa0d786f8c920a5a21f0ba84083782124))
+* use ivar for napoleon ([c6d8522](https://github.com/jolars/sortedl1/commit/c6d85222fb4e032547a13f674db3f342999d9800))
+* use myst parser ([0288739](https://github.com/jolars/sortedl1/commit/0288739f1d40ec9b9370da3d029bce9829fdf162))
+
 ## [0.2.1](https://github.com/jolars/sortedl1/compare/v0.2.0...v0.2.1) (2023-12-11)
 
 
