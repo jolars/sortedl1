@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/jolars/sortedl1/compare/v0.2.2...v0.2.3) (2023-12-19)
+
+
+### Documentation
+
+* make logo work better for mobile phones ([765077a](https://github.com/jolars/sortedl1/commit/765077a77c6082e36aa3b288e564ae9bdece5c1d))
+
 ## [0.2.2](https://github.com/jolars/sortedl1/compare/v0.2.1...v0.2.2) (2023-12-14)
 
 
