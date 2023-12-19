@@ -1,7 +1,6 @@
 {
   "packages": {
     ".": {
-      "package-name": "sortedl1",
       "release-type": "python",
       "bump-minor-pre-major": true
     }
