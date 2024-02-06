@@ -5,7 +5,7 @@ all: install
 
 .PHONY: install
 install:
-	pip install -e .
+	pip install -e .[tests,docs]
 
 .PHONY: build
 build:
