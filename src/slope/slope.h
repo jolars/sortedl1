@@ -7,6 +7,7 @@
 
 #include "cd.h"
 #include "clusters.h"
+#include "constants.h"
 #include "helpers.h"
 #include "math.h"
 #include "objectives.h"
@@ -390,7 +391,7 @@ private:
 
         dual_gaps.emplace_back(dual_gap);
 
-        double tol_scaled = std::abs(primal) * this->tol;
+        double tol_scaled = (std::abs(primal) + EPSILON) * this->tol;
 
         if (this->print_level > 1) {
           std::cout << indent(1) << "IRLS iteration: " << it_outer << std::endl
@@ -431,7 +432,7 @@ private:
 
             double dual_gap_inner = primal_inner - dual_inner;
 
-            double tol_inner = std::abs(primal_inner) * this->tol;
+            double tol_inner = (std::abs(primal_inner) + EPSILON) * this->tol;
 
             if (this->print_level > 2) {
               std::cout << indent(2) << "iteration: " << it << std::endl

@@ -42,7 +42,6 @@ slopeThreshold(const double x,
     }
 
     return { x - sign_x * lo, 0 };
-
   } else {
     int end = clusters.pointer(j + 1);
     double hi = lambdas.segment(end - cluster_size, cluster_size).sum();
