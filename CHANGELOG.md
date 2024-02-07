@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.3](https://github.com/jolars/sortedl1/compare/v0.2.2...v0.2.3) (2024-02-07)
+
+
+### Bug Fixes
+
+* **deps:** update to libslope 0.3.1 ([bac6f93](https://github.com/jolars/sortedl1/commit/bac6f93a2dcb0e3ab4cfbe8beb174ede34e6838b))
+* update libslope to 0.3.2 ([c059f6a](https://github.com/jolars/sortedl1/commit/c059f6a4d584827e9410f6d715aa3eb4a2b18728))
+
+
+### Documentation
+
+* make logo work better for mobile phones ([765077a](https://github.com/jolars/sortedl1/commit/765077a77c6082e36aa3b288e564ae9bdece5c1d))
+
 ## [0.2.2](https://github.com/jolars/sortedl1/compare/v0.2.1...v0.2.2) (2023-12-14)
 
 
