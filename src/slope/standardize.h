@@ -36,17 +36,20 @@ computeCentersAndScales(const T& x, const bool standardize)
     int count = 0;
 
     for (typename T::InnerIterator it(x, j); it; ++it) {
+      count++;
       double delta = it.value() - mean;
-      mean += delta / (++count);
-      m2 += delta * (it.value() - mean);
+      mean += delta / count;
+      double delta2 = it.value() - mean;
+      m2 += delta * delta2;
     }
 
     // Account for zeros in the column
-    double delta = -mean;
     while (count < n) {
       count++;
+      double delta = -mean;
       mean += delta / count;
-      m2 -= mean * delta;
+      double delta2 = -mean;
+      m2 += delta * delta2;
     }
 
     x_means(j) = mean;
