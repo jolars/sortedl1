@@ -52,8 +52,6 @@ def test_sparse_dense_standardized():
     coef_sparse = model.coef_
 
     model.fit(x.toarray(), y)
-    coef_sparse = model.coef_
-
     coef_dense = model.coef_
 
     np.testing.assert_array_almost_equal(coef_sparse, coef_dense)
