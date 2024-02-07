@@ -31,12 +31,12 @@ def test_simple_problem():
     np.testing.assert_array_almost_equal(coef, coef_true)
 
 
-def test_simple_sparse_problem():
-    """Test case for a simple sparse SLOPE problem."""
+def test_sparse_dense_standardized():
+    """Test case for checking standardization works for both sparse and dense."""
     n = 10
     p = 3
 
-    rng = np.random.default_rng(4)
+    rng = default_rng(4)
     x = csc_array(random(n, p, density=0.5, random_state=rng))
     beta = np.array([1.0, 2, -0.9])
     y = x @ beta
@@ -46,12 +46,18 @@ def test_simple_sparse_problem():
 
     model = Slope(lam, alpha, standardize=True)
 
+    coef_true = np.array([[0.04258934], [0.74274634], [-0.02910647]])
+
     model.fit(x, y)
+    coef_sparse = model.coef_
 
-    coef = model.coef_
-    coef_true = np.array([[0.03459716], [0.69168031], [-0.02195692]])
+    model.fit(x.toarray(), y)
+    coef_sparse = model.coef_
 
-    np.testing.assert_array_almost_equal(coef, coef_true)
+    coef_dense = model.coef_
+
+    np.testing.assert_array_almost_equal(coef_sparse, coef_dense)
+    np.testing.assert_array_almost_equal(coef_dense, coef_true)
 
 
 def test_failing_problem():
