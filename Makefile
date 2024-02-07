@@ -39,4 +39,6 @@ autodoc:
 update-libslope:
 	@mkdir -p tmp
 	@curl -L $(LIBSLOPE_RELEASE) | tar -xz --strip-components=1 -C tmp
-	@rm -rf src/slope @cp -ri tmp/src/slope src/ @rm -rf tmp
+	@rm -rf src/slope
+	@cp -ri tmp/src/slope src/
+	@rm -rf tmp
