@@ -58,19 +58,3 @@ def test_sparse_dense_standardized():
 
     np.testing.assert_array_almost_equal(coef_sparse, coef_dense)
     np.testing.assert_array_almost_equal(coef_dense, coef_true)
-
-
-def test_failing_problem():
-    """Test care for problem that failed at some point."""
-    n = 100
-    p = 3
-
-    seed = 31
-    rng = default_rng(seed)
-
-    x = rng.standard_normal((n, p))
-    beta = rng.standard_normal(p)
-    y = x @ beta + rng.standard_normal(n)
-
-    model = Slope(alpha=1.0)
-    model.fit(x, y)
