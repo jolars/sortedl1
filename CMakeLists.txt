@@ -5,9 +5,10 @@ cmake_minimum_required(VERSION 3.15...3.29)
 # Scikit-build-core sets these values for you, or you can just hard-code the
 # name and version.
 project(
-  ${SKBUILD_PROJECT_NAME}
-  VERSION ${SKBUILD_PROJECT_VERSION}
-  LANGUAGES CXX)
+    ${SKBUILD_PROJECT_NAME}
+    VERSION ${SKBUILD_PROJECT_VERSION}
+    LANGUAGES CXX
+)
 
 # set(CMAKE_CXX_STANDARD 17) set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -34,7 +35,8 @@ pybind11_add_module(
   src/slope/regularization_sequence.cpp
   src/slope/slope_threshold.cpp
   src/slope/sorted_l1_norm.cpp
-  src/slope/standardize.cpp)
+  src/slope/standardize.cpp
+)
 
 # The install directory is the output (wheel) directory
 install(TARGETS _sortedl1 LIBRARY DESTINATION .)
