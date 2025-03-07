@@ -22,7 +22,6 @@ include_directories(${CMAKE_SOURCE_DIR}/external)
 # Add a library using FindPython's tooling (pybind11 also provides a helper like
 # this) python_add_library(_sortedl1 MODULE src/main.cpp WITH_SOABI)
 # target_link_libraries(_sortedl1 PRIVATE pybind11::headers)
-#
 
 pybind11_add_module(
   _sortedl1
