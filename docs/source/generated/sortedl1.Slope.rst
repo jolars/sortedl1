@@ -28,4 +28,10 @@
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Slope.DType
+   
    
