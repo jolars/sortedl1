@@ -1,0 +1,57 @@
+version: "3"
+
+vars:
+  LIBSLOPE_API_URL: https://api.github.com/repos/jolars/libslope/releases/latest
+  LIBSLOPE_RELEASE:
+    sh: curl -s {{.LIBSLOPE_API_URL}} | grep "tarball_url" | cut -d '"' -f 4
+
+tasks:
+  default:
+    deps: [install]
+
+  install:
+    desc: Install the package in development mode
+    cmds:
+      - pip install -e .[tests,docs]
+
+  build:
+    desc: Build distribution packages
+    cmds:
+      - rm -rf dist
+      - python -m build
+
+  test-pypi:
+    desc: Upload packages to TestPyPI
+    cmds:
+      - python -m twine upload --repository testpypi dist/*
+
+  clean:
+    desc: Remove compiled files
+    cmds:
+      - rm -rf src/*.o src/*.so
+
+  test:
+    desc: Run all tests
+    cmds:
+      - pytest
+      - cd docs && make doctest
+
+  docs:
+    desc: Build documentation
+    dir: docs
+    cmds:
+      - make html
+
+  autodoc:
+    desc: Auto-build documentation on changes
+    cmds:
+      - sphinx-autobuild docs/source docs/build --watch sortedl1
+
+  update-libslope:
+    desc: Update libslope from the latest release
+    cmds:
+      - mkdir -p tmp
+      - curl -L {{.LIBSLOPE_RELEASE}} | tar -xz --strip-components=1 -C tmp
+      - rm -rf src/slope
+      - cp -ri tmp/src/slope src/
+      - rm -rf tmp
