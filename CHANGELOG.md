@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.3.0](https://github.com/jolars/sortedl1/compare/v0.2.3...v0.3.0) (2025-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for python 3.7 and 3.8
+* deprecate `standardize` in Slope estimator
+* change loss value parameterization
+* update libslope to v0.21.0
+* allow only single float input for `alpha`
+
+### Features
+
+* allow only single float input for `alpha` ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+* change loss value parameterization ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+* deprecate `standardize` in Slope estimator ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+* update Eigen to 3.4.0 ([5ce41d2](https://github.com/jolars/sortedl1/commit/5ce41d28d15d0d74c3dd9e3f88bbf6db66cc2604))
+* update libslope to v0.21.0 ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+
+
+### Bug Fixes
+
+* fix convergence issues with solver ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+
+
+### Dependencies
+
+* cet scikit-build-core minversion to 0.10 and remove cmake ver ([bd63a29](https://github.com/jolars/sortedl1/commit/bd63a29addd530f31e49a3943f55bdb2220019c2))
+* drop support for python 3.7 and 3.8 ([139e0d8](https://github.com/jolars/sortedl1/commit/139e0d837d6177ebfca95ed6dc2d8df6673cf136))
+
+
+### Documentation
+
+* document as compliantwith python 3.13 ([87e9219](https://github.com/jolars/sortedl1/commit/87e9219917bc69b9b4c01e3fdea630abc1d49e77))
+
 ## [0.2.3](https://github.com/jolars/sortedl1/compare/v0.2.2...v0.2.3) (2024-02-07)
 
 
