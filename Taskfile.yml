@@ -67,3 +67,20 @@ tasks:
       - 'git commit -m "feat: update libslope to {{.VERSION}}" -m "Release: https://github.com/jolars/libslope/releases/tag/{{.VERSION}}"'
     silent: true
 
+  update-eigen:
+    desc: Fetch and update the latest Eigen library
+    vars:
+      EIGEN_VERSION:
+        sh: curl -s https://gitlab.com/api/v4/projects/libeigen%2Feigen/releases | jq -r '.[0].tag_name'
+    cmds:
+      - echo "Fetching Eigen {{.EIGEN_VERSION}}..."
+      - mkdir -p tmp
+      - curl -L https://gitlab.com/libeigen/eigen/-/archive/{{.EIGEN_VERSION}}/eigen-{{.EIGEN_VERSION}}.tar.gz -o tmp/eigen.tar.gz
+      - cd tmp && tar xzf eigen.tar.gz
+      - rm -rf external/Eigen
+      - mkdir -p external
+      - cp -r tmp/eigen-*/Eigen external/
+      - rm -rf tmp
+      - git add external/Eigen
+      - 'git commit -m "feat: update Eigen to {{.EIGEN_VERSION}}" -m "Source: https://gitlab.com/libeigen/eigen/-/releases/{{.EIGEN_VERSION}}"'
+    silent: true
