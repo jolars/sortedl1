@@ -1,35 +1,29 @@
-/**
+/*
  * @file
  * @brief The actual function that fits SLOPE
  */
 
 #pragma once
 
-#include "cd.h"
-#include "clusters.h"
-#include "constants.h"
-#include "helpers.h"
-#include "math.h"
-#include "objectives.h"
-#include "pgd.h"
-#include "regularization_sequence.h"
-#include "sorted_l1_norm.h"
-#include "standardize.h"
+#include "slope_fit.h"
+#include "slope_path.h"
 #include <Eigen/Core>
-#include <Eigen/Sparse>
+#include <Eigen/SparseCore>
 #include <cassert>
-#include <iostream>
-#include <memory>
-#include <vector>
+#include <optional>
 
+/** @namespace slope
+ *  @brief Namespace containing SLOPE regression implementation
+ */
 namespace slope {
 
 /**
- * Abstract class representing an objective function.
+ * Class representing SLOPE (Sorted L-One Penalized Estimation) optimization.
  *
- * This class defines the interface for an objective function, which is used in
- * optimization algorithms. The objective function calculates the loss, dual,
- * residual, and updates the weights and working response.
+ * This class implements the SLOPE algorithm for regularized regression
+ * problems. It supports different loss functions (quadratic, logistic, poisson)
+ * and provides functionality for fitting models with sorted L1 regularization
+ * along a path of regularization parameters.
  */
 class Slope
 {
@@ -41,57 +35,37 @@ public:
    */
   Slope()
     : intercept(true)
-    , standardize(true)
+    , modify_x(false)
     , update_clusters(false)
+    , collect_diagnostics(false)
     , alpha_min_ratio(-1)
+    , dev_change_tol(1e-5) // TODO: Use std::optional for alpha_min_ratio
+    , dev_ratio_tol(0.999)
     , learning_rate_decr(0.5)
     , q(0.1)
     , tol(1e-4)
-    , max_it(1e6)
-    , max_it_outer(30)
+    , max_it(1e4)
     , path_length(100)
-    , pgd_freq(10)
-    , print_level(0)
+    , cd_iterations(10)
+    , max_clusters(std::optional<int>())
     , lambda_type("bh")
-    , objective("gaussian")
+    , centering_type("mean")
+    , scaling_type("sd")
+    , loss_type("quadratic")
+    , screening_type("strong")
+    , solver_type("auto")
   {
   }
 
   /**
-   * Sorted L-One Penalized Estimation.
+   * @brief Sets the numerical solver used to fit the model.
    *
-   * This function fits a linear regression model to the given data using the
-   * ordinary least squares method.
-   *
-   * @param x The design matrix, where each column represents a feature.
-   * @param y The response matrix. Each row represents an observation.
-   * @param alpha Sequence of multipliers for the sorted l1 norm along the
-   * regularization path.
-   * @param lambda The regularization parameter for the sorted l1 norm, which is
-   * a positive nonincreasing array of weights.
+   * @param solver One of "auto", "pgd", "fista", or "hybrid". In the first case
+   * (the default), the solver is automatically selected based on availability
+   * of the hybrid solver, which currently means that the hybrid solver is used
+   * everywhere except for the multinomial loss.
    */
-  void fit(const Eigen::MatrixXd& x,
-           const Eigen::MatrixXd& y,
-           const Eigen::ArrayXd& alpha = Eigen::ArrayXd::Zero(0),
-           const Eigen::ArrayXd& lambda = Eigen::ArrayXd::Zero(0));
-
-  /**
-   * Sorted L-One Penalized Estimation.
-   *
-   * This function fits a linear regression model to the given data using the
-   * ordinary least squares method.
-   *
-   * @param x The design matrix, where each column represents a feature.
-   * @param y The response matrix. Each row represents an observation.
-   * @param alpha Sequence of multipliers for the sorted l1 norm along the
-   * regularization path.
-   * @param lambda The regularization parameter for the sorted l1 norm, which is
-   * a positive nonincreasing array of weights.
-   */
-  void fit(const Eigen::SparseMatrix<double>& x,
-           const Eigen::MatrixXd& y,
-           const Eigen::ArrayXd& alpha = Eigen::ArrayXd::Zero(0),
-           const Eigen::ArrayXd& lambda = Eigen::ArrayXd::Zero(0));
+  void setSolver(const std::string& solver);
 
   /**
    * @brief Sets the intercept flag.
@@ -101,11 +75,13 @@ public:
   void setIntercept(bool intercept);
 
   /**
-   * @brief Sets the standardize flag.
+   * @brief Sets normalization type for the design matrix.
    *
-   * @param standardize Should the design matrix be standardized?
+   * @param type Type of normalization: one of "standardization" or "none".
+   * @see setCentering() For setting centers, specifically
+   * @see setScaling() For setting scales, specifically
    */
-  void setStandardize(bool standardize);
+  void setNormalization(const std::string& type);
 
   /**
    * @brief Sets the update clusters flag.
@@ -141,6 +117,14 @@ public:
   void setQ(double q);
 
   /**
+   * @brief Sets OSCAR parameters.
+   *
+   * @param theta1 Parameter for OSCAR.
+   * @param theta2 Parameter for OSCAR.
+   */
+  void setOscarParameters(const double theta1, const double theta2);
+
+  /**
    * @brief Sets the tolerance value.
    *
    * @param tol The value to set for the tolerance value. Must be positive.
@@ -151,18 +135,10 @@ public:
    * @brief Sets the maximum number of iterations.
    *
    * @param max_it The value to set for the maximum number of iterations. Must
-   * be positive.
+   * be positive. If negative (the default), then the value will be decided by
+   * the solver.
    */
-  void setMaxIt(int max_it);
-
-  /**
-   * @brief Sets the maximum number of outer iterations.
-   *
-   * @param max_it_outer The value to set for the maximum number of outer
-   * iterations for the iterative repeated least-squares step. Must be positive.
-   * Has no real effect when the objective is Gaussian.
-   */
-  void setMaxItOuter(int max_it_outer);
+  void setMaxIterations(int max_it);
 
   /**
    * @brief Sets the path length.
@@ -174,375 +150,186 @@ public:
   /**
    * @brief Sets the frequence of proximal gradient descent steps.
    *
-   * @param pgd_freq The frequency of the proximal gradient descent steps (or
-   * the inverse of that actually). A value of 1 means that the algorithm only
-   * runs proximal gradient descent steps.
+   * @param cd_iterations Number of inner coordinate descent iterations to
+   * perform in each iteration of the hybrid solver. If set to 0, the solver
+   * will resolve into pure PGD.
    */
-  void setPgdFreq(int pgd_freq);
+  void setHybridCdIterations(int cd_iterations);
 
   /**
-   * @brief Sets the print level.
+   * @brief Sets the lambda type for regularization weights.
    *
-   * @param print_level The value to set for the print level. A print level of 1
-   * prints values from the outer loop, a level of 2 from the inner loop, and a
-   * level of 3 some extra debugging information. A level of 0 means no
-   * printing.
-   */
-  void setPrintLevel(int print_level);
-
-  /**
-   * @brief Sets the lambda type.
-   *
-   * @param lambda_type The value to set for the lambda type. Only "bh" is
-   * allowed at the moment, which computed the Benjamini-Hochberg sequence.
-   * @see setQ
+   * @param lambda_type The method used to compute regularization weights.
+   * Currently "bh" (Benjamini-Hochberg), "quadratic", "oscar", and "lasso" are
+   * supported.
    */
   void setLambdaType(const std::string& lambda_type);
 
   /**
-   * @brief Sets the objective.
+   * @brief Sets the loss function type.
    *
-   * @param objective The value to set for the objective. Only "gaussian" is
-   * allowed at the moment, which results in the standard SLOPE.
+   * @param loss_type The type of loss function to use. Supported values
+   * are:
+   *                 - "quadratic": Quadratic regression
+   *                 - "logistic": Logistic regression
+   *                 - "poisson": Poisson regression
+   *                 - "multinomial": Multinomial logistic regression
    */
-  void setObjective(const std::string& objective);
+  void setLoss(const std::string& loss_type);
 
   /**
-   * @brief Get the alpha sequence.
+   * @brief Sets the type of feature screening used, which discards predictors
+   * that are unlikely to be active.
    *
-   * @return The sequence of weights for the regularization path.
+   * @param screening_type Type of screening. Supported values are:
+   * are:
+   *   - "strong": Strong screening rule ()
+   *   - "none": No screening
    */
-  const Eigen::ArrayXd& getAlpha() const;
+  void setScreening(const std::string& screening_type);
 
   /**
-   * @brief Get the lambda sequence.
-   *
-   * @return The sequence of lambda values for the weights of the sorted L1
-   * norm.
+   * @brief Controls if `x` should be modified-in-place.
+   * @details If `true`, then `x` will be modified in place if
+   *   it is normalized. In case when `x` is dense, it will be both
+   *   centered and scaled. If `x` is sparse, it will be only scaled.
+   * @param modify_x Whether to modfiy `x` in place or not
    */
-  const Eigen::ArrayXd& getLambda() const;
+  void setModifyX(const bool modify_x);
 
   /**
-   * Get the coefficients from the path.
-   *
-   * @return The coefficients from the path, stored in a sparse matrix.
+   * @brief Sets tolerance in deviance change for early stopping.
+   * @param dev_change_tol The tolerance for the change in deviance.
    */
-  const Eigen::SparseMatrix<double>& getCoefs() const;
+  void setDevChangeTol(const double dev_change_tol);
 
   /**
-   * Get the intercepts from the path.
-   *
-   * @return The coefficients from the path, stored in an Eigen vector. If no
-   * intercepts were fit, this is a vector of zeros.
+   * @brief Sets tolerance in deviance change for early stopping.
+   * @param dev_ratio_tol The tolerance for the dev ratio. If the deviance
+   * exceeds this value, the path will terminate.
    */
-  const Eigen::VectorXd& getIntercepts() const;
+  void setDevRatioTol(const double dev_ratio_tol);
 
   /**
-   * Get the total number of (inner) iterations.
-   *
-   * @return The toral number of iterations from the inner loop, computed across
-   * the path.
+   * @brief Sets tolerance in deviance change for early stopping.
+   * @param max_clusters The maximum number of clusters. SLOPE
+   * can (theoretically) select at most select min(n, p) clusters (unique
+   * non-zero betas). By default, this is set to -1, which means that the number
+   * of clusters will be automatically set to the number of observations + 1.
    */
-  int getTotalIterations() const;
+  void setMaxClusters(const int max_clusters);
 
   /**
-   * Get the duality gaps.
-   *
-   * @return Get the duality gaps from the path.
+   * @brief Sets the center points for feature normalization.
+   * @param type Type of centering, one of: "mean", "none"
    */
-  const std::vector<std::vector<double>>& getDualGaps() const;
+  void setCentering(const std::string& type);
 
   /**
-   * Get the primal objective values.
-   *
-   * @return Get the primal objective values from the path.
+   * @brief Sets the center points for feature normalization.
+   * @param x_centers Vector containing center values for each feature
+   * Used in feature normalization: x_normalized = (x - center) / scale
    */
-  const std::vector<std::vector<double>>& getPrimals() const;
+  void setCentering(const Eigen::VectorXd& x_centers);
 
-private:
   /**
-   * Calculates the slope coefficients for a linear regression model using the
-   * SortedL1Norm regularization.
+   * @brief Sets the scaling type
+   * @param type Type of scaling, one of: "sd", "l1", "none"
+   */
+  void setScaling(const std::string& type);
+
+  /**
+   * @brief Toggles collection of diagnostics.
+   * @param collect_diagnostics Whether to collect diagnostics, i.e.
+   * dual gap, objective value, etc. These will be stored in the SlopeFit and
+   * SlopePath objects.
+   */
+  void setDiagnostics(const bool collect_diagnostics);
+
+  /**
+   * @brief Sets the scaling factors for feature normalization.
+   * @param x_scales Vector containing scale values for each feature
+   * Used in feature normalization: x_normalized = (x - center) / scale
+   */
+  void setScaling(const Eigen::VectorXd& x_scales);
+
+  /**
+   * @brief Get currently defined loss type
+   * @return The loss type
+   */
+  const std::string& getLossType();
+
+  /**
+   * @brief Computes SLOPE regression solution path for multiple alpha and
+   * lambda values
    *
-   * @param x The dense input matrix of size n x p, where n is the number of
-   *   observations and p is the number of predictors.
-   * @param y The response matrix of size n x 1.
-   * @param alpha The regularization parameter sequence. If not provided, it
-   * will be generated automatically.
-   * @param lambda The regularization parameter for the SortedL1Norm
-   *   regularization. If not provided, it will be set to zero.
-   * @see SlopeParameters
+   * @tparam T Matrix type for feature input (supports dense or sparse matrices)
+   * @param x Feature matrix of size n x p
+   * @param y_in Response matrix of size n x m
+   * @param alpha Sequence of mixing parameters for elastic net regularization
+   * @param lambda Sequence of regularization parameters (if empty, computed
+   * automatically)
+   * @return SlopePath object containing full solution path and optimization
+   * metrics
+   *
+   * Fits SLOPE models for each combination of alpha and lambda values, storing
+   * all solutions and optimization metrics in a SlopePath object.
    */
   template<typename T>
-  void fitImpl(const T& x,
-               const Eigen::VectorXd& y,
-               Eigen::ArrayXd alpha,
-               Eigen::ArrayXd lambda)
-  {
-    using Eigen::VectorXd;
+  SlopePath path(T& x,
+                 const Eigen::MatrixXd& y_in,
+                 Eigen::ArrayXd alpha = Eigen::ArrayXd::Zero(0),
+                 Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0));
 
-    const int n = x.rows();
-    const int p = x.cols();
+  /**
+   * @brief Fits a single SLOPE regression model for given alpha and lambda
+   * values
+   *
+   * @tparam T Matrix type for feature input (supports dense or sparse matrices)
+   * @param x Feature matrix of size n x p
+   * @param y_in Response matrix of size n x m
+   * @param alpha Mixing parameter for elastic net regularization
+   * @param lambda Vector of regularization parameters (if empty, computed
+   * automatically)
+   * @return SlopeFit Object containing fitted model and optimization metrics
+   *
+   * Fits a single SLOPE model with specified regularization parameters,
+   * returning coefficients and optimization details in a SlopeFit object.
+   */
+  template<typename T>
+  SlopeFit fit(T& x,
+               const Eigen::MatrixXd& y_in,
+               const double alpha = 1.0,
+               Eigen::ArrayXd lambda = Eigen::ArrayXd::Zero(0));
 
-    if (n != y.rows()) {
-      throw std::invalid_argument("x and y must have the same number of rows");
-    }
-
-    auto [x_centers, x_scales] = computeCentersAndScales(x, this->standardize);
-
-    std::unique_ptr<Objective> objective = setupObjective(this->objective);
-
-    beta0 = 0.0;
-    beta.resize(p);
-    beta.setZero();
-    VectorXd eta = VectorXd::Zero(n); // linear predictor
-    VectorXd w = VectorXd::Ones(n);   // weights
-    VectorXd z = y;                   // working response
-
-    objective->updateWeightsAndWorkingResponse(w, z, eta, y);
-
-    VectorXd residual = z;
-
-    if (lambda.size() == 0) {
-      lambda = lambdaSequence(p, this->q, this->lambda_type);
-    } else {
-      if (lambda.size() != p) {
-        throw std::invalid_argument(
-          "lambda must be the same length as the number of predictors");
-      }
-      if (lambda.minCoeff() < 0) {
-        throw std::invalid_argument("lambda must be non-negative");
-      }
-      if (!lambda.isFinite().all()) {
-        throw std::invalid_argument("lambda must be finite");
-      }
-    }
-
-    // Setup the regularization sequence and path
-    SortedL1Norm sl1_norm{ lambda };
-
-    if (alpha.size() == 0) {
-      alpha = regularizationPath(x,
-                                 w,
-                                 z,
-                                 x_centers,
-                                 x_scales,
-                                 sl1_norm,
-                                 this->path_length,
-                                 this->alpha_min_ratio,
-                                 this->intercept,
-                                 this->standardize);
-    } else {
-      if (alpha.minCoeff() < 0) {
-        throw std::invalid_argument("alpha must be non-negative");
-      }
-      if (!alpha.isFinite().all()) {
-        throw std::invalid_argument("alpha must be finite");
-      }
-      path_length = alpha.size();
-    }
-
-    int path_length = this->path_length;
-
-    std::vector<Eigen::Triplet<double>> beta_triplets;
-    std::vector<double> dual_gaps;
-    std::vector<double> primals;
-
-    beta0s.resize(path_length);
-
-    double learning_rate = 1.0;
-
-    VectorXd beta_old_outer = beta;
-
-    Gaussian subprob_objective;
-
-    Clusters clusters(beta);
-
-    this->it_total = 0;
-
-    // Regularization path loop
-    for (int path_step = 0; path_step < path_length; ++path_step) {
-      if (this->print_level > 0) {
-        std::cout << "Path step: " << path_step
-                  << ", alpha: " << alpha(path_step) << std::endl;
-      }
-
-      sl1_norm.setAlpha(alpha(path_step));
-
-      // IRLS loop
-      for (int it_outer = 0; it_outer < this->max_it_outer; ++it_outer) {
-        // The residual is kept up to date, but not eta. So we need to compute
-        // it here.
-        eta = z - residual;
-
-        // Compute primal, dual, and gap
-        double primal = objective->loss(eta, y) + sl1_norm.eval(beta);
-        primals.emplace_back(primal);
-
-        VectorXd gen_residual = objective->residual(eta, y);
-
-        VectorXd gradient = computeGradient(
-          x, gen_residual, x_centers, x_scales, this->standardize);
-        VectorXd theta = gen_residual;
-        theta.array() /= std::max(1.0, sl1_norm.dualNorm(gradient));
-        double dual = objective->dual(theta, y);
-
-        double dual_gap = primal - dual;
-
-        dual_gaps.emplace_back(dual_gap);
-
-        double tol_scaled = (std::abs(primal) + EPSILON) * this->tol;
-
-        if (this->print_level > 1) {
-          std::cout << indent(1) << "IRLS iteration: " << it_outer << std::endl
-                    << indent(2) << "primal (main problem): " << primal
-                    << std::endl
-                    << indent(2) << "duality gap (main problem): " << dual_gap
-                    << ", tol: " << tol_scaled << std::endl;
-        }
-
-        if (std::max(dual_gap, 0.0) <= tol_scaled) {
-          break;
-        }
-
-        // Update weights and working response
-        beta_old_outer = beta;
-
-        objective->updateWeightsAndWorkingResponse(w, z, eta, y);
-        residual = z - eta;
-
-        if (this->print_level > 3) {
-          printContents(w, "    weights");
-          printContents(z, "    working response");
-        }
-
-        for (int it = 0; it < this->max_it; ++it) {
-          if (it % this->pgd_freq == 0) {
-            double g = (0.5 / n) * residual.cwiseAbs2().dot(w);
-            double h = sl1_norm.eval(beta);
-            double primal_inner = g + h;
-
-            VectorXd gradient = computeGradient(
-              x, residual, x_centers, x_scales, this->standardize);
-
-            // Obtain a feasible dual point by dual scaling
-            theta = residual;
-            theta.array() /= std::max(1.0, sl1_norm.dualNorm(gradient));
-            double dual_inner = subprob_objective.dual(theta, z);
-
-            double dual_gap_inner = primal_inner - dual_inner;
-
-            double tol_inner = (std::abs(primal_inner) + EPSILON) * this->tol;
-
-            if (this->print_level > 2) {
-              std::cout << indent(2) << "iteration: " << it << std::endl
-                        << indent(3) << "primal (inner): " << primal_inner
-                        << std::endl
-                        << indent(3)
-                        << "duality gap (inner): " << dual_gap_inner
-                        << ", tol: " << tol_inner << std::endl;
-            }
-
-            if (std::max(dual_gap_inner, 0.0) <= tol_inner) {
-              break;
-            }
-
-            VectorXd beta_old = beta;
-
-            if (this->print_level > 2) {
-              std::cout << indent(3) << "Running PGD step" << std::endl;
-            }
-
-            proximalGradientDescent(beta0,
-                                    beta,
-                                    residual,
-                                    learning_rate,
-                                    gradient,
-                                    x,
-                                    w,
-                                    z,
-                                    sl1_norm,
-                                    x_centers,
-                                    x_scales,
-                                    g,
-                                    intercept,
-                                    standardize,
-                                    learning_rate_decr,
-                                    print_level);
-
-            clusters.update(beta);
-          } else {
-            if (this->print_level > 2) {
-              std::cout << indent(3) << "Running CD step" << std::endl;
-            }
-
-            coordinateDescent(beta0,
-                              beta,
-                              residual,
-                              clusters,
-                              x,
-                              w,
-                              z,
-                              sl1_norm,
-                              x_centers,
-                              x_scales,
-                              this->intercept,
-                              this->standardize,
-                              this->update_clusters,
-                              this->print_level);
-          }
-        }
-        it_total++;
-      }
-
-      // Store everything for this step of the path
-      auto [beta0_out, beta_out] = rescaleCoefficients(
-        beta0, beta, x_centers, x_scales, intercept, standardize);
-
-      beta0s(path_step) = std::move(beta0_out);
-
-      for (int j = 0; j < p; ++j) {
-        if (beta_out(j) != 0) {
-          beta_triplets.emplace_back(j, path_step, beta_out(j));
-        }
-      }
-
-      primals_path.emplace_back(primals);
-      dual_gaps_path.emplace_back(dual_gaps);
-    }
-
-    betas.resize(p, path_length);
-    betas.setFromTriplets(beta_triplets.begin(), beta_triplets.end());
-    alpha_out = alpha;
-    lambda_out = lambda;
-  }
-
-  // parameters
+private:
+  // Parameters
   bool intercept;
-  bool standardize;
+  bool modify_x;
   bool update_clusters;
+  bool collect_diagnostics;
   double alpha_min_ratio;
+  double dev_change_tol;
+  double dev_ratio_tol;
   double learning_rate_decr;
   double q;
+  double theta1;
+  double theta2;
   double tol;
   int max_it;
-  int max_it_outer;
   int path_length;
-  int pgd_freq;
-  int print_level;
+  int cd_iterations;
+  std::optional<int> max_clusters;
   std::string lambda_type;
-  std::string objective;
+  std::string centering_type;
+  std::string scaling_type;
+  std::string loss_type;
+  std::string screening_type;
+  std::string solver_type;
 
-  // estimates
-  Eigen::ArrayXd alpha_out;
-  Eigen::ArrayXd lambda_out;
-  Eigen::SparseMatrix<double> betas;
-  Eigen::VectorXd beta0s;
-  Eigen::VectorXd beta;
-  double beta0;
-  int it_total;
-  std::vector<std::vector<double>> dual_gaps_path;
-  std::vector<std::vector<double>> primals_path;
+  // Data
+  Eigen::VectorXd x_centers;
+  Eigen::VectorXd x_scales;
 };
 
 } // namespace slope

@@ -11,10 +11,11 @@ project(
 )
 
 # set(CMAKE_CXX_STANDARD 17) set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Find the module development requirements (requires FindPython from 3.17 or
 # scikit-build-core's built-in backport)
-find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
+find_package(Python REQUIRED COMPONENTS Interpreter Development)
 find_package(pybind11 CONFIG REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/external)
@@ -25,16 +26,29 @@ include_directories(${CMAKE_SOURCE_DIR}/external)
 
 pybind11_add_module(
   _sortedl1
-  src/main.cpp
-  src/slope/qnorm.cpp
-  src/slope/helpers.cpp
-  src/slope/objectives.cpp
   src/slope/clusters.cpp
-  src/slope/slope.cpp
+  src/slope/cv.cpp
+  src/slope/folds.cpp
+  src/slope/kkt_check.cpp
+  src/slope/losses/logistic.cpp
+  src/slope/losses/multinomial.cpp
+  src/slope/losses/poisson.cpp
+  src/slope/losses/quadratic.cpp
+  src/slope/losses/setup_loss.cpp
+  src/slope/math.cpp
+  src/slope/normalize.cpp
+  src/slope/qnorm.cpp
   src/slope/regularization_sequence.cpp
-  src/slope/slope_threshold.cpp
+  src/slope/score.cpp
+  src/slope/screening.cpp
+  src/slope/slope.cpp
+  src/slope/solvers/hybrid.cpp
+  src/slope/solvers/pgd.cpp
+  src/slope/solvers/setup_solver.cpp
+  src/slope/solvers/slope_threshold.cpp
   src/slope/sorted_l1_norm.cpp
-  src/slope/standardize.cpp
+  src/slope/timer.cpp
+  src/slope/utils.cpp
 )
 
 # The install directory is the output (wheel) directory

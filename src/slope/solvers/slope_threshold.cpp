@@ -1,5 +1,5 @@
 #include "slope_threshold.h"
-#include "math.h"
+#include "../math.h"
 
 namespace slope {
 
@@ -9,7 +9,7 @@ slopeThreshold(const double x,
                const Eigen::ArrayXd lambdas,
                const Clusters& clusters)
 {
-  const int cluster_size = clusters.cluster_size(j);
+  const Eigen::Index cluster_size = clusters.cluster_size(j);
   const double abs_x = std::abs(x);
   const int sign_x = sign(x);
 
@@ -23,12 +23,14 @@ slopeThreshold(const double x,
 
   if (direction_up) {
     int start = clusters.pointer(j + 1);
+    int end = std::min(lambdas.size() - start, cluster_size);
     double lo =
-      start < lambdas.size() ? lambdas.segment(start, cluster_size).sum() : 0.0;
+      start < lambdas.size() ? lambdas.segment(start, end).sum() : 0.0;
 
     for (int k = j; k >= 0; k--) {
       start = clusters.pointer(k);
-      double hi = lambdas.segment(start, cluster_size).sum();
+      Eigen::Index end = std::min(lambdas.size() - start, cluster_size);
+      double hi = lambdas.segment(start, end).sum();
       double c_k = clusters.coeff(k);
 
       if (abs_x < lo + c_k) {

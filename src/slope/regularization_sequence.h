@@ -1,58 +1,60 @@
+/**
+ * @file
+ * @brief Functions for generating regularization sequences for SLOPE.
+ * */
+
 #pragma once
 
-#include "math.h"
 #include "sorted_l1_norm.h"
-#include <Eigen/Sparse>
+#include <Eigen/SparseCore>
 #include <string>
 
 namespace slope {
 
 /**
- * Generates a BH sequence of lambda values.
+ * Generates a sequence of regularization weights for the sorted L1 norm.
  *
- * This function generates a sequence of lambda values based on the given
- * parameters based on the Benjamini-Hochberg sequence for SLOPE.
- *
- * @param p The number of lambda values to generate.
- * @param q The quantile value used in the calculation.
- * @return An Eigen::ArrayXd containing the generated lambda values.
+ * @param p The number of lambda values to generate (number of features)
+ * @param q The false discovery rate (FDR) level or quantile value (in (0, 1))
+ * @param type The type of sequence to generate:
+ *            - "bh": Benjamini-Hochberg sequence
+ *            - "gaussian": Gaussian sequence
+ *            - "oscar": Octagonal Shrinkage and Clustering Algorithm for
+ * Regression
+ * @param n Number of observations (only used for gaussian type)
+ * @param theta1 First parameter for OSCAR weights (default: 1.0)
+ * @param theta2 Second parameter for OSCAR weights (default: 1.0)
+ * @return Eigen::ArrayXd containing the generated lambda sequence in decreasing
+ * order
  */
 Eigen::ArrayXd
-lambdaSequence(const int p, const double q, const std::string& type);
+lambdaSequence(const int p,
+               const double q,
+               const std::string& type,
+               const int n = -1,
+               const double theta1 = 1.0,
+               const double theta2 = 1.0);
 
-template<typename T>
-Eigen::ArrayXd
-regularizationPath(const T& x,
-                   const Eigen::VectorXd& w,
-                   const Eigen::VectorXd& z,
-                   const Eigen::VectorXd& x_centers,
-                   const Eigen::VectorXd& x_scales,
+/**
+ * Computes a sequence of regularization weights for the SLOPE path.
+ *
+ * @param alpha_in Alpha sequence, of length zero if automatic.
+ * @param gradient The gradient
+ * @param penalty Penalty object.
+ * @param lambda Regularization weights.
+ * @param n Number of observations.
+ * @param path_length Length of path.
+ * @param alpha_min_ratio Ratio of minimum to maximum alpha
+ * @return Eigen::ArrayXd containing the sequence of regularization parameters
+ * from strongest (alpha_max) to weakest (alpha_max * alpha_min_ratio)
+ */
+std::tuple<Eigen::ArrayXd, double, int>
+regularizationPath(const Eigen::ArrayXd& alpha_in,
+                   const Eigen::VectorXd& gradient,
                    const SortedL1Norm& penalty,
+                   const Eigen::ArrayXd& lambda,
+                   const int n,
                    const int path_length,
-                   double alpha_min_ratio,
-                   const bool intercept,
-                   const bool standardize)
-{
-  const int n = x.rows();
-  const int p = x.cols();
-
-  if (alpha_min_ratio < 0) {
-    alpha_min_ratio = n > p ? 1e-4 : 1e-2;
-  }
-
-  auto gradient = computeGradient(x, z, x_centers, x_scales, standardize);
-
-  double alpha_max = penalty.dualNorm(gradient);
-
-  Eigen::ArrayXd alpha(path_length);
-
-  double div = path_length - 1;
-
-  for (int i = 0; i < path_length; ++i) {
-    alpha[i] = alpha_max * std::pow(alpha_min_ratio, i / div);
-  }
-
-  return alpha;
-}
+                   double alpha_min_ratio);
 
 } // namespace slope

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "clusters.h"
+#include "../clusters.h"
 #include <Eigen/Core>
 #include <tuple>
 

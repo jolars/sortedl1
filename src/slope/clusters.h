@@ -5,10 +5,7 @@
 
 #pragma once
 
-#include "utils.h"
 #include <Eigen/Core>
-#include <algorithm>
-#include <numeric>
 #include <vector>
 
 namespace slope {

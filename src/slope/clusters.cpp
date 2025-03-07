@@ -1,4 +1,5 @@
 #include "clusters.h"
+#include "utils.h"
 
 namespace slope {
 

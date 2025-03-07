@@ -1,4 +1,5 @@
 """Basic tests for the sortedl1 package."""
+
 import numpy as np
 from numpy.random import default_rng
 from scipy.sparse import csc_array, random
@@ -20,7 +21,7 @@ def test_simple_problem():
     lam = np.array([2, 1, 0.2])
     alpha = 1.0
 
-    model = Slope(lam, alpha, standardize=True)
+    model = Slope(lam, alpha)
 
     model.fit(x, y)
 
@@ -56,14 +57,14 @@ def test_sparse_dense_standardized():
     lam = np.array([0.5, 0.5, 0.2])
     alpha = 1.0
 
-    model = Slope(lam, alpha, standardize=True, fit_intercept=False)
+    model = Slope(lam, alpha, fit_intercept=False)
 
-    coef_true = np.array([[0.04258934], [0.74274634], [-0.02910647]])
+    coef_true = np.array([[0.0], [0.74524155], [0.0]])
 
     model.fit(x_dense, y)
     coef_sparse = model.coef_
 
-    model2 = Slope(lam, alpha, standardize=True, fit_intercept=False)
+    model2 = Slope(lam, alpha, fit_intercept=False)
 
     model2.fit(x_sparse, y)
     coef_dense = model2.coef_

@@ -5,9 +5,13 @@
 
 #pragma once
 
-#include <algorithm> // std::sort
-#include <numeric>   // std::iota
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
+#include <algorithm>
+#include <numeric>
+#include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace slope {
@@ -37,6 +41,32 @@ sort(T& v, const bool descending = false)
   } else {
     std::sort(v.data(), v.data() + v.size(), std::less<double>());
   }
+}
+
+/**
+ * Returns indices of true values in a boolean container.
+ *
+ * @tparam T Container type supporting size() and operator[] (e.g.,
+ * std::vector<bool>, std::array<bool>)
+ * @param x Input container with boolean-convertible values
+ * @return std::vector<int> containing indices where x[i] evaluates to true
+ *
+ * Example:
+ *   std::vector<bool> v = {true, false, true, false, true};
+ *   auto indices = which(v); // returns {0, 2, 4}
+ */
+template<typename T>
+std::vector<int>
+which(const T& x)
+{
+  std::vector<int> out;
+  for (int i = 0; i < x.size(); i++) {
+    if (x[i]) {
+      out.emplace_back(i);
+    }
+  }
+
+  return out;
 }
 
 /**
@@ -150,6 +180,76 @@ move_elements(std::vector<T>& v, const int from, const int to, const int size)
   } else {
     std::rotate(v.begin() + from, v.begin() + from + size, v.begin() + to + 1);
   }
+}
+
+/**
+ * @brief Validates if a given value exists in a set of valid options
+ *
+ * @details Throws an informative error if the value is not found in the valid
+ * options, listing all valid possibilities in the error message.
+ *
+ * @param value The value to validate
+ * @param valid_options Set of valid options
+ * @param parameter_name Name of the parameter being validated (used in error
+ * message).
+ * @throws std::invalid_argument If value is not in valid_options
+ */
+void
+validateOption(const std::string& value,
+               const std::set<std::string>& valid_options,
+               const std::string& parameter_name);
+
+/**
+ * @brief Extract a subset of rows from an Eigen matrix
+ *
+ * @param x The input matrix to extract rows from
+ * @param indices A vector of row indices to extract
+ * @return Eigen::MatrixXd A new matrix containing only the specified rows
+ *
+ * This function creates a new matrix containing only the rows specified in the
+ * indices vector, preserving their order. The number of columns remains the
+ * same.
+ */
+Eigen::MatrixXd
+subset(const Eigen::MatrixXd& x, const std::vector<int>& indices);
+
+/**
+ * @brief Extract a subset of rows from a sparse Eigen matrix
+ *
+ * @param x The input sparse matrix to extract rows from
+ * @param indices A vector of row indices to extract
+ * @return Eigen::SparseMatrix<double> A new sparse matrix containing only the
+ * specified rows
+ *
+ * This function creates a new sparse matrix containing only the rows specified
+ * in the indices vector, preserving their order. The number of columns remains
+ * the same. The sparsity structure is maintained in the extracted rows.
+ */
+Eigen::SparseMatrix<double>
+subset(const Eigen::SparseMatrix<double>& x, const std::vector<int>& indices);
+
+/**
+ * @brief Create a set of unique values from an Eigen matrix
+ *
+ * @param x The input matrix to extract unique values from
+ * @return std::unordered_set<double> A set containing all unique values found
+ * in the matrix
+ *
+ * This function iterates through all elements of the input matrix and collects
+ * all unique values into an unordered set. The order of elements in the
+ * returned set is not guaranteed.
+ */
+inline std::unordered_set<double>
+unique(const Eigen::MatrixXd& x)
+{
+  std::unordered_set<double> unique;
+  for (Eigen::Index j = 0; j < x.cols(); j++) {
+    for (Eigen::Index i = 0; i < x.rows(); i++) {
+      unique.insert(x(i, j));
+    }
+  }
+
+  return unique;
 }
 
 } // namespace slope
