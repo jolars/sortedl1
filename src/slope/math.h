@@ -1,11 +1,11 @@
 /**
- * @internal
  * @file
  * @brief Mathematical support functions for the slope package.
  */
 
 #pragma once
 
+#include "clusters.h"
 #include "jit_normalization.h"
 #include "threads.h"
 #include <Eigen/Core>
@@ -47,8 +47,7 @@ Eigen::ArrayXd
 cumSum(const T& x)
 {
   std::vector<double> cum_sum(x.size());
-  std::partial_sum(
-    x.data(), x.data() + x.size(), cum_sum.begin(), std::plus<double>());
+  std::partial_sum(x.begin(), x.end(), cum_sum.begin(), std::plus<double>());
 
   Eigen::Map<Eigen::ArrayXd> out(cum_sum.data(), cum_sum.size());
 
@@ -156,27 +155,46 @@ linearPredictor(const T& x,
 
   Eigen::MatrixXd eta = Eigen::MatrixXd::Zero(n, m);
 
-  for (const auto& ind : active_set) {
-    auto [k, j] = std::div(ind, p);
+#ifdef _OPENMP
+  bool large_problem = active_set.size() > 100 && n * active_set.size() > 1e7;
+#pragma omp parallel num_threads(Threads::get()) if (large_problem)
+#endif
+  {
+    Eigen::MatrixXd eta_local = Eigen::MatrixXd::Zero(n, m);
 
-    switch (jit_normalization) {
-      case JitNormalization::Both:
-        eta.col(k) += x.col(j) * beta(ind) / x_scales(j);
-        eta.col(k).array() -= beta(ind) * x_centers(j) / x_scales(j);
-        break;
+#ifdef _OPENMP
+#pragma omp for nowait
+#endif
+    for (size_t i = 0; i < active_set.size(); ++i) {
+      int ind = active_set[i];
+      auto [k, j] = std::div(ind, p);
 
-      case JitNormalization::Center:
-        eta.col(k) += x.col(j) * beta(ind);
-        eta.col(k).array() -= beta(ind) * x_centers(j);
-        break;
+      switch (jit_normalization) {
+        case JitNormalization::Both:
+          eta_local.col(k) += x.col(j) * beta(ind) / x_scales(j);
+          eta_local.col(k).array() -= beta(ind) * x_centers(j) / x_scales(j);
+          break;
 
-      case JitNormalization::Scale:
-        eta.col(k) += x.col(j) * beta(ind) / x_scales(j);
-        break;
+        case JitNormalization::Center:
+          eta_local.col(k) += x.col(j) * beta(ind);
+          eta_local.col(k).array() -= beta(ind) * x_centers(j);
+          break;
 
-      case JitNormalization::None:
-        eta.col(k) += x.col(j) * beta(ind);
-        break;
+        case JitNormalization::Scale:
+          eta_local.col(k) += x.col(j) * beta(ind) / x_scales(j);
+          break;
+
+        case JitNormalization::None:
+          eta_local.col(k) += x.col(j) * beta(ind);
+          break;
+      }
+    }
+
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+    {
+      eta += eta_local;
     }
   }
 
@@ -223,7 +241,8 @@ updateGradient(Eigen::VectorXd& gradient,
   Eigen::ArrayXd wr_sums(m);
 
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(Threads::get())
+  bool large_problem = active_set.size() > 100 && n * active_set.size() > 1e5;
+#pragma omp parallel for num_threads(Threads::get()) if (large_problem)
 #endif
   for (int k = 0; k < m; ++k) {
     weighted_residual.col(k) = residual.col(k).cwiseProduct(w);
@@ -231,7 +250,7 @@ updateGradient(Eigen::VectorXd& gradient,
   }
 
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(Threads::get())
+#pragma omp parallel for num_threads(Threads::get()) if (large_problem)
 #endif
   for (size_t i = 0; i < active_set.size(); ++i) {
     int ind = active_set[i];
@@ -517,7 +536,6 @@ means(const Eigen::MatrixXd& x);
 /**
  * @brief Computes the standard deviation for each column of a matrix
  *
- * @tparam T Matrix type (must support sparse matrix operations)
  * @param x Input matrix whose column standard deviations are to be computed
  * @return Eigen::VectorXd Vector containing the standard deviation of each
  * column
@@ -526,40 +544,24 @@ means(const Eigen::MatrixXd& x);
  * \f[ \sigma_j = \sqrt{\frac{1}{n}\sum_{i} (x_{ij} - \bar{x}_j)^2} \f]
  * where n is the number of rows, x_{ij} represents the i-th element of the j-th
  * column, and \f$\bar{x}_j\f$ is the mean of column j.
- *
- * This function uses Welford's algorithm.
  */
-template<typename T>
 Eigen::VectorXd
-stdDevs(const T& x)
-{
-  const int n = x.rows();
-  const int p = x.cols();
+stdDevs(const Eigen::SparseMatrix<double>& x);
 
-  Eigen::VectorXd x_means = means(x);
-  Eigen::VectorXd out(p);
-
-  for (int j = 0; j < p; ++j) {
-    double m2 = 0.0;
-    const double mean = x_means(j);
-
-    // Process non-zero elements
-    for (typename T::InnerIterator it(x, j); it; ++it) {
-      double delta = it.value() - mean;
-      m2 += delta * delta;
-    }
-
-    // Account for zeros
-    int nz_count = x.col(j).nonZeros();
-    if (nz_count < n) {
-      m2 += (n - nz_count) * mean * mean;
-    }
-
-    out(j) = std::sqrt(m2 / n);
-  }
-
-  return out;
-}
+/**
+ * @brief Computes the standard deviation for each column of a matrix
+ *
+ * @param x Input matrix whose column standard deviations are to be computed
+ * @return Eigen::VectorXd Vector containing the standard deviation of each
+ * column
+ *
+ * For each column j in matrix x, computes the standard deviation:
+ * \f[ \sigma_j = \sqrt{\frac{1}{n}\sum_{i} (x_{ij} - \bar{x}_j)^2} \f]
+ * where n is the number of rows, x_{ij} represents the i-th element of the j-th
+ * column, and \f$\bar{x}_j\f$ is the mean of column j.
+ */
+Eigen::VectorXd
+stdDevs(const Eigen::MatrixXd& x);
 
 /**
  * @brief Computes the range (max - min) for each column of a matrix
@@ -618,5 +620,58 @@ mins(const Eigen::SparseMatrix<double>& x);
  */
 Eigen::VectorXd
 mins(const Eigen::MatrixXd& x);
+
+template<typename T>
+Eigen::VectorXd
+clusterGradient(Eigen::VectorXd& beta,
+                Eigen::VectorXd& residual,
+                Clusters& clusters,
+                const T& x,
+                const Eigen::VectorXd& w,
+                const Eigen::VectorXd& x_centers,
+                const Eigen::VectorXd& x_scales,
+                const JitNormalization jit_normalization)
+{
+  using namespace Eigen;
+
+  const int n = x.rows();
+  const int n_clusters = clusters.n_clusters();
+
+  Eigen::VectorXd gradient = Eigen::VectorXd::Zero(n_clusters);
+
+  for (int j = 0; j < n_clusters; ++j) {
+    double c_old = clusters.coeff(j);
+
+    if (c_old == 0) {
+      gradient(j) = 0;
+      continue;
+    }
+
+    int cluster_size = clusters.cluster_size(j);
+    std::vector<int> s;
+    s.reserve(cluster_size);
+
+    for (auto c_it = clusters.cbegin(j); c_it != clusters.cend(j); ++c_it) {
+      double s_k = sign(beta(*c_it));
+      s.emplace_back(s_k);
+    }
+
+    double hessian_j = 1;
+    double gradient_j = 0;
+
+    if (cluster_size == 1) {
+      int k = *clusters.cbegin(j);
+      std::tie(gradient_j, hessian_j) = computeGradientAndHessian(
+        x, k, w, residual, x_centers, x_scales, s[0], jit_normalization, n);
+    } else {
+      std::tie(hessian_j, gradient_j) = computeClusterGradientAndHessian(
+        x, j, s, clusters, w, residual, x_centers, x_scales, jit_normalization);
+    }
+
+    gradient(j) = gradient_j;
+  }
+
+  return gradient;
+}
 
 } // namespace slope

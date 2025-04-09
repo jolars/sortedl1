@@ -42,4 +42,4 @@ kktCheck(const Eigen::VectorXd& gradient,
          const Eigen::ArrayXd& lambda,
          const std::vector<int>& strong_set);
 
-}
+} // namespace slope

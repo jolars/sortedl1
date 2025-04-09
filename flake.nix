@@ -61,6 +61,8 @@
                 sortedl1
                 ps.pytest
                 ps.ipython
+                ps.notebook
+                ps.jupyter
               ]))
             ];
         };

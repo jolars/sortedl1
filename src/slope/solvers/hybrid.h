@@ -15,7 +15,6 @@
 #include <memory>
 
 namespace slope {
-namespace solvers {
 
 /**
  * @brief Hybrid CD-PGD solver for SLOPE
@@ -57,7 +56,6 @@ public:
   void run(Eigen::VectorXd& beta0,
            Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
-           Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
@@ -72,7 +70,6 @@ public:
   void run(Eigen::VectorXd& beta0,
            Eigen::VectorXd& beta,
            Eigen::MatrixXd& eta,
-           Clusters& clusters,
            const Eigen::ArrayXd& lambda,
            const std::unique_ptr<Loss>& loss,
            const SortedL1Norm& penalty,
@@ -91,7 +88,6 @@ private:
    * @param beta0 Intercept term (scalar)
    * @param beta Coefficients
    * @param eta Linear predictor
-   * @param clusters Coefficient clustering information
    * @param loss Pointer to the loss function
    * @param penalty SLOPE penalty object
    * @param x Design matrix
@@ -103,7 +99,6 @@ private:
   void runImpl(Eigen::VectorXd& beta0,
                Eigen::VectorXd& beta,
                Eigen::MatrixXd& eta,
-               Clusters& clusters,
                const Eigen::ArrayXd& lambda,
                const std::unique_ptr<Loss>& loss,
                const SortedL1Norm& penalty,
@@ -119,13 +114,12 @@ private:
 
     const int n = x.rows();
 
-    solvers::PGD pgd_solver(jit_normalization, intercept, "pgd");
+    PGD pgd_solver(jit_normalization, intercept, "pgd");
 
     // Run proximal gradient descent
     pgd_solver.run(beta0,
                    beta,
                    eta,
-                   clusters,
                    lambda,
                    loss,
                    penalty,
@@ -136,7 +130,7 @@ private:
                    x_scales,
                    y);
 
-    clusters.update(beta);
+    Clusters clusters(beta);
 
     VectorXd w = VectorXd::Ones(n);
     VectorXd z = y;
@@ -173,5 +167,4 @@ private:
   int cd_iterations = 10;       ///< Number of CD iterations per hybrid step
 };
 
-} // namespace solvers
 } // namespace slope

@@ -1,4 +1,8 @@
-#include "../normalize.h"
+/**
+ * @file
+ * @brief Factory function to create and configure a SLOPE solver
+ */
+
 #include "solver.h"
 #include <memory>
 #include <string>
@@ -21,15 +25,15 @@ namespace slope {
  * @param cd_iterations Frequency of proximal gradient descent updates (Hybrid
  * solver)
  *
- * @return std::unique_ptr<solvers::SolverBase> A unique pointer to the
+ * @return std::unique_ptr<SolverBase> A unique pointer to the
  * configured solver
  * @see Loss
  * @see JitNormalization
- * @see solvers::SolverBase
- * @see solvers::PGD
- * @see solvers::Hybrid
+ * @see SolverBase
+ * @see PGD
+ * @see Hybrid
  */
-std::unique_ptr<solvers::SolverBase>
+std::unique_ptr<SolverBase>
 setupSolver(const std::string& solver_type,
             const std::string& loss,
             JitNormalization jit_normalization,

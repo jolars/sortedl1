@@ -2,7 +2,8 @@
 #include "clusters.h"
 #include "constants.h"
 #include "diagnostics.h"
-#include "kkt_check.h"
+#include "estimate_alpha.h"
+#include "logger.h"
 #include "losses/loss.h"
 #include "losses/setup_loss.h"
 #include "math.h"
@@ -108,33 +109,34 @@ Slope::path(T& x,
                  jit_normalization);
 
   int alpha_max_ind = whichMax(gradient.cwiseAbs());
+  double alpha_max = sl1_norm.dualNorm(gradient, lambda);
 
-  double alpha_max;
-  std::tie(alpha, alpha_max, this->path_length) =
-    regularizationPath(alpha,
-                       gradient,
-                       sl1_norm,
-                       lambda,
-                       n,
-                       this->path_length,
-                       this->alpha_min_ratio);
+  if (alpha_type == "path") {
+    if (alpha_min_ratio < 0) {
+      alpha_min_ratio = n > gradient.size() ? 1e-4 : 1e-2;
+    }
 
-  // Screening stuff
-  std::vector<int> strong_set, previous_set, working_set, inactive_set;
-  if (this->screening_type == "none") {
-    working_set = full_set;
+    alpha = regularizationPath(alpha, path_length, alpha_min_ratio, alpha_max);
+    path_length = alpha.size();
   } else {
-    working_set = { alpha_max_ind };
+    if (loss_type != "quadratic") {
+      throw std::invalid_argument(
+        "Automatic alpha estimation is only available for the quadratic loss");
+    }
+    return estimateAlpha(x, y, *this);
   }
+
+  // Screening setup
+  std::unique_ptr<ScreeningRule> screening_rule =
+    createScreeningRule(this->screening_type);
+  std::vector<int> working_set =
+    screening_rule->initialize(full_set, alpha_max_ind);
 
   // Path variables
   double null_deviance = loss->deviance(eta, y);
   double dev_prev = null_deviance;
 
   Timer timer;
-
-  // TODO: We should not do this for all solvers.
-  Clusters clusters(beta);
 
   double alpha_prev = std::max(alpha_max, alpha(0));
 
@@ -152,29 +154,23 @@ Slope::path(T& x,
     std::vector<double> duals, primals, time;
     timer.start();
 
-    if (screening_type == "strong") {
-      // TODO: Only update for inactive set, making sure gradient
-      // is updated for the active set
-      updateGradient(gradient,
-                     x,
-                     residual,
-                     full_set,
-                     this->x_centers,
-                     this->x_scales,
-                     Eigen::VectorXd::Ones(n),
-                     jit_normalization);
+    // Update gradient for the full set
+    // TODO: Only update for non-working set since gradient is updated before
+    // the convergence check in the inner loop for the working set
+    updateGradient(gradient,
+                   x,
+                   residual,
+                   full_set,
+                   x_centers,
+                   x_scales,
+                   Eigen::VectorXd::Ones(x.rows()),
+                   jit_normalization);
 
-      previous_set = activeSet(beta);
-      strong_set = strongSet(gradient, lambda_curr, lambda_prev);
-      strong_set = setUnion(strong_set, previous_set);
-      working_set = setUnion(previous_set, { alpha_max_ind });
-    }
+    working_set = screening_rule->screen(
+      gradient, lambda_curr, lambda_prev, beta, full_set);
 
     int it = 0;
     for (; it < this->max_it; ++it) {
-      // TODO: Return a warning code if the solver does not converge
-      assert(it < this->max_it - 1 && "Exceeded maximum number of iterations");
-
       // Compute primal, dual, and gap
       residual = loss->residual(eta, y);
       updateGradient(gradient,
@@ -245,40 +241,18 @@ Slope::path(T& x,
       double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
 
       if (dual_gap <= tol_scaled) {
-        if (screening_type == "strong") {
-          updateGradient(gradient,
-                         x,
-                         residual,
-                         strong_set,
-                         this->x_centers,
-                         this->x_scales,
-                         Eigen::VectorXd::Ones(n),
-                         jit_normalization);
-
-          auto violations = setDiff(
-            kktCheck(gradient, beta, lambda_curr, strong_set), working_set);
-
-          if (violations.empty()) {
-            updateGradient(gradient,
-                           x,
-                           residual,
-                           full_set,
-                           this->x_centers,
-                           this->x_scales,
-                           Eigen::VectorXd::Ones(n),
-                           jit_normalization);
-
-            violations = setDiff(
-              kktCheck(gradient, beta, lambda_curr, full_set), working_set);
-            if (violations.empty()) {
-              break;
-            } else {
-              working_set = setUnion(working_set, violations);
-            }
-          } else {
-            working_set = setUnion(working_set, violations);
-          }
-        } else {
+        bool no_violations =
+          screening_rule->checkKktViolations(gradient,
+                                             beta,
+                                             lambda_curr,
+                                             working_set,
+                                             x,
+                                             residual,
+                                             this->x_centers,
+                                             this->x_scales,
+                                             jit_normalization,
+                                             full_set);
+        if (no_violations) {
           break;
         }
       }
@@ -286,7 +260,6 @@ Slope::path(T& x,
       solver->run(beta0,
                   beta,
                   eta,
-                  clusters,
                   lambda_curr,
                   loss,
                   sl1_norm,
@@ -298,9 +271,12 @@ Slope::path(T& x,
                   y);
     }
 
-    // Store everything for this step of the path
-    auto [beta0_out, beta_out] = rescaleCoefficients(
-      beta0, beta, this->x_centers, this->x_scales, this->intercept);
+    if (it == this->max_it) {
+      WarningLogger::addWarning(
+        WarningCode::MAXIT_REACHED,
+        "Maximum number of iterations reached at step = " +
+          std::to_string(path_step) + ".");
+    }
 
     alpha_prev = alpha_curr;
 
@@ -310,8 +286,15 @@ Slope::path(T& x,
     double dev_change = path_step == 0 ? 1.0 : 1 - dev / dev_prev;
     dev_prev = dev;
 
-    SlopeFit fit{ beta0_out,
-                  beta_out.sparseView(),
+    Clusters clusters;
+
+    if (return_clusters) {
+      clusters.update(beta);
+    }
+
+    SlopeFit fit{ beta0,
+                  beta.reshaped(p, m).sparseView(),
+                  clusters,
                   alpha_curr,
                   lambda,
                   dev,
@@ -321,15 +304,17 @@ Slope::path(T& x,
                   time,
                   it,
                   this->centering_type,
-                  this->scaling_type };
+                  this->scaling_type,
+                  this->intercept,
+                  this->x_centers,
+                  this->x_scales };
 
     fits.emplace_back(std::move(fit));
 
-    clusters.update(beta);
-
     if (!user_alpha) {
+      int n_unique = unique(beta.cwiseAbs()).size();
       if (dev_ratio > dev_ratio_tol || dev_change < dev_change_tol ||
-          clusters.n_clusters() >= this->max_clusters.value_or(n + 1)) {
+          n_unique >= this->max_clusters.value_or(n + 1)) {
         break;
       }
     }
@@ -422,6 +407,19 @@ Slope::setUpdateClusters(bool update_clusters)
 }
 
 void
+Slope::setReturnClusters(const bool return_clusters)
+{
+  this->return_clusters = return_clusters;
+}
+
+void
+Slope::setAlphaType(const std::string& alpha_type)
+{
+  validateOption(alpha_type, { "path", "estimate" }, "alpha_type");
+  this->alpha_type = alpha_type;
+}
+
+void
 Slope::setAlphaMinRatio(double alpha_min_ratio)
 {
   if (alpha_min_ratio <= 0 || alpha_min_ratio >= 1) {
@@ -470,6 +468,34 @@ Slope::setTol(double tol)
     throw std::invalid_argument("tol must be non-negative");
   }
   this->tol = tol;
+}
+
+void
+Slope::setRelaxTol(double tol)
+{
+  if (tol < 0) {
+    throw std::invalid_argument("tol must be non-negative");
+  }
+
+  this->tol_relax = tol;
+}
+
+void
+Slope::setRelaxMaxOuterIterations(int max_it)
+{
+  if (max_it < 1) {
+    throw std::invalid_argument("max_it must be >= 1");
+  }
+  this->max_it_outer_relax = max_it;
+}
+
+void
+Slope::setRelaxMaxInnerIterations(int max_it)
+{
+  if (max_it < 1) {
+    throw std::invalid_argument("max_it_outer must be >= 1");
+  }
+  this->max_it_inner_relax = max_it;
 }
 
 void
@@ -564,6 +590,24 @@ void
 Slope::setDiagnostics(const bool collect_diagnostics)
 {
   this->collect_diagnostics = collect_diagnostics;
+}
+
+void
+Slope::setAlphaEstimationMaxIterations(const int alpha_est_maxit)
+{
+  this->alpha_est_maxit = alpha_est_maxit;
+}
+
+int
+Slope::getAlphaEstimationMaxIterations() const
+{
+  return alpha_est_maxit;
+}
+
+bool
+Slope::getFitIntercept() const
+{
+  return intercept;
 }
 
 const std::string&

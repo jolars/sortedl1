@@ -179,7 +179,7 @@ normalize(Eigen::SparseMatrix<double>& x,
  */
 std::tuple<Eigen::VectorXd, Eigen::MatrixXd>
 rescaleCoefficients(const Eigen::VectorXd& beta0,
-                    const Eigen::VectorXd& beta,
+                    const Eigen::SparseMatrix<double>& beta,
                     const Eigen::VectorXd& x_centers,
                     const Eigen::VectorXd& x_scales,
                     const bool intercept);

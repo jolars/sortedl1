@@ -4,23 +4,19 @@
  */
 
 #include "hybrid.h"
-#include "../clusters.h"
 #include "../losses/loss.h"
-#include "../math.h"
 #include "../sorted_l1_norm.h"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 #include <memory>
 
 namespace slope {
-namespace solvers {
 
 // Override for dense matrices
 void
 Hybrid::run(Eigen::VectorXd& beta0,
             Eigen::VectorXd& beta,
             Eigen::MatrixXd& eta,
-            Clusters& clusters,
             const Eigen::ArrayXd& lambda,
             const std::unique_ptr<Loss>& loss,
             const SortedL1Norm& penalty,
@@ -34,7 +30,6 @@ Hybrid::run(Eigen::VectorXd& beta0,
   runImpl(beta0,
           beta,
           eta,
-          clusters,
           lambda,
           loss,
           penalty,
@@ -51,7 +46,6 @@ void
 Hybrid::run(Eigen::VectorXd& beta0,
             Eigen::VectorXd& beta,
             Eigen::MatrixXd& eta,
-            Clusters& clusters,
             const Eigen::ArrayXd& lambda,
             const std::unique_ptr<Loss>& loss,
             const SortedL1Norm& penalty,
@@ -65,7 +59,6 @@ Hybrid::run(Eigen::VectorXd& beta0,
   runImpl(beta0,
           beta,
           eta,
-          clusters,
           lambda,
           loss,
           penalty,
@@ -77,5 +70,4 @@ Hybrid::run(Eigen::VectorXd& beta0,
           y);
 }
 
-} // namespace solvers
 } // namespace slope

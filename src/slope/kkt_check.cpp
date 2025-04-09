@@ -39,4 +39,4 @@ kktCheck(const Eigen::VectorXd& gradient,
   return out;
 }
 
-}
+} // namespace slope
