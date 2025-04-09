@@ -71,11 +71,7 @@ myst_enable_extensions = [
 # Linkcode
 linkcode_resolve = make_linkcode_resolve(
     "sortedl1",
-    (
-        "https://github.com/jolars/"
-        "sortedl1/blob/{revision}/"
-        "{package}/{path}#L{lineno}"
-    ),
+    ("https://github.com/jolars/sortedl1/blob/{revision}/{package}/{path}#L{lineno}"),
 )
 
 # Napoleon
