@@ -6,9 +6,9 @@
 
 #pragma once
 
+#include "logger.h"
+#include "ols.h"
 #include "slope.h"
-#include "slope/logger.h"
-#include "slope/ols.h"
 #include "utils.h"
 
 namespace slope {
