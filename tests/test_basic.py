@@ -21,7 +21,7 @@ def test_simple_problem():
     lam = np.array([2, 1, 0.2])
     alpha = 1.0
 
-    model = Slope(lam, alpha)
+    model = Slope(lam, alpha, centering="mean", scaling="sd")
 
     model.fit(x, y)
 
@@ -57,14 +57,14 @@ def test_sparse_dense_standardized():
     lam = np.array([0.5, 0.5, 0.2])
     alpha = 1.0
 
-    model = Slope(lam, alpha, fit_intercept=False)
+    model = Slope(lam, alpha, fit_intercept=False, centering="mean", scaling="sd")
 
     coef_true = np.array([[0.0], [0.74524155], [0.0]])
 
     model.fit(x_dense, y)
     coef_sparse = model.coef_
 
-    model2 = Slope(lam, alpha, fit_intercept=False)
+    model2 = Slope(lam, alpha, fit_intercept=False, centering="mean", scaling="sd")
 
     model2.fit(x_sparse, y)
     coef_dense = model2.coef_
