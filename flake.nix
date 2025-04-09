@@ -60,6 +60,7 @@
               (pkgs.python3.withPackages (ps: [
                 sortedl1
                 ps.pytest
+                ps.pandas
                 ps.ipython
                 ps.notebook
                 ps.jupyter
