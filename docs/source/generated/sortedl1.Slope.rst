@@ -19,6 +19,7 @@
       ~Slope.fit
       ~Slope.get_metadata_routing
       ~Slope.get_params
+      ~Slope.path
       ~Slope.predict
       ~Slope.score
       ~Slope.set_params
