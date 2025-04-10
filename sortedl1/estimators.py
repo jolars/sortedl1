@@ -6,7 +6,12 @@ import warnings
 from typing import TypeVar, final
 
 import numpy as np
-from _sortedl1 import fit_slope_dense, fit_slope_sparse
+from _sortedl1 import (
+    fit_slope_dense,
+    fit_slope_path_dense,
+    fit_slope_path_sparse,
+    fit_slope_sparse,
+)
 from numpy.typing import ArrayLike, NDArray
 from scipy import sparse
 from sklearn.base import BaseEstimator, RegressorMixin
@@ -152,6 +157,104 @@ class Slope(RegressorMixin, BaseEstimator):
         self.n_features_in_ = X.shape[1]
 
         return self
+
+    def path(
+        self,
+        X: NDArray[np.number] | sparse.csc_array,
+        y: NDArray[np.number] | list[float] | tuple[float, ...],
+        alphas: None | NDArray[np.number] = None,
+        path_length: int = 100,
+        alpha_min_ratio: None | np.number = None,
+        **kwargs,
+    ):
+        """
+        Fit the SLOPE path
+
+        Parameters
+        ----------
+        X :
+            Feature matrix, where n_samples is the number of samples and
+            n_features is the number of features.
+
+        y :
+            Response vector.
+
+        alphas :
+            An array of lambda values to use for the path. If None, the lambda
+            values are computed automatically based on `path_length` and
+            `alpha_min_ratio`.
+
+        path_length :
+            The number of alpha values to compute for the path. This parameter
+            is ignored if `alphas` is provided.
+
+        alpha_min_ratio :
+            The minimum value of alpha to use for the path as a fraction of
+            `alpha_max` (the value at which all coefficients are zero). If
+            `None`, then the value is computed based on the dimension of the
+            data: 1e-2 if there are more features than observations and 1e-4
+            otherwise. This parameter is ignored if `alphas` is provided.
+
+        Returns
+        -------
+        coefs : array, shape (n_features, n_alphas)
+            The estimated coefficients for each alpha.
+
+        intercepts : array, shape (n_alphas,)
+            The estimated intercepts for each alpha.
+
+        alphas : array, shape (n_alphas,)
+            The lambda values for the path.
+
+        lambdas : array, shape (n_alphas,)
+            The lambda values for the path.
+
+        """
+        X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
+        y = np.atleast_1d(y).astype(np.float64)
+
+        if y.ndim == 1:
+            y = y.reshape(-1, 1)
+
+        if X.shape[0] == 1:
+            raise ValueError("Data contains only one sample")
+
+        if np.unique(y).size == 1:
+            raise ValueError("y contains only one unique value")
+
+        if self.lam is None:
+            lam = np.array([], dtype=np.float64)
+        else:
+            lam = np.atleast_1d(self.lam).astype(np.float64)
+
+        if alphas is None:
+            alphas = np.array([], dtype=np.float64)
+
+        if alpha_min_ratio is None:
+            alpha_min_ratio = -1
+
+        params = {
+            "intercept": self.fit_intercept,
+            "scaling": self.scaling,
+            "centering": self.centering,
+            "tol": self.tol,
+            "max_it": self.max_iter,
+            "path_length": path_length,
+            "alpha_min_ratio": alpha_min_ratio,
+        }
+
+        fit_slope_path = (
+            fit_slope_path_sparse if sparse.issparse(X) else fit_slope_path_dense
+        )
+
+        result = fit_slope_path(X, y, lam, alphas, params)
+
+        intercepts = result[0]
+        coefs = result[1]
+        lambdas = result[2]
+        alphas = result[3]
+
+        return coefs, intercepts, alphas, lambdas
 
     def predict(self, X: ArrayLike | sparse.sparray) -> np.ndarray:
         """

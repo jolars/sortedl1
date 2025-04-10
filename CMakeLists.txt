@@ -27,6 +27,7 @@ include_directories(${CMAKE_SOURCE_DIR}/external)
 pybind11_add_module(
   _sortedl1
   src/main.cpp
+  src/setup_model.cpp
   src/slope/clusters.cpp
   src/slope/cv.cpp
   src/slope/folds.cpp
