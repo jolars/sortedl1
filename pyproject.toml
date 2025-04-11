@@ -69,7 +69,7 @@ CMAKE_CXX_STANDARD_REQUIRED = "ON"
 [tool.cibuildwheel]
 build-frontend = "build[uv]"
 test-command = "pytest {project}/tests"
-test-extras = ["test"]
+test-extras = ["tests"]
 
 [tool.ruff.lint]
 extend-select = [
