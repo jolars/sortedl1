@@ -2,6 +2,13 @@ name: wheels
 
 on:
   workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
 
 jobs:
   build_sdist:
@@ -41,6 +48,7 @@ jobs:
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
     environment: pypi
     permissions:
       id-token: write
@@ -57,6 +65,7 @@ jobs:
       pages: write
       id-token: write
     runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
