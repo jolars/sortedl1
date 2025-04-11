@@ -23,7 +23,7 @@ tasks:
   test-pypi:
     desc: Upload packages to TestPyPI
     cmds:
-      - python -m twine upload --repository testpypi dist/*
+      - python -m twine upload --repository testpypi dist/*.tar.gz
 
   clean:
     desc: Remove compiled files
