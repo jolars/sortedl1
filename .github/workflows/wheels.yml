@@ -1,0 +1,128 @@
+name: wheels
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
+env:
+  FORCE_COLOR: 3
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_sdist:
+    name: Build SDist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build SDist
+        run: pipx run build --sdist
+
+      - name: Check metadata
+        run: pipx run twine check dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
+
+  build_wheels:
+    name: Wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: astral-sh/setup-uv@v4
+
+      - uses: pypa/cibuildwheel@v2.22
+        env:
+          CIBW_ENABLE: cpython-prerelease
+          CIBW_ARCHS_WINDOWS: auto ARM64
+
+      - name: Verify clean directory
+        run: git diff --exit-code
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}
+          path: wheelhouse/*.whl
+
+  upload_pypi:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-*
+          merge-multiple: true
+          path: dist
+
+      - name: Generate artifact attestation for sdist and wheels
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "dist/*"
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: true
+
+  docs:
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pybind11 setuptools
+
+      - name: Install
+        run: pip install .[docs]
+
+      - name: Build documentation
+        run: |
+          cd docs
+          make html
+
+      - name: Setup pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "docs/build/html/"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

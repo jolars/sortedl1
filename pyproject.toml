@@ -66,6 +66,11 @@ build.verbose = true
 CMAKE_CXX_STANDARD = "17"
 CMAKE_CXX_STANDARD_REQUIRED = "ON"
 
+[tool.cibuildwheel]
+build-frontend = "build[uv]"
+test-command = "pytest {project}/tests"
+test-extras = ["test"]
+
 [tool.ruff.lint]
 extend-select = [
   "B",      # flake8-bugbear
