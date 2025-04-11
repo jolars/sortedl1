@@ -57,9 +57,13 @@
               pkgs.ruff
               pkgs.jq
               pkgs.go-task
+              pkgs.cmake
+              pkgs.eigen
               (pkgs.python3.withPackages (ps: [
                 sortedl1
                 ps.pytest
+                ps.twine
+                ps.build
                 ps.pandas
                 ps.ipython
                 ps.notebook
