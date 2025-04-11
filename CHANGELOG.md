@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.3.0](https://github.com/jolars/sortedl1/compare/v0.2.3...v0.3.0) (2025-04-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* change default centering and scaling to `"none"`
+* drop support for python 3.7 and 3.8
+* deprecate `standardize` in Slope estimator
+* change loss value parameterization
+* update libslope to v0.21.0
+* allow only single float input for `alpha`
+
+### Features
+
+* add slope path ([#31](https://github.com/jolars/sortedl1/issues/31)) ([f407d8c](https://github.com/jolars/sortedl1/commit/f407d8ca628e40484f98481ca0c22d267a3c3ca4))
+* allow only single float input for `alpha` ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+* change default centering and scaling to `"none"` ([7e27318](https://github.com/jolars/sortedl1/commit/7e273184f7b4993fd55187bb80f6e3d8c5c59871))
+* change loss value parameterization ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+* deprecate `standardize` in Slope estimator ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+* update Eigen to 3.4.0 ([5ce41d2](https://github.com/jolars/sortedl1/commit/5ce41d28d15d0d74c3dd9e3f88bbf6db66cc2604))
+* update libslope to v0.21.0 ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+* update libslope to v0.30.0 ([307f36b](https://github.com/jolars/sortedl1/commit/307f36b06cec7cc3f1edcf9eb79435bff37c7f22))
+* update libslope to v0.30.1 ([f012ba6](https://github.com/jolars/sortedl1/commit/f012ba6e08a10e16305485f8f0c3d1b16a8adf11))
+
+
+### Bug Fixes
+
+* add missing sources to pybind11 module ([a08be2c](https://github.com/jolars/sortedl1/commit/a08be2c64bcf4c8edd3ed67716d8e5828761efba))
+* fix convergence issues with solver ([3f65287](https://github.com/jolars/sortedl1/commit/3f652879e4639535862807416f1e75cabf749a20))
+
+
+### Dependencies
+
+* cet scikit-build-core minversion to 0.10 and remove cmake ver ([bd63a29](https://github.com/jolars/sortedl1/commit/bd63a29addd530f31e49a3943f55bdb2220019c2))
+* drop support for python 3.7 and 3.8 ([139e0d8](https://github.com/jolars/sortedl1/commit/139e0d837d6177ebfca95ed6dc2d8df6673cf136))
+
+
+### Documentation
+
+* document as compliantwith python 3.13 ([87e9219](https://github.com/jolars/sortedl1/commit/87e9219917bc69b9b4c01e3fdea630abc1d49e77))
+* update copyright year ([cd707c4](https://github.com/jolars/sortedl1/commit/cd707c4097c0124de7d22559c4a514ad34c38861))
+
 ## [0.2.3](https://github.com/jolars/sortedl1/compare/v0.2.2...v0.2.3) (2024-02-07)
 
 
