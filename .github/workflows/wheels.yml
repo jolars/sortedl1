@@ -73,6 +73,8 @@ jobs:
     environment: pypi
     permissions:
       id-token: write
+      attestations: write
+
     steps:
       - uses: actions/setup-python@v5
         with:
