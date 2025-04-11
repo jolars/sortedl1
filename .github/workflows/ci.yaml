@@ -1,27 +1,20 @@
 name: CI
-
-on:
-  workflow_dispatch:
-  pull_request:
-  push:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build-and-test:
-    runs-on: ${{ matrix.platform }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, macos-latest, ubuntu-latest]
-        python-version: ["3.9", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          allow-prereleases: true
 
       - name: Install dependencies
         run: |
@@ -38,7 +31,6 @@ jobs:
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
   docs:
     needs: build-and-test
     permissions:
@@ -62,7 +54,6 @@ jobs:
         run: |
           cd docs
           make html
-
   release:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
