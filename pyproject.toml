@@ -56,7 +56,7 @@ tests = ["pytest", "sphinx"]
 
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"
-minimum-version = "0.10"
+minimum-version = "build-system.requires"
 wheel.expand-macos-universal-tags = true
 wheel.license-files = ["LICENSE"]
 sdist.exclude = [".github"]
