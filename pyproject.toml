@@ -65,6 +65,10 @@ sdist.exclude = [".github"]
 CMAKE_CXX_STANDARD = "17"
 CMAKE_CXX_STANDARD_REQUIRED = "ON"
 
+[tool.cibuildwheel]
+test-requires = "pytest"
+test-command = "pytest {project}/tests"
+
 [tool.ruff.lint]
 extend-select = [
   "B",      # flake8-bugbear
