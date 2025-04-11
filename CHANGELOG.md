@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.1](https://github.com/jolars/sortedl1/compare/v0.3.0...v0.3.1) (2025-04-11)
+
+
+### Bug Fixes
+
+* don't use `value()` since it does not exist on early macos ([034c9af](https://github.com/jolars/sortedl1/commit/034c9af67982e613eb29c5846bdc87e80055cacb))
+
+
+### Reverts
+
+* "ci: add pytest to cibuildwheel" ([631f2cb](https://github.com/jolars/sortedl1/commit/631f2cb8f4f3f62c6c48928b6875dc556143c453))
+* "ci: update ci workflows: ([6bbfedd](https://github.com/jolars/sortedl1/commit/6bbfedda323ad41c8a3b2ef652c1ce8eb2b6b8ac))
+
 ## [0.3.0](https://github.com/jolars/sortedl1/compare/v0.2.3...v0.3.0) (2025-04-10)
 
 
