@@ -60,7 +60,6 @@ minimum-version = "0.10"
 wheel.expand-macos-universal-tags = true
 wheel.license-files = ["LICENSE"]
 sdist.exclude = [".github"]
-build.verbose = true
 
 [tool.scikit-build.cmake.define]
 CMAKE_CXX_STANDARD = "17"
