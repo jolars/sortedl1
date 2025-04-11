@@ -39,7 +39,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  docs:
+  test-docs:
     needs: build-and-test
     permissions:
       pages: write
@@ -62,6 +62,7 @@ jobs:
         run: |
           cd docs
           make html
+
   release:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
