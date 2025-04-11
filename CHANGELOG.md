@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/jolars/sortedl1/compare/v0.3.1...v0.3.2) (2025-04-11)
+
+
+### Reverts
+
+* "ci: temporarily change pypi workflow to allow manual run" ([dbfb32c](https://github.com/jolars/sortedl1/commit/dbfb32c99d9864c2af06899ef6b9f83dbf6138df))
+
 ## [0.3.1](https://github.com/jolars/sortedl1/compare/v0.3.0...v0.3.1) (2025-04-11)
 
 
