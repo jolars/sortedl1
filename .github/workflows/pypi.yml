@@ -44,8 +44,6 @@ jobs:
     environment: pypi
     permissions:
       id-token: write
-      attestations: write
-
     steps:
       - uses: actions/download-artifact@v4
         with:
