@@ -48,10 +48,6 @@ class Slope(LinearModel):
         Maximum number of iterations.
     tol :
         Tolerance for the stopping criterion.
-    standardize :
-        DEPRECATED: This parameter is deprecated and will be removed in
-        a future version. It no longer has any effect. Use `centering` and
-        `scaling` instead.
 
     Attributes
     ----------
@@ -79,7 +75,6 @@ class Slope(LinearModel):
         scaling: str = "none",
         max_iter: int = 100_000,
         tol: float = 1e-4,
-        standardize: str | None = None,
     ):
         self.lam = lam
         self.alpha = alpha
@@ -89,14 +84,6 @@ class Slope(LinearModel):
         self.tol = tol
         self.scaling = scaling
         self.centering = centering
-        self.standardize = None
-
-        if standardize is not None:
-            warnings.warn(
-                "The 'standardize' parameter is deprecated and will be removed in a future version. It no longer has any effect",
-                DeprecationWarning,
-                stacklevel=2,
-            )
 
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
