@@ -267,7 +267,7 @@ class Slope(RegressorMixin, BaseEstimator):
 
         Returns
         -------
-        C : array, shape (n_samples,)
+        y_pred :
             Returns predicted values.
         """
         check_is_fitted(self)
