@@ -21,9 +21,7 @@
       ~Slope.get_params
       ~Slope.path
       ~Slope.predict
-      ~Slope.score
       ~Slope.set_params
-      ~Slope.set_score_request
    
    
 
