@@ -71,3 +71,29 @@ def test_sparse_dense_standardized():
 
     np.testing.assert_array_almost_equal(coef_sparse, coef_dense)
     np.testing.assert_array_almost_equal(coef_dense, coef_true)
+
+
+def test_logistic():
+    """Test case for a simple dense SLOPE problem."""
+    n = 10
+    p = 5
+    rng = default_rng(9)
+    x = rng.standard_normal((n, p))
+
+    beta = np.array([1.0, 2, -0.9, 0, 0])
+
+    y = x @ beta
+    y = np.where(y > 0, 1, 0)
+
+    lam = np.array([3, 2.5, 2, 1, 0.2])
+    alpha = 0.02
+
+    model = Slope(lam, alpha, centering="mean", scaling="sd", loss="logistic")
+
+    _ = model.fit(x, y)
+
+    coef = model.coef_
+
+    coef_true = np.array([0.0, 1.14226639, -1.16286048, 0.34141038, -0.40745121])
+
+    np.testing.assert_array_almost_equal(coef, coef_true)

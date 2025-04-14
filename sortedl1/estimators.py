@@ -37,6 +37,9 @@ class Slope(LinearModel):
         A multiplier for the Sorted L1 Penalty.
     fit_intercept :
         Whether to fit an intercept term.
+    loss :
+        Loss (data-fitting) function to be used. One of "quadratic", "logistic",
+        "multinomial", and "poisson".
     centering :
         Type of centering, one of "mean", "min", and "none".
     scaling :
@@ -71,6 +74,7 @@ class Slope(LinearModel):
         lam: None | ArrayLike = None,
         alpha: float = 1.0,
         fit_intercept: bool = True,
+        loss: str = "quadratic",
         centering: str = "none",
         scaling: str = "none",
         max_iter: int = 100_000,
@@ -80,6 +84,7 @@ class Slope(LinearModel):
         self.lam = lam
         self.alpha = alpha
         self.fit_intercept = fit_intercept
+        self.loss = loss
         self.max_iter = max_iter
         self.tol = tol
         self.scaling = scaling
@@ -142,6 +147,7 @@ class Slope(LinearModel):
             "alpha": self.alpha,
             "intercept": self.fit_intercept,
             "scaling": self.scaling,
+            "loss": self.loss,
             "centering": self.centering,
             "tol": self.tol,
             "max_it": self.max_iter,
@@ -236,8 +242,10 @@ class Slope(LinearModel):
             alpha_min_ratio = -1
 
         params = {
+            "alpha": self.alpha,
             "intercept": self.fit_intercept,
             "scaling": self.scaling,
+            "loss": self.loss,
             "centering": self.centering,
             "tol": self.tol,
             "max_it": self.max_iter,

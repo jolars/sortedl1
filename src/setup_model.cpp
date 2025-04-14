@@ -15,7 +15,7 @@ setup_model(const pybind11::dict& args)
   auto intercept = args["intercept"].cast<bool>();
   // auto lambda = as<ArrayXd>(control["lambda"]);
   // auto lambda_type = as<std::string>(control["lambda_type"]);
-  // auto loss_type = as<std::string>(control["family"]);
+  auto loss_type = args["loss"].cast<std::string>();
   // auto max_clusters = as<int>(control["max_variables"]);
   auto max_it = args["max_it"].cast<int>();
   // auto path_length = as<int>(control["path_length"]);
@@ -38,7 +38,7 @@ setup_model(const pybind11::dict& args)
   model.setIntercept(intercept);
   // model.setMaxClusters(max_clusters);
   model.setMaxIterations(max_it);
-  // model.setLoss(loss_type);
+  model.setLoss(loss_type);
   // model.setOscarParameters(theta1, theta2);
   // model.setPathLength(path_length);
   // model.setQ(q);
