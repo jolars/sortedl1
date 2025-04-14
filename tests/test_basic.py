@@ -27,7 +27,7 @@ def test_simple_problem():
 
     coef = model.coef_
 
-    coef_true = np.array([[-0.16031162], [0.1606755], [-0.12518555]])
+    coef_true = np.array([-0.16031162, 0.1606755, -0.12518555])
 
     np.testing.assert_array_almost_equal(coef, coef_true)
 
@@ -59,7 +59,7 @@ def test_sparse_dense_standardized():
 
     model = Slope(lam, alpha, fit_intercept=False, centering="mean", scaling="sd")
 
-    coef_true = np.array([[0.0], [0.74524155], [0.0]])
+    coef_true = np.array([0.0, 0.74524155, 0.0])
 
     model.fit(x_dense, y)
     coef_sparse = model.coef_

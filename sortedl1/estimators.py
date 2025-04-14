@@ -7,6 +7,7 @@ from typing import TypeVar, final
 
 import numpy as np
 from _sortedl1 import (
+    _predict,
     fit_slope_dense,
     fit_slope_path_dense,
     fit_slope_path_sparse,
@@ -150,7 +151,7 @@ class Slope(RegressorMixin, BaseEstimator):
 
         self.intercept_ = result[0][0]
         self.sparse_coef_ = result[1]
-        self.coef_ = result[1].toarray()
+        self.coef_ = np.squeeze(result[1].toarray())
         self.lambda_ = result[2]
         self.alpha_ = result[3]
         self.n_iter_ = max(1, result[4])
@@ -239,6 +240,7 @@ class Slope(RegressorMixin, BaseEstimator):
             "centering": self.centering,
             "tol": self.tol,
             "max_it": self.max_iter,
+            # Path-specific parameters
             "path_length": path_length,
             "alpha_min_ratio": alpha_min_ratio,
         }
@@ -270,8 +272,8 @@ class Slope(RegressorMixin, BaseEstimator):
         y_pred :
             Returns predicted values.
         """
-        check_is_fitted(self)
-        X = validate_data(self, X, accept_sparse=True, reset=False)
+        eta = self._decision_function(X)
 
-        pred = X @ self.coef_ + self.intercept_
-        return np.ravel(pred)
+        out = _predict(eta, self.loss)
+
+        return np.ravel(out)

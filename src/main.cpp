@@ -110,10 +110,18 @@ fit_slope_path_sparse(Eigen::SparseMatrix<double>& x,
   return fit_slope_path(x, y, lambda, alpha, args);
 }
 
+Eigen::MatrixXd
+_predict(const Eigen::MatrixXd& eta, const std::string& loss_type)
+{
+  std::unique_ptr<slope::Loss> loss = slope::setupLoss(loss_type);
+  return loss->predict(eta);
+}
+
 PYBIND11_MODULE(_sortedl1, m)
 {
   m.def("fit_slope_dense", &fit_slope_dense);
   m.def("fit_slope_sparse", &fit_slope_sparse);
   m.def("fit_slope_path_dense", &fit_slope_path_dense);
   m.def("fit_slope_path_sparse", &fit_slope_path_sparse);
+  m.def("_predict", &_predict);
 }
