@@ -116,8 +116,8 @@ class Slope(RegressorMixin, BaseEstimator):
 
         Returns
         -------
-        self : object
-            Returns self.
+        self :
+            Fitted estimator.
         """
         X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
         y = np.atleast_1d(y).astype(np.float64)
