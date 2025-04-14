@@ -263,7 +263,7 @@ class Slope(RegressorMixin, BaseEstimator):
         Parameters
         ----------
         X :
-            Samples.
+            The feature matrix to predict from.
 
         Returns
         -------
