@@ -20,7 +20,7 @@ def test_path():
 
     model = Slope()
 
-    coefs, intercepts, _, _ = model.path(x, y)
+    coefs, intercepts, _, _ = model.path(x, y.ravel())
 
     assert coefs.shape[0] == p
     assert coefs.shape[1] == 1
