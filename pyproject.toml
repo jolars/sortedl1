@@ -88,7 +88,6 @@ extend-select = [
 ]
 ignore = [
   "PLR",    # Design related pylint codes
-  "PT004",  # Incorrect check, usefixtures is the correct way to do this
   "RUF012", # Would require a lot of ClassVar's
 ]
 
