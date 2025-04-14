@@ -31,22 +31,6 @@ setup_model(const pybind11::dict& args)
 
   slope::Slope model;
 
-  // Map family to loss_type
-  // if (loss_type == "gaussian") {
-  //   loss_type = "quadratic";
-  // } else if (loss_type == "binomial") {
-  //   loss_type = "logistic";
-  // }
-
-  // overwrite solver type for Poisson regression,
-  // since the hybrid solver has convergence issues for this
-  // objective
-  // if (solver_type == "auto") {
-  //   if (loss_type == "poisson") {
-  //     solver_type = "fista";
-  //   }
-  // }
-
   // model.setAlphaMinRatio(alpha_min_ratio);
   // model.setAlphaType(alpha_type);
   // model.setDevChangeTol(tol_dev_change);
