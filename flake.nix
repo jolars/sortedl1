@@ -59,6 +59,7 @@
               pkgs.go-task
               pkgs.cmake
               pkgs.eigen
+              pkgs.semantic-release
               (pkgs.python3.withPackages (ps: [
                 sortedl1
                 ps.pytest
