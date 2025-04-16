@@ -40,7 +40,6 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   test-docs:
-    needs: build-and-test
     permissions:
       pages: write
       id-token: write
