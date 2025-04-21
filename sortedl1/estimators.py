@@ -40,6 +40,8 @@ class Slope(LinearModel):
     loss :
         Loss (data-fitting) function to be used. One of "quadratic", "logistic",
         "multinomial", and "poisson".
+    q :
+        FDR control parameter for the Sorted L1 Penalty. Must be between 0 and 1.
     centering :
         Type of centering, one of "mean", "min", and "none".
     scaling :
@@ -71,6 +73,7 @@ class Slope(LinearModel):
         alpha: float = 1.0,
         fit_intercept: bool = True,
         loss: str = "quadratic",
+        q: float = 0.1,
         centering: str = "none",
         scaling: str = "none",
         max_iter: int = 100_000,
@@ -80,6 +83,7 @@ class Slope(LinearModel):
         self.alpha = alpha
         self.fit_intercept = fit_intercept
         self.loss = loss
+        self.q = q
         self.max_iter = max_iter
         self.tol = tol
         self.scaling = scaling
@@ -135,6 +139,7 @@ class Slope(LinearModel):
             "intercept": self.fit_intercept,
             "scaling": self.scaling,
             "loss": self.loss,
+            "q": self.q,
             "centering": self.centering,
             "tol": self.tol,
             "max_it": self.max_iter,
@@ -233,6 +238,7 @@ class Slope(LinearModel):
             "intercept": self.fit_intercept,
             "scaling": self.scaling,
             "loss": self.loss,
+            "q": self.q,
             "centering": self.centering,
             "tol": self.tol,
             "max_it": self.max_iter,

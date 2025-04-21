@@ -21,7 +21,7 @@ def test_simple_problem():
     lam = np.array([2, 1, 0.2])
     alpha = 1.0
 
-    model = Slope(lam, alpha, centering="mean", scaling="sd")
+    model = Slope(lam, alpha, centering="mean", scaling="sd", q=0.1)
 
     model.fit(x, y)
 

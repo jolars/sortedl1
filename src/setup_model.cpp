@@ -19,7 +19,7 @@ setup_model(const pybind11::dict& args)
   // auto max_clusters = as<int>(control["max_variables"]);
   auto max_it = args["max_it"].cast<int>();
   // auto path_length = as<int>(control["path_length"]);
-  // auto q = as<double>(control["q"]);
+  auto q = args["q"].cast<double>();
   // auto scales = as<VectorXd>(control["scales"]);
   auto scaling_type = args["scaling"].cast<std::string>();
   // auto solver_type = as<std::string>(control["solver"]);
@@ -41,7 +41,7 @@ setup_model(const pybind11::dict& args)
   model.setLoss(loss_type);
   // model.setOscarParameters(theta1, theta2);
   // model.setPathLength(path_length);
-  // model.setQ(q);
+  model.setQ(q);
   // model.setSolver(solver_type);
   model.setTol(tol);
   // model.setDiagnostics(diagnostics);
