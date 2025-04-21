@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.4.0](https://github.com/jolars/sortedl1/compare/v0.3.1...v0.4.0) (2025-04-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* change super class to `LinearModel`
+* squeeze coefs into sklearn-compatible output
+
+### Features
+
+* add poisson, logistic, multinomial losses ([9858ae7](https://github.com/jolars/sortedl1/commit/9858ae7c0e52ba1f19a543e6343878f7b604aa29))
+* change super class to `LinearModel` ([1e5ca5d](https://github.com/jolars/sortedl1/commit/1e5ca5d4d7fa49847190844e3ab5121b166f8235))
+* enable setting the q parameter ([05734fb](https://github.com/jolars/sortedl1/commit/05734fb15dbb6d97dd8b4339b8460c9bb3adeb96))
+* squeeze coefs into sklearn-compatible output ([7f5bede](https://github.com/jolars/sortedl1/commit/7f5bede4f84f7a5171c466526305a94f4fa1f18d))
+
+
+### Reverts
+
+* "ci: temporarily change pypi workflow to allow manual run" ([dbfb32c](https://github.com/jolars/sortedl1/commit/dbfb32c99d9864c2af06899ef6b9f83dbf6138df))
+
+
+### Documentation
+
+* change name of returned value ([133a50c](https://github.com/jolars/sortedl1/commit/133a50c991435b15cbd5de2ea49b3f7a5e7b35ab))
+* change return value description ([682aa88](https://github.com/jolars/sortedl1/commit/682aa88ee2f2d717a6662a3e35c5bc885abc8b58))
+* improve description of `X` in `predict()` ([2b3d3fa](https://github.com/jolars/sortedl1/commit/2b3d3fa18192f7f284519fdbfa691ab5f5cf1ea8))
+
 ## [0.3.1](https://github.com/jolars/sortedl1/compare/v0.3.0...v0.3.1) (2025-04-11)
 
 
