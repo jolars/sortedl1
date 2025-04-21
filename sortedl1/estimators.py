@@ -130,16 +130,7 @@ class Slope(LinearModel):
         else:
             lam = np.atleast_1d(self.lam).astype(np.float64)
 
-        params = {
-            "alpha": self.alpha,
-            "intercept": self.fit_intercept,
-            "scaling": self.scaling,
-            "loss": self.loss,
-            "q": self.q,
-            "centering": self.centering,
-            "tol": self.tol,
-            "max_it": self.max_iter,
-        }
+        params = self._get_common_params()
 
         fit_slope = fit_slope_sparse if sparse.issparse(X) else fit_slope_dense
         result = fit_slope(X, y, lam, self.alpha, params)
@@ -229,19 +220,9 @@ class Slope(LinearModel):
         if alpha_min_ratio is None:
             alpha_min_ratio = -1
 
-        params = {
-            "alpha": self.alpha,
-            "intercept": self.fit_intercept,
-            "scaling": self.scaling,
-            "loss": self.loss,
-            "q": self.q,
-            "centering": self.centering,
-            "tol": self.tol,
-            "max_it": self.max_iter,
-            # Path-specific parameters
-            "path_length": path_length,
-            "alpha_min_ratio": alpha_min_ratio,
-        }
+        params = self._get_common_params(
+            path_length=path_length, alpha_min_ratio=alpha_min_ratio
+        )
 
         fit_slope_path = (
             fit_slope_path_sparse if sparse.issparse(X) else fit_slope_path_dense
@@ -275,3 +256,18 @@ class Slope(LinearModel):
         out = _predict(eta, self.loss)
 
         return np.ravel(out)
+
+    def _get_common_params(self, **additional_params):
+        """Get common parameters shared between fit and path methods."""
+        params = {
+            "alpha": self.alpha,
+            "intercept": self.fit_intercept,
+            "scaling": self.scaling,
+            "loss": self.loss,
+            "q": self.q,
+            "centering": self.centering,
+            "tol": self.tol,
+            "max_it": self.max_iter,
+        }
+        params.update(additional_params)
+        return params
