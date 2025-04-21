@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import warnings
 from typing import TypeVar, final
 
 import numpy as np
@@ -15,12 +14,9 @@ from _sortedl1 import (
 )
 from numpy.typing import ArrayLike, NDArray
 from scipy import sparse
-from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.linear_model._base import LinearModel
 from sklearn.utils.validation import (
-    check_is_fitted,
     check_X_y,
-    validate_data,
 )
 
 
