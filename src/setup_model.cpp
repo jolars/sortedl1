@@ -19,7 +19,7 @@ setup_model(const pybind11::dict& args)
   auto q = args["q"].cast<double>();
   // auto scales = as<VectorXd>(control["scales"]);
   auto scaling_type = args["scaling"].cast<std::string>();
-  // auto solver_type = as<std::string>(control["solver"]);
+  auto solver_type = args["solver"].cast<std::string>();
   // auto theta1 = as<double>(control["theta1"]);
   // auto theta2 = as<double>(control["theta2"]);
   auto tol = args["tol"].cast<double>();
@@ -33,7 +33,7 @@ setup_model(const pybind11::dict& args)
   model.setLoss(loss_type);
   // model.setOscarParameters(theta1, theta2);
   model.setQ(q);
-  // model.setSolver(solver_type);
+  model.setSolver(solver_type);
   model.setTol(tol);
   // model.setDiagnostics(diagnostics);
   //

@@ -46,6 +46,8 @@ class Slope(LinearModel):
         Maximum number of iterations.
     tol :
         Tolerance for the stopping criterion.
+    solver:
+        Solver to be used. One of "hybrid", "pgd", and "fista"
 
     Attributes
     ----------
@@ -74,6 +76,7 @@ class Slope(LinearModel):
         scaling: str = "none",
         max_iter: int = 100_000,
         tol: float = 1e-4,
+        solver: str = "hybrid",
     ):
         self.lam = lam
         self.alpha = alpha
@@ -82,6 +85,7 @@ class Slope(LinearModel):
         self.q = q
         self.max_iter = max_iter
         self.tol = tol
+        self.solver = solver
         self.scaling = scaling
         self.centering = centering
 
@@ -282,6 +286,7 @@ class Slope(LinearModel):
             "q": self.q,
             "centering": self.centering,
             "tol": self.tol,
+            "solver": self.solver,
             "max_it": self.max_iter,
         }
         params.update(additional_params)
