@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.0](https://github.com/jolars/sortedl1/compare/v0.5.1...v0.6.0) (2025-04-22)
+
+### Features
+
+* enable setting solver via `solver` ([70eb844](https://github.com/jolars/sortedl1/commit/70eb844bcb7f6c02049fb61658db54eecff2464d))
+
 ## [0.5.1](https://github.com/jolars/sortedl1/compare/v0.5.0...v0.5.1) (2025-04-22)
 
 ### Bug Fixes
