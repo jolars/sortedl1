@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0](https://github.com/jolars/sortedl1/compare/v0.4.0...v0.5.0) (2025-04-22)
+
+### Features
+
+* add path early stopping criteria ([a6b690a](https://github.com/jolars/sortedl1/commit/a6b690a144bf4f85f75feeb59da4708eda630ac3))
+
 ## [0.4.0](https://github.com/jolars/sortedl1/compare/v0.3.1...v0.4.0) (2025-04-22)
 
 ### Features
