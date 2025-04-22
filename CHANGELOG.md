@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.1](https://github.com/jolars/sortedl1/compare/v0.5.0...v0.5.1) (2025-04-22)
+
+### Bug Fixes
+
+* use correct version ([56752f5](https://github.com/jolars/sortedl1/commit/56752f5eda57677384c6d5c0def82ad39f181c03))
+
 ## [0.5.0](https://github.com/jolars/sortedl1/compare/v0.4.0...v0.5.0) (2025-04-22)
 
 ### Features
