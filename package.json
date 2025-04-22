@@ -1,0 +1,69 @@
+{
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "semantic-release": "^24.2.3",
+    "semantic-release-replace-plugin": "^1.2.7"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      [
+        "semantic-release-replace-plugin",
+        {
+          "replacements": [
+            {
+              "files": [
+                "sortedl1/__init__.py"
+              ],
+              "from": "__version__ = \".*\"",
+              "to": "__version__ = \"${nextRelease.version}\"",
+              "results": [
+                {
+                  "file": "sortedl1/__init__.py",
+                  "hasChanged": true,
+                  "numMatches": 1,
+                  "numReplacements": 1
+                }
+              ],
+              "countMatches": true
+            },
+            {
+              "files": [
+                "pyproject.toml"
+              ],
+              "from": "version = \".*\"",
+              "to": "version = \"${nextRelease.version}\"",
+              "results": [
+                {
+                  "file": "pyproject.toml",
+                  "hasChanged": true,
+                  "numMatches": 1,
+                  "numReplacements": 1
+                }
+              ],
+              "countMatches": true
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "message": "chore(release): release ${nextRelease.version}\n\n${nextRelease.notes}",
+          "assets": [
+            "pyproject.toml",
+            "sortedl1/__init__.py",
+            "CHANGELOG.md"
+          ]
+        }
+      ],
+      "@semantic-release/github"
+    ]
+  }
+}
