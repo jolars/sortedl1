@@ -1,3 +1,11 @@
+# [0.4.0](https://github.com/jolars/sortedl1/compare/v0.3.1...v0.4.0) (2025-04-22)
+
+
+### Features
+
+* add poisson, logistic, multinomial losses ([9858ae7](https://github.com/jolars/sortedl1/commit/9858ae7c0e52ba1f19a543e6343878f7b604aa29))
+* enable setting the q parameter ([05734fb](https://github.com/jolars/sortedl1/commit/05734fb15dbb6d97dd8b4339b8460c9bb3adeb96))
+
 # Changelog
 
 ## [0.3.1](https://github.com/jolars/sortedl1/compare/v0.3.0...v0.3.1) (2025-04-11)
