@@ -19,6 +19,22 @@ fit_slope_path(T& x,
                const py::dict& args)
 {
   slope::Slope model = setup_model(args);
+
+  auto tol_dev_change = args["tol_dev_change"].cast<double>();
+  auto tol_dev_ratio = args["tol_dev_ratio"].cast<double>();
+  auto path_length = args["path_length"].cast<int>();
+  auto alpha_min_ratio = args["alpha_min_ratio"].cast<double>();
+
+  // auto max_clusters = as<int>(control["max_variables"]);
+
+  model.setDevChangeTol(tol_dev_change);
+  model.setDevRatioTol(tol_dev_ratio);
+  model.setPathLength(path_length);
+
+  if (alpha_min_ratio != -1) {
+    model.setAlphaMinRatio(alpha_min_ratio);
+  }
+
   slope::SlopePath path = model.path(x, y, alpha, lambda);
 
   std::vector<Eigen::SparseMatrix<double>> coefs = path.getCoefs();
@@ -26,7 +42,7 @@ fit_slope_path(T& x,
 
   int p = coefs.front().rows();
   int m = coefs.front().cols();
-  int path_length = path.size();
+  path_length = path.size();
 
   py::array_t<double> coefs_out({ p, m, path_length });
   py::array_t<double> intercepts_out({ m, path_length });

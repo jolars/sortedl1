@@ -152,6 +152,8 @@ class Slope(LinearModel):
         alphas: None | NDArray[np.number] = None,
         path_length: int = 100,
         alpha_min_ratio: None | np.number = None,
+        tol_dev_change: float = 1e-5,
+        tol_dev_ratio: float = 0.999,
         **kwargs,
     ):
         """
@@ -181,6 +183,16 @@ class Slope(LinearModel):
             `None`, then the value is computed based on the dimension of the
             data: 1e-2 if there are more features than observations and 1e-4
             otherwise. This parameter is ignored if `alphas` is provided.
+
+        tol_dev_change :
+            Early path stopping criterion based on the change in deviance.
+            If the fractional change in deviance is less than this value, the path is
+            stopped early.
+
+        tol_dev_ratio :
+            Early path stopping criterion based on the ratio of deviance.
+            If the deviance ratio exceeds this value, the path is stopped
+            early.
 
         Returns
         -------
@@ -221,7 +233,10 @@ class Slope(LinearModel):
             alpha_min_ratio = -1
 
         params = self._get_common_params(
-            path_length=path_length, alpha_min_ratio=alpha_min_ratio
+            path_length=path_length,
+            alpha_min_ratio=alpha_min_ratio,
+            tol_dev_change=tol_dev_change,
+            tol_dev_ratio=tol_dev_ratio,
         )
 
         fit_slope_path = (
