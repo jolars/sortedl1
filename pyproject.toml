@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "sortedl1"
-version = "0.7.0"
+version = "1.0.0"
 description = "Sorted L-One Penalized Estimation"
 readme = "README.md"
 maintainers = [{ name = "Johan Larsson", email = "johanlarsson@outlook.com" }]

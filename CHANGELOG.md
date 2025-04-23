@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.0](https://github.com/jolars/sortedl1/compare/v0.7.0...v1.0.0) (2025-04-23)
+
+### ⚠ BREAKING CHANGES
+
+* **path:** allow setting maximum clusters for path method
+
+### Features
+
+* **path:** allow setting maximum clusters for path method ([3eb28c4](https://github.com/jolars/sortedl1/commit/3eb28c4c24a68c768b1eda3ca19bc02d22d1fd1b))
+
 ## [0.7.0](https://github.com/jolars/sortedl1/compare/v0.6.0...v0.7.0) (2025-04-23)
 
 ### ⚠ BREAKING CHANGES
