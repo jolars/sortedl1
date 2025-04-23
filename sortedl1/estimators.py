@@ -98,7 +98,7 @@ class Slope(LinearModel):
         fit_intercept: bool = True,
         loss: str = "quadratic",
         q: float = 0.1,
-        theta1: float = 0.5,
+        theta1: float = 1.0,
         theta2: float = 0.5,
         centering: str = "none",
         scaling: str = "none",
