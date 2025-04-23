@@ -97,6 +97,7 @@ class Slope(LinearModel):
         alpha: float = 1.0,
         fit_intercept: bool = True,
         loss: str = "quadratic",
+        lambda_type: str = "bh",
         q: float = 0.1,
         theta1: float = 1.0,
         theta2: float = 0.5,
@@ -110,6 +111,7 @@ class Slope(LinearModel):
         self.alpha = alpha
         self.fit_intercept = fit_intercept
         self.loss = loss
+        self.lambda_type = lambda_type
         self.q = q
         self.theta1 = theta1
         self.theta2 = theta2
@@ -324,6 +326,7 @@ class Slope(LinearModel):
             "intercept": self.fit_intercept,
             "scaling": self.scaling,
             "loss": self.loss,
+            "lambda_type": self.lambda_type,
             "q": self.q,
             "theta1": self.theta1,
             "theta2": self.theta2,

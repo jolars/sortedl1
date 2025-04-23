@@ -13,7 +13,7 @@ setup_model(const pybind11::dict& args)
   // auto diagnostics = as<bool>(control["diagnostics"]);
   auto intercept = args["intercept"].cast<bool>();
   // auto lambda = as<ArrayXd>(control["lambda"]);
-  // auto lambda_type = as<std::string>(control["lambda_type"]);
+  auto lambda_type = args["lambda_type"].cast<std::string>();
   auto loss_type = args["loss"].cast<std::string>();
   auto max_it = args["max_it"].cast<int>();
   auto q = args["q"].cast<double>();
@@ -42,11 +42,11 @@ setup_model(const pybind11::dict& args)
   // } else {
   model.setCentering(centering_type);
   // }
-  //
-  // if (lambda_type != "user") {
-  //   model.setLambdaType(lambda_type);
-  // }
-  //
+
+  if (lambda_type != "user") {
+    model.setLambdaType(lambda_type);
+  }
+
   // if (scaling_type == "manual") {
   //   model.setScaling(scales);
   // } else {

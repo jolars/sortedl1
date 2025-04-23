@@ -113,12 +113,19 @@ def test_oscar():
 
     alpha = 0.1
 
-    model = Slope(alpha=alpha, centering="mean", scaling="sd", theta1=0.1, theta2=2)
+    model = Slope(
+        alpha=alpha,
+        centering="mean",
+        scaling="sd",
+        theta1=0.1,
+        theta2=2,
+        lambda_type="oscar",
+    )
 
     model.fit(x, y)
 
     coef = model.coef_
 
-    coef_true = np.array([-0.006937, 0.3233, -0.811386, -0.01864, 0.0])
+    coef_true = np.array([0.0, 0.13789, -0.279516, 0.0, 0.0])
 
     np.testing.assert_array_almost_equal(coef, coef_true)
