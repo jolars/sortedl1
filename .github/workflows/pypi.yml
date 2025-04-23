@@ -73,6 +73,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: pypa/cibuildwheel@v2.23.2
+        env:
+          CIBW_ENABLE: cpython-prerelease
+          CIBW_ARCHS_WINDOWS: auto ARM64
 
       - uses: actions/upload-artifact@v4
         with:
