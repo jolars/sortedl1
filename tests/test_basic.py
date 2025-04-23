@@ -97,3 +97,28 @@ def test_logistic():
     coef_true = np.array([0.0, 1.14226639, -1.16286048, 0.34141038, -0.40745121])
 
     np.testing.assert_array_almost_equal(coef, coef_true)
+
+
+def test_oscar():
+    """Test case for OSCAR."""
+    n = 10
+    p = 5
+
+    rng = default_rng(4)
+    x = rng.standard_normal((n, p))
+
+    beta = rng.standard_normal(p)
+
+    y = x @ beta
+
+    alpha = 0.1
+
+    model = Slope(alpha=alpha, centering="mean", scaling="sd", theta1=0.1, theta2=2)
+
+    model.fit(x, y)
+
+    coef = model.coef_
+
+    coef_true = np.array([-0.006937, 0.3233, -0.811386, -0.01864, 0.0])
+
+    np.testing.assert_array_almost_equal(coef, coef_true)

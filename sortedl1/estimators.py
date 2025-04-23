@@ -40,8 +40,20 @@ class Slope(LinearModel):
         Loss (data-fitting) function to be used. One of "quadratic", "logistic",
         "multinomial", and "poisson".
 
+    lambda_type :
+        Type of lambda sequence. One of `"bh"`, `"gaussian"`, `"oscar"`, and `"lasso"`.
+
     q :
         FDR control parameter for the Sorted L1 Penalty. Must be between 0 and 1.
+        Only has effect if `lambda_type` is `"bh"` or `"gaussian"`.
+
+    theta1:
+        Slope of the penalty sequence for OSCAR type sequences. Only has effect
+        when `lambda_type` is `"oscar"`.
+
+    theta2:
+        Slope of the penalty sequence for OSCAR type sequences. Only has effect
+        when `lambda_type` is `"oscar"`.
 
     centering :
         Type of centering, one of "mean", "min", and "none".
@@ -86,6 +98,8 @@ class Slope(LinearModel):
         fit_intercept: bool = True,
         loss: str = "quadratic",
         q: float = 0.1,
+        theta1: float = 0.5,
+        theta2: float = 0.5,
         centering: str = "none",
         scaling: str = "none",
         max_iter: int = 100_000,
@@ -97,6 +111,8 @@ class Slope(LinearModel):
         self.fit_intercept = fit_intercept
         self.loss = loss
         self.q = q
+        self.theta1 = theta1
+        self.theta2 = theta2
         self.max_iter = max_iter
         self.tol = tol
         self.solver = solver
@@ -298,6 +314,8 @@ class Slope(LinearModel):
             "scaling": self.scaling,
             "loss": self.loss,
             "q": self.q,
+            "theta1": self.theta1,
+            "theta2": self.theta2,
             "centering": self.centering,
             "tol": self.tol,
             "solver": self.solver,
