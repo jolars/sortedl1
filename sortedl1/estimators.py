@@ -188,6 +188,7 @@ class Slope(LinearModel):
         alpha_min_ratio: None | np.number = None,
         tol_dev_change: float = 1e-5,
         tol_dev_ratio: float = 0.999,
+        max_clusters: int = None,
         **kwargs,
     ):
         """
@@ -228,6 +229,12 @@ class Slope(LinearModel):
             If the deviance ratio exceeds this value, the path is stopped
             early.
 
+        max_clusters :
+            Early path stopping criterion based on the number of
+            clusters (unique nonzero magnitudes among the coefficients).
+            The default, `None`, sets this value to the number of
+            observations plus one.
+
         Returns
         -------
         coefs : array, shape (n_features, n_alphas)
@@ -266,11 +273,15 @@ class Slope(LinearModel):
         if alpha_min_ratio is None:
             alpha_min_ratio = -1
 
+        if max_clusters is None:
+            max_clusters = X.shape[0] + 1
+
         params = self._get_common_params(
             path_length=path_length,
             alpha_min_ratio=alpha_min_ratio,
             tol_dev_change=tol_dev_change,
             tol_dev_ratio=tol_dev_ratio,
+            max_clusters=max_clusters,
         )
 
         fit_slope_path = (

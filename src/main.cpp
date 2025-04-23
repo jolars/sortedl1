@@ -24,12 +24,12 @@ fit_slope_path(T& x,
   auto tol_dev_ratio = args["tol_dev_ratio"].cast<double>();
   auto path_length = args["path_length"].cast<int>();
   auto alpha_min_ratio = args["alpha_min_ratio"].cast<double>();
-
-  // auto max_clusters = as<int>(control["max_variables"]);
+  auto max_clusters = args["max_clusters"].cast<int>();
 
   model.setDevChangeTol(tol_dev_change);
   model.setDevRatioTol(tol_dev_ratio);
   model.setPathLength(path_length);
+  model.setMaxClusters(max_clusters);
 
   if (alpha_min_ratio != -1) {
     model.setAlphaMinRatio(alpha_min_ratio);
