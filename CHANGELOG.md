@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.7.0](https://github.com/jolars/sortedl1/compare/v0.6.0...v0.7.0) (2025-04-23)
+
+### ⚠ BREAKING CHANGES
+
+* change default of `theta1` to 1.0
+
+### Features
+
+* change default of `theta1` to 1.0 ([7eb0930](https://github.com/jolars/sortedl1/commit/7eb09301d8d79662363c9e1a859fe84e6cf44033))
+* make lambda type selectable ([f516a3e](https://github.com/jolars/sortedl1/commit/f516a3e20f777d6483d3ccaec492661ce05b60e7))
+
 ## [0.6.0](https://github.com/jolars/sortedl1/compare/v0.5.1...v0.6.0) (2025-04-22)
 
 ### Features
