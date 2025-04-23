@@ -29,23 +29,32 @@ class Slope(LinearModel):
     ----------
     lam :
         The lambda parameter vector for the Sorted L1 Penalty.
+
     alpha :
         A multiplier for the Sorted L1 Penalty.
+
     fit_intercept :
         Whether to fit an intercept term.
+
     loss :
         Loss (data-fitting) function to be used. One of "quadratic", "logistic",
         "multinomial", and "poisson".
+
     q :
         FDR control parameter for the Sorted L1 Penalty. Must be between 0 and 1.
+
     centering :
         Type of centering, one of "mean", "min", and "none".
+
     scaling :
         Type of scaling, one of "sd", "l1", "l2", "max_abs", and "none".
+
     max_iter :
         Maximum number of iterations.
+
     tol :
         Tolerance for the stopping criterion.
+
     solver:
         Solver to be used. One of "hybrid", "pgd", and "fista"
 
@@ -53,14 +62,19 @@ class Slope(LinearModel):
     ----------
     intercept_ : float
         The estimated intercept.
+
     coef_ : ndarray
         The estimated regression coefficients in a sparse format.
+
     sparse_coef_ : scipy.sparse.csc_matrix
         The estimated regression coefficients in a dense format.
+
     lambda_ : ndarray
         The lambda parameter vector for the Sorted L1 Penalty.
+
     n_iter_ : int
         The total number of iterations from the inner loop.
+
     n_features_in_ : int
         The number of features seen by the estimator.
     """
