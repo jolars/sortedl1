@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1](https://github.com/jolars/sortedl1/compare/v1.0.0...v1.0.1) (2025-04-23)
+
+### Bug Fixes
+
+* actually pass `lambda_type` to c++ api ([4903081](https://github.com/jolars/sortedl1/commit/4903081cf9ae20d326ff5403edf4e794552483bf))
+
 ## [1.0.0](https://github.com/jolars/sortedl1/compare/v0.7.0...v1.0.0) (2025-04-23)
 
 ### ⚠ BREAKING CHANGES
