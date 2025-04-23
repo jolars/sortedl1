@@ -44,7 +44,6 @@ jobs:
 
   build_sdist:
     name: Build source distribution
-    needs: [build-and-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +61,6 @@ jobs:
 
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
-    needs: [build-and-test]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -88,7 +86,7 @@ jobs:
 
   docs:
     name: Document
-    needs: [build_wheels, build_sdist]
+    needs: [build-and-test, build_wheels, build_sdist]
     runs-on: ubuntu-latest
     permissions:
       pages: write
