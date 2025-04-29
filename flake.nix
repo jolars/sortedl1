@@ -22,7 +22,7 @@
                 pkgs.python3.pkgs.buildPythonPackage {
                   name = "sortedl1";
                   src = ./.;
-                  version = "0.2.3";
+                  version = "1.0.1";
                   pyproject = true;
 
                   dontUseCmakeConfigure = true;
