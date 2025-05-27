@@ -88,13 +88,13 @@ def test_logistic():
     lam = np.array([3, 2.5, 2, 1, 0.2])
     alpha = 0.02
 
-    model = Slope(lam, alpha, centering="mean", scaling="sd", loss="logistic")
+    model = Slope(lam, alpha, centering="mean", scaling="sd", loss="logistic", tol=1e-6)
 
     _ = model.fit(x, y)
 
     coef = model.coef_
 
-    coef_true = np.array([0.0, 1.14226639, -1.16286048, 0.34141038, -0.40745121])
+    coef_true = np.array([0.0, 1.148466, -1.171151, 0.342722, -0.409017])
 
     np.testing.assert_array_almost_equal(coef, coef_true)
 
