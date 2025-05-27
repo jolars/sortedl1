@@ -30,6 +30,7 @@ pybind11_add_module(
   src/slope/folds.cpp
   src/slope/kkt_check.cpp
   src/slope/logger.cpp
+  src/slope/losses/loss.cpp
   src/slope/losses/logistic.cpp
   src/slope/losses/multinomial.cpp
   src/slope/losses/poisson.cpp
@@ -37,7 +38,6 @@ pybind11_add_module(
   src/slope/losses/setup_loss.cpp
   src/slope/math.cpp
   src/slope/normalize.cpp
-  src/slope/ols.cpp
   src/slope/qnorm.cpp
   src/slope/regularization_sequence.cpp
   src/slope/score.cpp

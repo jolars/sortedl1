@@ -17,19 +17,18 @@ Logistic::dual(const Eigen::MatrixXd& theta,
                const Eigen::MatrixXd& y,
                const Eigen::VectorXd&)
 {
-  using Eigen::log;
+  int n = y.rows();
 
-  // Clamp probabilities to [p_min, 1-p_min]
-  Eigen::ArrayXd pr =
-    (theta + y).array().min(constants::P_MAX).max(constants::P_MIN);
+  Eigen::VectorXd eta = link(theta + y);
 
-  return -(pr * log(pr) + (1.0 - pr) * log(1.0 - pr)).mean();
+  return loss(eta, y) - theta.reshaped().dot(eta) / n;
 }
 
 Eigen::MatrixXd
-Logistic::residual(const Eigen::MatrixXd& eta, const Eigen::MatrixXd& y)
+Logistic::hessianDiagonal(const Eigen::MatrixXd& eta)
 {
-  return 1.0 / (1.0 + (-eta).array().exp()) - y.array();
+  const auto pr = inverseLink(eta);
+  return pr.array() * (1.0 - pr.array());
 }
 
 Eigen::MatrixXd
@@ -46,19 +45,6 @@ Logistic::preprocessResponse(const Eigen::MatrixXd& y)
   return y_clamped;
 }
 
-void
-Logistic::updateWeightsAndWorkingResponse(Eigen::VectorXd& w,
-                                          Eigen::VectorXd& z,
-                                          const Eigen::VectorXd& eta,
-                                          const Eigen::VectorXd& y)
-{
-  Eigen::ArrayXd pr = (1.0 / (1.0 + (-eta.array()).exp()))
-                        .min(constants::P_MAX)
-                        .max(constants::P_MIN);
-  w = pr * (1.0 - pr);
-  z = eta.array() + (y.array() - pr) / w.array();
-}
-
 Eigen::MatrixXd
 Logistic::link(const Eigen::MatrixXd& mu)
 {
@@ -70,8 +56,10 @@ Logistic::link(const Eigen::MatrixXd& mu)
 Eigen::MatrixXd
 Logistic::inverseLink(const Eigen::MatrixXd& eta)
 {
-  return eta.unaryExpr(
-    [](const double& x) { return 1.0 / (1.0 + std::exp(-x)); });
+  Eigen::ArrayXd pr =
+    1.0 / (1.0 + (-eta).array().min(constants::MAX_EXP).exp());
+
+  return pr.max(constants::P_MIN).min(constants::P_MAX);
 }
 
 Eigen::MatrixXd
