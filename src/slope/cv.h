@@ -334,7 +334,7 @@ crossValidate(Slope model,
   // Total number of evaluations (n_repeats * n_folds)
   Folds folds =
     config.predefined_folds.has_value()
-      ? Folds(config.predefined_folds.value())
+      ? Folds(*config.predefined_folds)
       : Folds(n, config.n_folds, config.n_repeats, config.random_seed);
 
   int n_evals = folds.numEvals();
