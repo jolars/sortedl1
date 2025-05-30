@@ -444,7 +444,6 @@ public:
         throw std::invalid_argument("Automatic alpha estimation is only "
                                     "available for the quadratic loss");
       }
-      // return this->estimateAlpha(x, y);
     }
 
     // Screening setup
