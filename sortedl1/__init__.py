@@ -4,4 +4,4 @@ from .estimators import Slope
 
 __all__ = ["Slope"]
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"

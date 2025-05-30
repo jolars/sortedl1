@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.1](https://github.com/jolars/sortedl1/compare/v1.1.0...v1.1.1) (2025-05-30)
+
+### Reverts
+
+* "ci: only trigger release on workflow_dispatch" ([359a31c](https://github.com/jolars/sortedl1/commit/359a31cff06caa05c2b1df6159c6b10d2ab2ac23))
+
 ## [1.1.0](https://github.com/jolars/sortedl1/compare/v1.0.1...v1.1.0) (2025-05-27)
 
 ### Features
