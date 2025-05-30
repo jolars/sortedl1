@@ -95,7 +95,6 @@ jobs:
   release:
     name: Release
     needs: [build_wheels, build_sdist]
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
