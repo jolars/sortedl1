@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.0](https://github.com/jolars/sortedl1/compare/v1.2.0...v1.3.0) (2025-06-08)
+
+### Features
+
+* update libslope to v2.8.0 ([02a5a1b](https://github.com/jolars/sortedl1/commit/02a5a1b006266996521976e422f0a898e30d8376))
+
 ## [1.2.0](https://github.com/jolars/sortedl1/compare/v1.1.1...v1.2.0) (2025-05-30)
 
 ### Features
