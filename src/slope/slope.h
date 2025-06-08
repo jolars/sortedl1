@@ -562,7 +562,7 @@ public:
 
         double tol_scaled = (std::abs(primal) + constants::EPSILON) * this->tol;
 
-        if (dual_gap <= tol_scaled) {
+        if (dual_gap <= tol_scaled || it == this->max_it) {
           bool no_violations =
             screening_rule->checkKktViolations(gradient,
                                                beta,
@@ -576,6 +576,8 @@ public:
                                                full_set);
           if (no_violations) {
             break;
+          } else {
+            it = 0; // Restart if there are KKT violations
           }
         }
 
