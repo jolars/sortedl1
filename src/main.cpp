@@ -55,11 +55,11 @@ fit_slope_path(T& x,
   for (int step = 0; step < path_length; step++) {
     Eigen::MatrixXd dense_coefs = coefs[step];
 
-    for (int j = 0; j < m; j++) {
-      intercepts_buf(j, step) = intercepts[step](j);
+    for (int k = 0; k < m; k++) {
+      intercepts_buf(k, step) = intercepts[step](k);
 
-      for (int i = 0; i < p; i++) {
-        coefs_buf(i, j, step) = dense_coefs(i, j);
+      for (int j = 0; j < p; j++) {
+        coefs_buf(j, k, step) = dense_coefs(j, k);
       }
     }
   }
