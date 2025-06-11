@@ -490,7 +490,8 @@ public:
         gradient, lambda_curr, lambda_prev, beta, full_set);
 
       int it = 0;
-      for (; it < this->max_it; ++it) {
+      int total_it = 0;
+      for (; it < this->max_it; ++it, ++total_it) {
         // Compute primal, dual, and gap
         residual = loss->residual(eta, y);
         updateGradient(gradient,
@@ -555,8 +556,6 @@ public:
         }
 
         double dual_gap = primal - dual;
-
-        // std::cout << "gap: " << dual_gap << std::endl;
 
         assert(dual_gap > -1e-6 && "Dual gap should be positive");
 
@@ -626,7 +625,7 @@ public:
                     primals,
                     duals,
                     time,
-                    it,
+                    total_it,
                     this->centering_type,
                     this->scaling_type,
                     this->intercept,
@@ -790,7 +789,7 @@ public:
       beta = fit.getCoefs(false);
     }
 
-    double alpha = 0;
+    double alpha = fit.getAlpha();
 
     Timer timer;
 
