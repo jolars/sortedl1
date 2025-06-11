@@ -23,7 +23,7 @@ def test_simple_problem():
 
     model = Slope(lam, alpha, centering="mean", scaling="sd", q=0.1)
 
-    model.fit(x, y)
+    _ = model.fit(x, y)
 
     coef = model.coef_
 
