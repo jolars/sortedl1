@@ -23,6 +23,7 @@ setup_model(const pybind11::dict& args)
   auto theta1 = args["theta1"].cast<double>();
   auto theta2 = args["theta2"].cast<double>();
   auto tol = args["tol"].cast<double>();
+  auto update_clusters = args["update_clusters"].cast<bool>();
 
   slope::Slope model;
 
@@ -35,6 +36,7 @@ setup_model(const pybind11::dict& args)
   model.setQ(q);
   model.setSolver(solver_type);
   model.setTol(tol);
+  model.setUpdateClusters(tol);
   // model.setDiagnostics(diagnostics);
   //
   // if (centering_type == "manual") {

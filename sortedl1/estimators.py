@@ -70,6 +70,10 @@ class Slope(LinearModel):
     solver:
         Solver to be used. One of "hybrid", "pgd", and "fista"
 
+    update_clusters:
+        Wheter to update the clusters between hybrid coordinate
+        descent steps.
+
     Attributes
     ----------
     intercept_ : float
@@ -106,6 +110,7 @@ class Slope(LinearModel):
         max_iter: int = 100_000,
         tol: float = 1e-4,
         solver: str = "hybrid",
+        update_clusters: bool = False,
     ):
         self.lam = lam
         self.alpha = alpha
@@ -120,6 +125,7 @@ class Slope(LinearModel):
         self.solver = solver
         self.scaling = scaling
         self.centering = centering
+        self.update_clusters = update_clusters
 
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
@@ -334,6 +340,7 @@ class Slope(LinearModel):
             "tol": self.tol,
             "solver": self.solver,
             "max_it": self.max_iter,
+            "update_clusters": self.update_clusters,
         }
         params.update(additional_params)
         return params
