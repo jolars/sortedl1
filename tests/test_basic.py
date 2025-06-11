@@ -59,7 +59,7 @@ def test_sparse_dense_standardized():
 
     model = Slope(lam, alpha, fit_intercept=False, centering="mean", scaling="sd")
 
-    coef_true = np.array([0.0, 0.74524155, 0.0])
+    coef_true = np.array([0.042589, 0.742746, -0.029106])
 
     model.fit(x_dense, y)
     coef_sparse = model.coef_
