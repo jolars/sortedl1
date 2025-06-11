@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.1](https://github.com/jolars/sortedl1/compare/v1.4.0...v1.4.1) (2025-06-11)
+
+### Bug Fixes
+
+* correctly pass `update_clusters` flag ([60d544e](https://github.com/jolars/sortedl1/commit/60d544ea42a2947a98e08044b70a8286d3cc7204))
+
 ## [1.4.0](https://github.com/jolars/sortedl1/compare/v1.3.1...v1.4.0) (2025-06-11)
 
 ### Features
