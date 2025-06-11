@@ -2,7 +2,7 @@
 
 import numpy as np
 from numpy.random import default_rng
-from scipy.sparse import csc_array, random
+from scipy.sparse import csc_array
 
 from sortedl1 import Slope
 
