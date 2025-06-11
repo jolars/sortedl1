@@ -36,7 +36,7 @@ setup_model(const pybind11::dict& args)
   model.setQ(q);
   model.setSolver(solver_type);
   model.setTol(tol);
-  model.setUpdateClusters(tol);
+  model.setUpdateClusters(update_clusters);
   // model.setDiagnostics(diagnostics);
   //
   // if (centering_type == "manual") {
