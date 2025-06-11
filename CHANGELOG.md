@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.0](https://github.com/jolars/sortedl1/compare/v1.3.1...v1.4.0) (2025-06-11)
+
+### Features
+
+* add `update_clusters` to `Slope()` ([de4d706](https://github.com/jolars/sortedl1/commit/de4d70611d74b5121fb52679b32ce42d6e899484))
+
 ## [1.3.1](https://github.com/jolars/sortedl1/compare/v1.3.0...v1.3.1) (2025-06-11)
 
 ### Bug Fixes
