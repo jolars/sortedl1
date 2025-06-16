@@ -16,6 +16,8 @@ jobs:
     permissions:
       actions: write
       contents: read
+      pages: write
+      id-token: write
 
   build_sdist:
     name: Build source distribution
