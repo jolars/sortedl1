@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/jolars/sortedl1/compare/v1.4.1...v1.5.0) (2025-06-16)
+
+### Features
+
+* enable randomized CD type ([a4abef1](https://github.com/jolars/sortedl1/commit/a4abef1a8e1865a402aa309f298b7e0723e3a18a))
+* update libslope to v3.0.0 ([040ecc6](https://github.com/jolars/sortedl1/commit/040ecc6045f421b3c51e7bedfb905d686f044212))
+
 ## [1.4.1](https://github.com/jolars/sortedl1/compare/v1.4.0...v1.4.1) (2025-06-11)
 
 ### Bug Fixes
