@@ -200,6 +200,13 @@ public:
   void setHybridCdIterations(int cd_iterations);
 
   /**
+   * @brief Sets the frequence of proximal gradient descent steps.
+   *
+   * @param cd_type The type of coordinate descent to use in the hybrid solver.
+   */
+  void setHybridCdType(const std::string& cd_type);
+
+  /**
    * @brief Sets the lambda type for regularization weights.
    *
    * @param lambda_type The method used to compute regularization weights.
@@ -416,7 +423,8 @@ public:
                               jit_normalization,
                               this->intercept,
                               this->update_clusters,
-                              this->cd_iterations);
+                              this->cd_iterations,
+                              this->cd_type);
 
     updateGradient(gradient,
                    x.derived(),
@@ -827,7 +835,7 @@ public:
     MatrixXd w_ones = MatrixXd::Ones(n, m);
     MatrixXd z = y;
 
-    Clusters clusters = fit.getClusters();
+    slope::Clusters clusters(beta);
 
     int passes = 0;
 
@@ -899,7 +907,7 @@ public:
                       beta.reshaped(p, m).sparseView(),
                       clusters,
                       alpha,
-                      lambda_relax,
+                      fit.getLambda(),
                       dev,
                       fit.getNullDeviance(),
                       primals,
@@ -935,20 +943,15 @@ public:
   {
     std::vector<SlopeFit> fits;
 
-    Eigen::VectorXd beta0 = path(0).getIntercepts(false);
-    Eigen::VectorXd beta = path(0).getCoefs(false);
-
     for (size_t i = 0; i < path.size(); i++) {
-      auto relaxed_fit = relax(path(i), x, y, gamma, beta0, beta);
+      // TODO: Reinstate warm starts. Need to be careful about
+      // the warm started values though since they have to
+      // agree with the cluster or we will run into trouble.
+      // We can probably fix this by using the signs
+      // of the cluster object rather than the betas though.
+      auto relaxed_fit = relax(path(i), x, y, gamma);
 
       fits.emplace_back(relaxed_fit);
-
-      // Update warm starts
-      // TODO: Maybe be more clever about whether to use the
-      // previous values or the regularized estimates and warm starts.
-      // Maybe just pick the solution with larger coefficients?
-      beta0 = relaxed_fit.getIntercepts(false);
-      beta = relaxed_fit.getCoefs(false);
     }
 
     return fits;
@@ -960,7 +963,7 @@ private:
   bool intercept = true;
   bool modify_x = false;
   bool return_clusters = true;
-  bool update_clusters = false;
+  bool update_clusters = true;
   double alpha_min_ratio = -1;
   double dev_change_tol = 1e-5;
   double dev_ratio_tol = 0.999;
@@ -979,6 +982,7 @@ private:
   int path_length = 100;
   std::optional<int> max_clusters = std::nullopt;
   std::string alpha_type = "path";
+  std::string cd_type = "cyclical";
   std::string centering_type = "mean";
   std::string lambda_type = "bh";
   std::string loss_type = "quadratic";
