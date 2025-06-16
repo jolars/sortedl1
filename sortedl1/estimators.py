@@ -74,6 +74,11 @@ class Slope(LinearModel):
         Wheter to update the clusters between hybrid coordinate
         descent steps.
 
+    hybrid_cd_type:
+        Type of hybrid coordinate descent to be used. One of "cyclical" and
+        "permuted" (random permutations). Only has effect when `solver` is
+        `"hybrid"` or possibly `"auto"`.
+
     Attributes
     ----------
     intercept_ : float
@@ -111,6 +116,7 @@ class Slope(LinearModel):
         tol: float = 1e-4,
         solver: str = "hybrid",
         update_clusters: bool = False,
+        hybrid_cd_type: str = "cyclical",
     ):
         self.lam = lam
         self.alpha = alpha
@@ -126,6 +132,7 @@ class Slope(LinearModel):
         self.scaling = scaling
         self.centering = centering
         self.update_clusters = update_clusters
+        self.hybrid_cd_type = hybrid_cd_type
 
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
@@ -341,6 +348,7 @@ class Slope(LinearModel):
             "solver": self.solver,
             "max_it": self.max_iter,
             "update_clusters": self.update_clusters,
+            "hybrid_cd_type": self.hybrid_cd_type,
         }
         params.update(additional_params)
         return params

@@ -129,3 +129,33 @@ def test_oscar():
     coef_true = np.array([0.0, 0.13789, -0.279516, 0.0, 0.0])
 
     np.testing.assert_array_almost_equal(coef, coef_true)
+
+
+def test_hybrid_type():
+    """Test case for hybrid type."""
+    n = 100
+    p = 20
+
+    rng = default_rng(28)
+    x = rng.standard_normal((n, p))
+
+    beta = rng.standard_normal(p)
+
+    y = x @ beta
+
+    alpha = 1e-4
+
+    model = Slope(
+        alpha=alpha,
+        hybrid_cd_type="cyclical",
+    )
+
+    model.fit(x, y)
+    coef_cyclical = model.coef_
+
+    model.hybrid_cd_type = "permuted"
+
+    model.fit(x, y)
+    coef_random = model.coef_
+
+    np.testing.assert_array_almost_equal(coef_random, coef_cyclical)
