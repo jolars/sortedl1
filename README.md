@@ -1,6 +1,6 @@
 # sortedl1 <a href="https://jolars.github.io/sortedl1/"><img src="https://github.com/jolars/sortedl1/raw/main/docs/source/_static/slope-horizontal.svg" align="right" width="140" /></a>
 
-[![CI](https://github.com/jolars/sortedl1/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/jolars/sortedl1/actions/workflows/ci.yaml)
+[![Tests](https://github.com/jolars/sortedl1/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/jolars/sortedl1/actions/workflows/test.yaml)
 [![PyPI version](https://badge.fury.io/py/sortedl1.svg)](https://badge.fury.io/py/sortedl1)
 [![codecov](https://codecov.io/gh/jolars/sortedl1/graph/badge.svg?token=tMVGB2LHcM)](https://codecov.io/gh/jolars/sortedl1)
 
