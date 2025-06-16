@@ -65,7 +65,6 @@ jobs:
 
   build_sdist:
     name: Build source distribution
-    needs: [build-and-test, test-docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -76,9 +75,13 @@ jobs:
       - name: Check metadata
         run: pipx run twine check dist/*
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
+
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
-    needs: [build-and-test, test-docs]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -92,3 +95,12 @@ jobs:
         env:
           CIBW_ENABLE: cpython-prerelease
           CIBW_ARCHS_WINDOWS: auto ARM64
+
+      - name: Verify clean directory
+        run: git diff --exit-code
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}
+          path: wheelhouse/*.whl
