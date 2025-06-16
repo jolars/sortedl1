@@ -21,7 +21,7 @@ jobs:
 
   docs:
     name: Document
-    needs: [build-and-test, build_wheels, build_sdist]
+    needs: [build-and-test]
     runs-on: ubuntu-latest
     permissions:
       pages: write
