@@ -159,3 +159,30 @@ def test_hybrid_type():
     coef_random = model.coef_
 
     np.testing.assert_array_almost_equal(coef_random, coef_cyclical)
+
+
+def test_screening():
+    """Test case for feature screening."""
+    n = 50
+    p = 100
+
+    rng = default_rng(28)
+    x = rng.standard_normal((n, p))
+
+    beta = rng.standard_normal(p)
+
+    y = x @ beta
+
+    alpha = 0.1
+
+    model = Slope(alpha=alpha, screening="none", tol=1e-6)
+
+    model.fit(x, y)
+    coef_none = model.coef_
+
+    model.screening = "strong"
+
+    model.fit(x, y)
+    coef_strong = model.coef_
+
+    np.testing.assert_array_almost_equal(coef_strong, coef_none, decimal=5)

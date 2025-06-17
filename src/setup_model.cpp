@@ -25,6 +25,7 @@ setup_model(const pybind11::dict& args)
   auto tol = args["tol"].cast<double>();
   auto update_clusters = args["update_clusters"].cast<bool>();
   auto hybrid_cd_type = args["hybrid_cd_type"].cast<std::string>();
+  auto screening_type = args["screening"].cast<std::string>();
 
   slope::Slope model;
 
@@ -39,6 +40,7 @@ setup_model(const pybind11::dict& args)
   model.setTol(tol);
   model.setUpdateClusters(update_clusters);
   model.setHybridCdType(hybrid_cd_type);
+  model.setScreening(screening_type);
   // model.setDiagnostics(diagnostics);
   //
   // if (centering_type == "manual") {

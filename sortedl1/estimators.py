@@ -79,6 +79,9 @@ class Slope(LinearModel):
         "permuted" (random permutations). Only has effect when `solver` is
         `"hybrid"` or possibly `"auto"`.
 
+    screening:
+        Type of feature screening to be used. One of "none" and "strong".
+
     Attributes
     ----------
     intercept_ : float
@@ -117,6 +120,7 @@ class Slope(LinearModel):
         solver: str = "hybrid",
         update_clusters: bool = False,
         hybrid_cd_type: str = "cyclical",
+        screening: str = "strong",
     ):
         self.lam = lam
         self.alpha = alpha
@@ -133,6 +137,7 @@ class Slope(LinearModel):
         self.centering = centering
         self.update_clusters = update_clusters
         self.hybrid_cd_type = hybrid_cd_type
+        self.screening = screening
 
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
@@ -349,6 +354,7 @@ class Slope(LinearModel):
             "max_it": self.max_iter,
             "update_clusters": self.update_clusters,
             "hybrid_cd_type": self.hybrid_cd_type,
+            "screening": self.screening,
         }
         params.update(additional_params)
         return params
