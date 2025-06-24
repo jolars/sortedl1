@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections import namedtuple
 from typing import TypeVar, final
 
 import numpy as np
@@ -22,16 +21,7 @@ from sklearn.utils.validation import (
     check_X_y,
 )
 
-# Define the named tuple for CV results
-CvResults = namedtuple(
-    "CvResults",
-    ["best_ind", "best_score", "best_alpha_ind", "scores", "means", "errors"],
-)
-
-PathResults = namedtuple(
-    "PathResults",
-    ["coefs", "intercepts", "alphas", "lambdas"],
-)
+from .results import CvResults, PathResults
 
 
 @final
@@ -369,8 +359,6 @@ class Slope(LinearModel):
         params["metric"] = metric
         params["predefined_folds"] = predefined_folds
 
-        print(params)
-
         cv_slope = cv_slope_sparse if sparse.issparse(X) else cv_slope_dense
 
         result = cv_slope(X, y, lam, alphas, params)
@@ -379,9 +367,12 @@ class Slope(LinearModel):
             best_ind=result[0],
             best_score=result[1],
             best_alpha_ind=result[2],
+            metric=metric,
             scores=result[3],
             means=result[4],
             errors=result[5],
+            alphas=result[6],
+            params=result[7],
         )
 
     def predict(self, X: ArrayLike | sparse.sparray) -> np.ndarray:

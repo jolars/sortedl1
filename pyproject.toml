@@ -48,6 +48,7 @@ tracker = "https://github.com/jolars/sortedl1/issues"
 [project.optional-dependencies]
 docs = ["sphinx", "furo", "sphinx-copybutton", "myst-parser"]
 tests = ["pytest", "sphinx"]
+plots = ["matplotlib>=3.5.0"]
 
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"

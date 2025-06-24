@@ -22,7 +22,7 @@
                 pkgs.python3.pkgs.buildPythonPackage {
                   name = "sortedl1";
                   src = ./.;
-                  version = "1.2.0";
+                  version = "1.5.0";
                   pyproject = true;
 
                   dontUseCmakeConfigure = true;
@@ -41,6 +41,7 @@
                     sphinx-copybutton
                     myst-parser
                     pytest
+                    matplotlib
                   ];
                   disabledTests = [
                     "test_cdist"
