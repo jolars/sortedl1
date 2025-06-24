@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.0](https://github.com/jolars/sortedl1/compare/v1.5.0...v1.6.0) (2025-06-24)
+
+### Features
+
+* add CV method to `Slope` class ([#37](https://github.com/jolars/sortedl1/issues/37)) ([a4752da](https://github.com/jolars/sortedl1/commit/a4752da18fd9aa52824c0f438d5926a86060b3c6))
+* add plotting for cv and path objects ([#38](https://github.com/jolars/sortedl1/issues/38)) ([70c5bef](https://github.com/jolars/sortedl1/commit/70c5bef3419302a9549701e140e6431e18a2df62))
+* enable feature screening toggling ([16a9820](https://github.com/jolars/sortedl1/commit/16a9820010224f267598f60ffd958da60c92c1c6))
+* set `update_clusters` to `True` by default ([b34ff38](https://github.com/jolars/sortedl1/commit/b34ff38b31ef4ace07d3a2ef7bf9da11e9c41e46))
+
 ## [1.5.0](https://github.com/jolars/sortedl1/compare/v1.4.1...v1.5.0) (2025-06-16)
 
 ### Features
