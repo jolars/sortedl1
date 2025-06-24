@@ -175,7 +175,7 @@ def test_screening():
 
     alpha = 0.1
 
-    model = Slope(alpha=alpha, screening="none", tol=1e-6)
+    model = Slope(alpha=alpha, screening="none", tol=1e-8)
 
     model.fit(x, y)
     coef_none = model.coef_

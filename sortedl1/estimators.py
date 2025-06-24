@@ -132,7 +132,7 @@ class Slope(LinearModel):
         max_iter: int = 100_000,
         tol: float = 1e-4,
         solver: str = "hybrid",
-        update_clusters: bool = False,
+        update_clusters: bool = True,
         hybrid_cd_type: str = "cyclical",
         screening: str = "strong",
     ):
