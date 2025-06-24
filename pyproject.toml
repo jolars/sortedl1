@@ -14,11 +14,6 @@ authors = [
   { name = "Quentin Klopfenstein" },
   { name = "Jonas Wallin", email = "jonas.wallin@stat.lu.se" },
   { name = "Malgorzata Bogdan" },
-  { name = "Ewout van den Berg" },
-  { name = "Chiarai Sabatti" },
-  { name = "Emmanuel Candes" },
-  { name = "Evan Patterson" },
-  { name = "Weijie Su" },
 ]
 license = { file = "LICENSE" }
 keywords = ["statistics", "machine-learning"]
