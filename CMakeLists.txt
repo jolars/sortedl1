@@ -1,6 +1,6 @@
 # Require CMake 3.15+ (matching scikit-build-core) Use new versions of all
 # policies up to CMake 3.27
-cmake_minimum_required(VERSION 3.15...3.29)
+cmake_minimum_required(VERSION 3.30...3.31)
 
 # Scikit-build-core sets these values for you, or you can just hard-code the
 # name and version.
@@ -15,14 +15,11 @@ project(
 set(PYBIND11_FINDPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 
+set(OpenMP_RUNTIME_MSVC "llvm")
 find_package(OpenMP)
 if(OpenMP_FOUND)
     message(STATUS "OpenMP found: ${OpenMP_CXX_FLAGS}")
-    if(MSVC)
-        add_compile_options(/openmp:llvm)
-    else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    endif()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/external)
