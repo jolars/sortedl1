@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+from collections import namedtuple
 from typing import TypeVar, final
 
 import numpy as np
 from _sortedl1 import (
     _predict,
+    cv_slope_dense,
+    cv_slope_sparse,
     fit_slope_dense,
     fit_slope_path_dense,
     fit_slope_path_sparse,
@@ -17,6 +20,17 @@ from scipy import sparse
 from sklearn.linear_model._base import LinearModel
 from sklearn.utils.validation import (
     check_X_y,
+)
+
+# Define the named tuple for CV results
+CvResults = namedtuple(
+    "CvResults",
+    ["best_ind", "best_score", "best_alpha_ind", "scores", "means", "errors"],
+)
+
+PathResults = namedtuple(
+    "PathResults",
+    ["coefs", "intercepts", "alphas", "lambdas"],
 )
 
 
@@ -167,16 +181,7 @@ class Slope(LinearModel):
         self :
             Fitted estimator.
         """
-        X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
-        y = np.atleast_1d(y).astype(np.float64)
-        if y.ndim == 1:
-            y = y.reshape(-1, 1)
-
-        if X.shape[0] == 1:
-            raise ValueError("Data contains only one sample")
-
-        if np.unique(y).size == 1:
-            raise ValueError("y contains only one unique value")
+        X, y = self._validate_data(X, y)
 
         if self.lam is None:
             # If None, the lambda value is computed automatically in Slope
@@ -210,7 +215,7 @@ class Slope(LinearModel):
         tol_dev_ratio: float = 0.999,
         max_clusters: int = None,
         **kwargs,
-    ):
+    ) -> PathResults:
         """
         Fit the SLOPE path
 
@@ -270,38 +275,15 @@ class Slope(LinearModel):
             The lambda values for the path.
 
         """
-        X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
-        y = np.atleast_1d(y).astype(np.float64)
-
-        if y.ndim == 1:
-            y = y.reshape(-1, 1)
-
-        if X.shape[0] == 1:
-            raise ValueError("Data contains only one sample")
-
-        if np.unique(y).size == 1:
-            raise ValueError("y contains only one unique value")
-
-        if self.lam is None:
-            lam = np.array([], dtype=np.float64)
-        else:
-            lam = np.atleast_1d(self.lam).astype(np.float64)
-
-        if alphas is None:
-            alphas = np.array([], dtype=np.float64)
-
-        if alpha_min_ratio is None:
-            alpha_min_ratio = -1
-
-        if max_clusters is None:
-            max_clusters = X.shape[0] + 1
-
-        params = self._get_common_params(
-            path_length=path_length,
-            alpha_min_ratio=alpha_min_ratio,
-            tol_dev_change=tol_dev_change,
-            tol_dev_ratio=tol_dev_ratio,
-            max_clusters=max_clusters,
+        X, y = self._validate_data(X, y)
+        lam, alphas, params = self._prepare_path_params(
+            alphas,
+            path_length,
+            alpha_min_ratio,
+            tol_dev_change,
+            tol_dev_ratio,
+            max_clusters,
+            **kwargs,
         )
 
         fit_slope_path = (
@@ -310,12 +292,97 @@ class Slope(LinearModel):
 
         result = fit_slope_path(X, y, lam, alphas, params)
 
-        intercepts = result[0]
-        coefs = result[1]
-        lambdas = result[2]
-        alphas = result[3]
+        return PathResults(
+            intercepts=result[0], coefs=result[1], lambdas=result[2], alphas=result[3]
+        )
 
-        return coefs, intercepts, alphas, lambdas
+    def cv(
+        self,
+        X,
+        y,
+        n_folds=10,
+        n_repeats=1,
+        predefined_folds=None,
+        metric="mse",
+        alphas=None,
+        q=[0.1, 0.2],
+        gamma=[1.0],
+        **kwargs,
+    ) -> CvResults:
+        """
+        Tune SLOPE with k-folds repeated cross-validation.
+
+        Parameters
+        ----------
+        X :
+            Feature matrix, where n_samples is the number of samples and
+            n_features is the number of features.
+        y :
+            Response vector.
+
+        n_folds : int
+            Number of folds for cross-validation.
+
+        n_repeats : int
+            Number of times to repeat the cross-validation.
+
+        alphas :
+            An array of lambda values to use for cross-validation. If None,
+            the lambda values are computed automatically from a run on the full data set.
+
+        q : array-like
+            FDR control parameter for the Sorted L1 Penalty. Must be between 0 and 1.
+            Only has effect if `lambda_type` is `"bh"` or `"gaussian"`.
+
+        gamma: array-like
+            The relaxation parameter.
+
+        **kwargs :
+            Additional parameters passed on to the `path` method.
+
+        Returns
+        -------
+        cv_results : dict
+            A dictionary containing cross-validation results.
+        """
+        X, y = self._validate_data(X, y)
+        lam, alphas, params = self._prepare_path_params(alphas, **kwargs)
+
+        n = X.shape[0]
+
+        if predefined_folds is None:
+            rng = np.random.default_rng()
+            predefined_folds = np.array(
+                [np.array_split(rng.permutation(n), n_folds) for _ in range(n_repeats)],
+                dtype=object,
+            )
+        else:
+            if (
+                not isinstance(predefined_folds, np.ndarray)
+                or predefined_folds.dtype != object
+            ):
+                msg = "Predefined_folds must be a numpy array of arrays."
+                raise ValueError(msg)
+
+        params["cv_q"] = np.asarray(q, dtype=np.float64)
+        params["cv_gamma"] = np.asarray(gamma, dtype=np.float64)
+        params["metric"] = metric
+        params["predefined_folds"] = predefined_folds
+
+        print(params)
+
+        cv_slope = cv_slope_sparse if sparse.issparse(X) else cv_slope_dense
+
+        result = cv_slope(X, y, lam, alphas, params)
+
+        return CvResults(
+            best_ind=result[0],
+            best_score=result[1],
+            best_alpha_ind=result[2],
+            scores=result[3],
+            means=result[4],
+            errors=result[5],
+        )
 
     def predict(self, X: ArrayLike | sparse.sparray) -> np.ndarray:
         """
@@ -358,3 +425,61 @@ class Slope(LinearModel):
         }
         params.update(additional_params)
         return params
+
+    def _prepare_path_params(
+        self,
+        alphas: None | NDArray[np.number] = None,
+        path_length: int = 100,
+        alpha_min_ratio: None | np.number = None,
+        tol_dev_change: float = 1e-5,
+        tol_dev_ratio: float = 0.999,
+        max_clusters: int | None = None,
+        **kwargs,
+    ):
+        """Prepare parameters for path fitting."""
+        if self.lam is None:
+            lam = np.array([], dtype=np.float64)
+        else:
+            lam = np.atleast_1d(self.lam).astype(np.float64)
+
+        if alphas is None:
+            alphas = np.array([], dtype=np.float64)
+
+        if alpha_min_ratio is None:
+            alpha_min_ratio = -1
+
+        if max_clusters is None:
+            max_clusters = -1
+
+        params = self._get_common_params(
+            path_length=path_length,
+            alpha_min_ratio=alpha_min_ratio,
+            tol_dev_change=tol_dev_change,
+            tol_dev_ratio=tol_dev_ratio,
+            max_clusters=max_clusters,
+            **kwargs,
+        )
+
+        return lam, alphas, params
+
+    def _validate_data(
+        self,
+        X: NDArray[np.number] | sparse.csc_array,
+        y: NDArray[np.number] | list[float] | tuple[float, ...],
+    ):
+        """Validate and prepare X and y data."""
+        X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
+        y = np.atleast_1d(y).astype(np.float64)
+
+        if y.ndim == 1:
+            y = y.reshape(-1, 1)
+
+        if X.shape[0] == 1:
+            msg = "Data contains only one sample"
+            raise ValueError(msg)
+
+        if np.unique(y).size == 1:
+            msg = "y contains only one unique value"
+            raise ValueError(msg)
+
+        return X, y

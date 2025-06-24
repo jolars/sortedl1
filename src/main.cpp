@@ -1,10 +1,12 @@
 #include "setup_model.h"
+#include "slope/cv.h"
 #include "slope/slope.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <pybind11/eigen.h>
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 using namespace pybind11::literals;
 
@@ -29,7 +31,10 @@ fit_slope_path(T& x,
   model.setDevChangeTol(tol_dev_change);
   model.setDevRatioTol(tol_dev_ratio);
   model.setPathLength(path_length);
-  model.setMaxClusters(max_clusters);
+
+  if (max_clusters != -1) {
+    model.setMaxClusters(max_clusters);
+  }
 
   if (alpha_min_ratio != -1) {
     model.setAlphaMinRatio(alpha_min_ratio);
@@ -86,6 +91,76 @@ fit_slope(T& x,
                         res.getPasses());
 }
 
+template<typename T>
+pybind11::tuple
+cv_slope(T& x,
+         const Eigen::MatrixXd& y,
+         const Eigen::ArrayXd& lambda,
+         const Eigen::ArrayXd& alpha,
+         const py::dict& args)
+{
+  slope::Slope model = setup_model(args);
+
+  auto tol_dev_change = args["tol_dev_change"].cast<double>();
+  auto tol_dev_ratio = args["tol_dev_ratio"].cast<double>();
+  auto path_length = args["path_length"].cast<int>();
+  auto alpha_min_ratio = args["alpha_min_ratio"].cast<double>();
+  auto max_clusters = args["max_clusters"].cast<int>();
+
+  model.setDevChangeTol(tol_dev_change);
+  model.setDevRatioTol(tol_dev_ratio);
+  model.setPathLength(path_length);
+
+  if (max_clusters != -1) {
+    model.setMaxClusters(max_clusters);
+  }
+
+  if (alpha_min_ratio != -1) {
+    model.setAlphaMinRatio(alpha_min_ratio);
+  }
+
+  auto cv_config = slope::CvConfig();
+
+  std::map<std::string, std::vector<double>> hyperparams;
+  hyperparams["q"] = args["cv_q"].cast<std::vector<double>>();
+  hyperparams["gamma"] = args["cv_gamma"].cast<std::vector<double>>();
+
+  cv_config.hyperparams = hyperparams;
+  cv_config.metric = args["metric"].cast<std::string>();
+  cv_config.predefined_folds =
+    args["predefined_folds"].cast<std::vector<std::vector<std::vector<int>>>>();
+
+  auto res = crossValidate(model, x, y, cv_config);
+
+  int n_slices = res.results.size();
+  int n_rows = res.results.front().score.rows();
+  int n_cols = res.results.front().score.cols();
+
+  py::array_t<double> results({ n_rows, n_cols, n_slices });
+  py::array_t<double> means({ n_cols, n_slices });
+  py::array_t<double> errors({ n_cols, n_slices });
+
+  auto results_buf = results.mutable_unchecked<3>();
+  auto means_buf = means.mutable_unchecked<2>();
+  auto errors_buf = errors.mutable_unchecked<2>();
+
+  for (int k = 0; k < n_slices; k++) {
+    const Eigen::MatrixXd& grid_result = res.results[k].score;
+
+    for (int j = 0; j < n_cols; j++) {
+      means_buf(j, k) = res.results[k].mean_scores(j);
+      errors_buf(j, k) = res.results[k].std_errors(j);
+
+      for (int i = 0; i < n_rows; i++) {
+        results_buf(i, j, k) = grid_result(i, j);
+      }
+    }
+  }
+
+  return py::make_tuple(
+    res.best_score, res.best_ind, res.best_alpha_ind, results, means, errors);
+}
+
 pybind11::tuple
 fit_slope_dense(Eigen::MatrixXd& x,
                 const Eigen::MatrixXd& y,
@@ -126,6 +201,26 @@ fit_slope_path_sparse(Eigen::SparseMatrix<double>& x,
   return fit_slope_path(x, y, lambda, alpha, args);
 }
 
+pybind11::tuple
+cv_slope_dense(Eigen::SparseMatrix<double>& x,
+               const Eigen::MatrixXd& y,
+               const Eigen::ArrayXd& lambda,
+               const Eigen::ArrayXd& alpha,
+               const py::dict& args)
+{
+  return cv_slope(x, y, lambda, alpha, args);
+}
+
+pybind11::tuple
+cv_slope_sparse(Eigen::MatrixXd& x,
+                const Eigen::MatrixXd& y,
+                const Eigen::ArrayXd& lambda,
+                const Eigen::ArrayXd& alpha,
+                const py::dict& args)
+{
+  return cv_slope(x, y, lambda, alpha, args);
+}
+
 Eigen::MatrixXd
 _predict(const Eigen::MatrixXd& eta, const std::string& loss_type)
 {
@@ -139,5 +234,7 @@ PYBIND11_MODULE(_sortedl1, m)
   m.def("fit_slope_sparse", &fit_slope_sparse);
   m.def("fit_slope_path_dense", &fit_slope_path_dense);
   m.def("fit_slope_path_sparse", &fit_slope_path_sparse);
+  m.def("cv_slope_dense", &cv_slope_dense);
+  m.def("cv_slope_sparse", &cv_slope_sparse);
   m.def("_predict", &_predict);
 }
