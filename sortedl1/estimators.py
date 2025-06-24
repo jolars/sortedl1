@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections import namedtuple
 from typing import TypeVar, final
 
 import numpy as np
@@ -22,16 +21,7 @@ from sklearn.utils.validation import (
     check_X_y,
 )
 
-# Define the named tuple for CV results
-CvResults = namedtuple(
-    "CvResults",
-    ["best_ind", "best_score", "best_alpha_ind", "scores", "means", "errors"],
-)
-
-PathResults = namedtuple(
-    "PathResults",
-    ["coefs", "intercepts", "alphas", "lambdas"],
-)
+from .results import CvResults, PathResults
 
 
 @final
