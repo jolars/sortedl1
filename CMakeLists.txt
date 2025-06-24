@@ -15,6 +15,12 @@ project(
 set(PYBIND11_FINDPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 
+find_package(OpenMP)
+if(OpenMP_FOUND)
+    message(STATUS "OpenMP found: ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR}/external)
 
 # Add a library using FindPython's tooling (pybind11 also provides a helper like
