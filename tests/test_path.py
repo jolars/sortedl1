@@ -39,3 +39,8 @@ def test_path_plot():
     res = model.path(x, y.ravel())
 
     fig, ax = res.plot()
+
+    assert fig.__class__.__name__ == "Figure"
+
+    lines = ax.get_lines()
+    assert len(lines) > 0

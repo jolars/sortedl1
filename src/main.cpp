@@ -133,54 +133,31 @@ cv_slope(T& x,
   auto res = crossValidate(model, x, y, cv_config);
 
   int n_slices = res.results.size();
-  int n_rows = res.results.front().score.rows();
-  int n_cols_max = 0;
 
-  for (const auto& result : res.results) {
-    n_cols_max = std::max(n_cols_max, static_cast<int>(result.score.cols()));
-  }
-
-  py::array_t<double> results({ n_rows, n_cols_max, n_slices });
-  py::array_t<double> means({ n_cols_max, n_slices });
-  py::array_t<double> errors({ n_cols_max, n_slices });
-  py::array_t<double> alphas({ n_cols_max, n_slices });
-  py::array_t<double> lengths({ n_slices });
-
-  auto results_buf = results.mutable_unchecked<3>();
-  auto means_buf = means.mutable_unchecked<2>();
-  auto errors_buf = errors.mutable_unchecked<2>();
-  auto alphas_buf = alphas.mutable_unchecked<2>();
-  auto lengths_buf = lengths.mutable_unchecked<1>();
+  std::vector<Eigen::MatrixXd> scores;
+  std::vector<Eigen::ArrayXd> means;
+  std::vector<Eigen::ArrayXd> errors;
+  std::vector<Eigen::ArrayXd> alphas;
+  std::vector<std::map<std::string, double>> params;
 
   for (int k = 0; k < n_slices; k++) {
     const auto& grid_result = res.results[k];
-    int n_cols = grid_result.score.cols();
-    lengths_buf(k) = n_cols;
 
-    for (int j = 0; j < n_cols; j++) {
-      means_buf(j, k) = grid_result.mean_scores(j);
-      errors_buf(j, k) = grid_result.std_errors(j);
-      alphas_buf(j, k) = grid_result.alphas(j);
-
-      for (int i = 0; i < n_rows; i++) {
-        results_buf(i, j, k) = grid_result.score(i, j);
-      }
-    }
+    scores.emplace_back(grid_result.score);
+    means.emplace_back(grid_result.mean_scores);
+    errors.emplace_back(grid_result.std_errors);
+    alphas.emplace_back(grid_result.alphas);
+    params.emplace_back(grid_result.params);
   }
-
-  std::vector<std::vector<double>> blabla;
-  std::vector<Eigen::MatrixXd> foobar;
 
   return py::make_tuple(res.best_score,
                         res.best_ind,
                         res.best_alpha_ind,
-                        results,
+                        scores,
                         means,
                         errors,
                         alphas,
-                        lengths,
-                        blabla,
-                        foobar);
+                        params);
 }
 
 pybind11::tuple

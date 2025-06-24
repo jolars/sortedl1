@@ -5,15 +5,19 @@ from __future__ import annotations
 from typing import NamedTuple
 
 import numpy as np
+from numpy.typing import NDArray
 
 
 class CvResults(NamedTuple):
-    best_ind: int
     best_score: float
+    best_ind: int
     best_alpha_ind: int
-    scores: np.ndarray
-    means: np.ndarray
-    errors: np.ndarray
+    metric: str
+    scores: list[NDArray[np.floating]]
+    means: list[NDArray[np.floating]]
+    errors: list[NDArray[np.floating]]
+    alphas: list[NDArray[np.floating]]
+    params: list[dict[str, str | float | int]]
 
     def plot(self, **kwargs):
         """Plot cross-validation results."""
@@ -26,18 +30,109 @@ class CvResults(NamedTuple):
             )
             raise ImportError(msg)
 
-        fig, ax = plt.subplots(**kwargs)
+        n_params = len(self.scores)
 
-        return fig, ax
+        subplot_kwargs = {}
+        plot_kwargs = {}
+
+        subplot_keys = {
+            "figsize",
+            "dpi",
+            "facecolor",
+            "edgecolor",
+            "frameon",
+            "subplotpars",
+            "tight_layout",
+            "constrained_layout",
+            "sharex",
+            "sharey",
+        }
+
+        for key, value in kwargs.items():
+            if key in subplot_keys:
+                subplot_kwargs[key] = value
+            else:
+                plot_kwargs[key] = value
+
+        plot_defaults = {"linestyle": "-"}
+        for key, default_value in plot_defaults.items():
+            plot_kwargs.setdefault(key, default_value)
+
+        subplot_defaults = {"sharex": True, "sharey": True, "constrained_layout": True}
+        for key, default_value in subplot_defaults.items():
+            subplot_kwargs.setdefault(key, default_value)
+
+        ribbon_kwargs = {}
+        ribbon_keys = {
+            "alpha",
+            "color",
+            "facecolor",
+            "edgecolor",
+            "linewidth",
+            "linestyle",
+        }
+
+        final_plot_kwargs = {}
+        for key, value in plot_kwargs.items():
+            if key in ribbon_keys and key.startswith("ribbon_"):
+                ribbon_kwargs[key.replace("ribbon_", "")] = value
+            else:
+                final_plot_kwargs[key] = value
+
+        ribbon_defaults = {"alpha": 0.2}
+        for key, default_value in ribbon_defaults.items():
+            ribbon_kwargs.setdefault(key, default_value)
+
+        if n_params == 1:
+            fig, ax = plt.subplots(**subplot_kwargs)
+            axes = [ax]
+        else:
+            n_rows = (n_params + 2) // 3
+            n_cols = min(3, n_params)
+            fig, axes = plt.subplots(n_rows, n_cols, **subplot_kwargs)
+            axes = axes.flatten() if n_params > 1 else [axes]
+
+        for i in range(n_params):
+            ax = axes[i]
+
+            params = self.params[i]
+
+            ax.fill_between(
+                self.alphas[i],
+                self.means[i] - self.errors[i],  # Lower bound
+                self.means[i] + self.errors[i],  # Upper bound
+                alpha=0.2,
+            )
+
+            ax.plot(
+                self.alphas[i],
+                self.means[i],
+                label=f"Parameter {i + 1}",
+                **plot_kwargs,
+            )
+
+            ax.set_xscale("log")
+            ax.invert_xaxis()
+            ax.set_title(rf"q: {params['q']}, $\gamma$: {params['gamma']}")
+
+            if n_params == 1:
+                ax.set_xlabel(r"$\alpha$")
+                ax.set_ylabel(f"{self.metric}")
+
+        if n_params > 1:
+            fig.supxlabel(r"$\alpha$")
+            fig.supylabel(f"{self.metric}")
+
+        return fig, axes if n_params > 1 else axes[0]
 
 
 class PathResults(NamedTuple):
-    coefs: np.ndarray
-    intercepts: np.ndarray
-    alphas: np.ndarray
-    lambdas: np.ndarray
+    coefs: NDArray[np.floating]
+    intercepts: NDArray[np.floating]
+    alphas: NDArray[np.floating]
+    lambdas: NDArray[np.floating]
 
-    def plot(self, response=None, **kwargs):
+    def plot(self, **kwargs):
         """Plot the SLOPE path."""
         try:
             import matplotlib.pyplot as plt
@@ -48,15 +143,7 @@ class PathResults(NamedTuple):
             )
             raise ImportError(msg)
 
-        n_responses = self.coefs.shape[1]
-
-        if response is None:
-            responses_to_plot = list(range(n_responses))
-        else:
-            if response < 0 or response >= n_responses:
-                msg = f"Response index {response} is out of bounds for coefs with shape {self.coefs.shape}"
-                raise IndexError(msg)
-            responses_to_plot = [response]
+        n_plots = self.coefs.shape[1]
 
         subplot_kwargs = {}
         plot_kwargs = {}
@@ -88,7 +175,6 @@ class PathResults(NamedTuple):
         for key, default_value in subplot_defaults.items():
             subplot_kwargs.setdefault(key, default_value)
 
-        n_plots = len(responses_to_plot)
         if n_plots == 1:
             fig, ax = plt.subplots(**subplot_kwargs)
             axes = [ax]
@@ -98,9 +184,9 @@ class PathResults(NamedTuple):
             fig, axes = plt.subplots(nrows, ncols, **subplot_kwargs)
             axes = axes.flatten() if n_plots > 1 else [axes]
 
-        for i, resp_idx in enumerate(responses_to_plot):
+        for i in range(n_plots):
             ax = axes[i]
-            coefs = self.coefs[:, resp_idx, :].T
+            coefs = self.coefs[:, i, :].T
             ax.plot(self.alphas.ravel(), coefs, **plot_kwargs)
 
             ax.set_xscale("log")
@@ -109,6 +195,6 @@ class PathResults(NamedTuple):
             ax.set_ylabel(r"$\beta$")
 
             if n_plots > 1:
-                ax.set_title(f"Response {resp_idx}")
+                ax.set_title(f"Response {i + 1}")
 
         return fig, axes if n_plots > 1 else axes[0]
