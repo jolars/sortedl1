@@ -16,6 +16,7 @@
    .. autosummary::
       :nosignatures:
    
+      ~Slope.cv
       ~Slope.fit
       ~Slope.get_metadata_routing
       ~Slope.get_params

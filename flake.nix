@@ -40,6 +40,7 @@
                     furo
                     sphinx-copybutton
                     myst-parser
+                    myst-nb
                     pytest
                     matplotlib
                   ];
@@ -69,6 +70,9 @@
                 ps.ipython
                 ps.notebook
                 ps.jupyter
+                ps.myst-nb
+                ps.myst-parser
+                ps.sphinx-autobuild
               ]))
             ];
         };

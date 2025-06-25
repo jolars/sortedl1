@@ -46,7 +46,14 @@ changelog = "https://github.com/jolars/sortedl1/blob/main/CHANGELOG.md"
 tracker = "https://github.com/jolars/sortedl1/issues"
 
 [project.optional-dependencies]
-docs = ["sphinx", "furo", "sphinx-copybutton", "myst-parser"]
+docs = [
+  "sphinx",
+  "furo",
+  "sphinx-copybutton",
+  "myst-parser",
+  "myst-nb",
+  "matplotlib>=3.5.0",
+]
 tests = ["pytest", "sphinx"]
 plots = ["matplotlib>=3.5.0"]
 

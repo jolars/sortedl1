@@ -23,7 +23,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
     "sphinx_copybutton",
-    "myst_parser",
+    "myst_nb",
     "sphinx.ext.linkcode",
 ]
 templates_path = ["_templates"]
@@ -37,6 +37,8 @@ master_doc = "index"
 exclude_patterns = ["_build"]
 
 templates_path = ["_templates"]
+
+pygments_style = "tango"
 
 # Autodoc
 autodoc_type_aliases = {
@@ -67,6 +69,9 @@ myst_enable_extensions = [
     "dollarmath",
     "amsmath",
 ]
+
+# Myst-NB
+jupyter_execute_notebooks = "auto"
 
 # Linkcode
 linkcode_resolve = make_linkcode_resolve(
