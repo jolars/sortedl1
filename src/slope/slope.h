@@ -316,6 +316,30 @@ public:
   void setAlphaEstimationMaxIterations(const int alpha_est_maxit);
 
   /**
+   * @brief Sets the random seed
+   *
+   * @param seed The value to set for the path length.
+   */
+  void setRandomSeed(const int seed);
+
+  /**
+   * @brief Sets the random seed
+   *
+   * @param seed The value to set for the path length.
+   */
+  void setRandomSeed(std::optional<int> seed);
+
+  /**
+   * @brief Checks if a random seed is set
+   */
+  bool hasRandomSeed() const;
+
+  /**
+   * @brief Gets the random seed
+   */
+  int getRandomSeed() const;
+
+  /**
    * @brief Gets the maximum number of iterations allowed for the
    * alpha estimation procedure
    */
@@ -424,7 +448,8 @@ public:
                               this->intercept,
                               this->update_clusters,
                               this->cd_iterations,
-                              this->cd_type);
+                              this->cd_type,
+                              this->random_seed);
 
     updateGradient(gradient,
                    x.derived(),
@@ -815,7 +840,7 @@ public:
 
     int m = y.cols();
 
-    Eigen::ArrayXd lambda_relax = Eigen::ArrayXd::Zero(p * m);
+    Eigen::ArrayXd lambda_cumsum_relax = Eigen::ArrayXd::Zero(p * m + 1);
 
     auto working_set = activeSet(beta);
 
@@ -836,6 +861,14 @@ public:
     MatrixXd z = y;
 
     slope::Clusters clusters(beta);
+
+    std::mt19937 rng;
+
+    if (random_seed.has_value()) {
+      rng.seed(random_seed.value());
+    } else {
+      rng.seed(std::random_device{}());
+    }
 
     int passes = 0;
 
@@ -873,14 +906,16 @@ public:
                                                     beta,
                                                     working_residual,
                                                     clusters,
-                                                    lambda_relax,
+                                                    lambda_cumsum_relax,
                                                     x,
                                                     w,
                                                     x_centers,
                                                     x_scales,
                                                     intercept,
                                                     jit_normalization,
-                                                    update_clusters);
+                                                    update_clusters,
+                                                    rng,
+                                                    cd_type);
 
         if (max_abs_gradient < tol_relax) {
           break;
@@ -981,8 +1016,9 @@ private:
   int max_it_outer_relax = 50;
   int path_length = 100;
   std::optional<int> max_clusters = std::nullopt;
+  std::optional<int> random_seed = 0;
   std::string alpha_type = "path";
-  std::string cd_type = "cyclical";
+  std::string cd_type = "permuted";
   std::string centering_type = "mean";
   std::string lambda_type = "bh";
   std::string loss_type = "quadratic";

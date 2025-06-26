@@ -13,6 +13,7 @@
 #include "pgd.h"
 #include "solver.h"
 #include <memory>
+#include <optional>
 
 namespace slope {
 
@@ -42,16 +43,20 @@ public:
    * @param update_clusters If true, updates clusters during optimization
    * @param cd_iterations Frequency of proximal gradient descent updates
    * @param cd_type Type of coordinate descent to use ("cyclical" or "permuted")
+   * @param random_seed Optional random seed for reproducibility
    */
   Hybrid(JitNormalization jit_normalization,
          bool intercept,
          bool update_clusters,
          int cd_iterations,
-         const std::string& cd_type)
+         const std::string& cd_type,
+         std::optional<int> random_seed = std::nullopt)
     : SolverBase(jit_normalization, intercept)
     , update_clusters(update_clusters)
     , cd_iterations(cd_iterations)
     , cd_type(cd_type)
+    , rng(random_seed.has_value() ? std::mt19937(*random_seed)
+                                  : std::mt19937(std::random_device{}()))
   {
   }
 
@@ -172,6 +177,10 @@ private:
 
     MatrixXd residual = eta - z;
 
+    Eigen::ArrayXd lambda_cumsum(lambda.size() + 1);
+    lambda_cumsum(0) = 0.0;
+    std::partial_sum(lambda.begin(), lambda.end(), lambda_cumsum.begin() + 1);
+
     for (int it = 0; it < this->cd_iterations; ++it) {
       double old_obj =
         computeObjective(penalty, beta, residual, w, lambda, working_set);
@@ -186,7 +195,7 @@ private:
                         beta,
                         residual,
                         clusters,
-                        lambda,
+                        lambda_cumsum,
                         x,
                         w,
                         x_centers,
@@ -194,6 +203,7 @@ private:
                         this->intercept,
                         this->jit_normalization,
                         this->update_clusters,
+                        rng,
                         this->cd_type);
 
       double new_obj =
@@ -241,6 +251,9 @@ private:
   int cd_iterations = 10;       ///< Number of CD iterations per hybrid step
   std::string cd_type =
     "cyclical"; ///< Type of coordinate descent ("cyclical" or "permuted")
+  std::mt19937 rng{
+    std::random_device{}()
+  }; ///< Random number generator for coordinate descent
 };
 
 } // namespace slope

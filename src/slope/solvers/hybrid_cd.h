@@ -310,15 +310,16 @@ computeClusterGradientAndHessian(const Eigen::SparseMatrixBase<T>& x,
  * @param beta The coefficients
  * @param residual The residual vector
  * @param clusters The cluster information, stored in a Cluster object.
- * @param lambda Regularization weights
+ * @param lambda_cumsum Cumulative sum of the lambda sequence.
  * @param x The design matrix
  * @param w Working weights
  * @param x_centers The center values of the data matrix columns
  * @param x_scales The scale values of the data matrix columns
  * @param intercept Shuold an intervept be fit?
  * @param jit_normalization Type o fJIT normalization.
- * @param update_clusters Flag indicating whether to update the cluster
- * information
+ * @param rng Random number generator for shuffling indices in permuted CD.
+ * @param update_clusters Flag indicating whether to update the clusters
+ *   after each uupdate.
  *
  * @see Clusters
  * @see SortedL1Norm
@@ -330,7 +331,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
                   Eigen::VectorXd& beta,
                   Eigen::MatrixXd& residual,
                   Clusters& clusters,
-                  const Eigen::ArrayXd& lambda,
+                  const Eigen::ArrayXd& lambda_cumsum,
                   const T& x,
                   const Eigen::MatrixXd& w,
                   const Eigen::VectorXd& x_centers,
@@ -338,6 +339,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
                   const bool intercept,
                   const JitNormalization jit_normalization,
                   const bool update_clusters,
+                  std::mt19937& rng,
                   const std::string& cd_type = "cyclical")
 {
   using namespace Eigen;
@@ -358,9 +360,7 @@ coordinateDescent(Eigen::VectorXd& beta0,
   }
 
   if (cd_type == "permuted") {
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(indices.begin(), indices.end(), g);
+    std::shuffle(indices.begin(), indices.end(), rng);
   }
 
   for (int c_ind : indices) {
@@ -415,9 +415,10 @@ coordinateDescent(Eigen::VectorXd& beta0,
     double c_tilde;
     int new_index;
 
-    std::tie(c_tilde, new_index) =
-      slopeThreshold(c_old - grad / hess, c_ind, lambda / hess, clusters);
+    std::tie(c_tilde, new_index) = slopeThreshold(
+      c_old - grad / hess, c_ind, lambda_cumsum / hess, clusters);
 
+    assert(c_tilde == 0 || new_index < clusters.size());
     assert(new_index >= 0 && new_index <= clusters.size());
 
     double c_diff = c_old - c_tilde;
