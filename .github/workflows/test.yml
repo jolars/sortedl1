@@ -91,7 +91,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pypa/cibuildwheel@v3.2.0
+      - uses: pypa/cibuildwheel@v3.2.1
         env:
           CIBW_ENABLE: cpython-prerelease
           CIBW_ARCHS_WINDOWS: auto ARM64
