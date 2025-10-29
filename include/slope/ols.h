@@ -13,16 +13,22 @@
 #include <Eigen/SparseQR>
 #include <utility>
 
+namespace slope {
+namespace detail {
+
 /**
- * @brief Fits an OLS regression model using dense matrices
+ * Fits ordinary least squares (OLS) regression using dense matrices.
  *
- * @param X The design matrix with predictors (features) - dense representation
- * @param y The target/response vector
+ * This function performs OLS regression using QR decomposition with column
+ * pivoting for numerical stability. Optionally includes an intercept term.
+ *
+ * @param X Feature matrix (dense)
+ * @param y Response vector
  * @param fit_intercept Whether to include an intercept term (default: true)
  *
- * @return std::pair containing:
- *         - double: Intercept term (or 0 if fit_intercept is false)
- *         - Eigen::VectorXd: Coefficient vector
+ * @return std::pair<double, Eigen::VectorXd> containing:
+ *         - first: Intercept value (0.0 if fit_intercept is false)
+ *         - second: Coefficient vector for predictors
  */
 template<typename T>
 std::pair<double, Eigen::VectorXd>
@@ -57,15 +63,19 @@ fitOls(const Eigen::MatrixBase<T>& X,
 }
 
 /**
- * @brief Fits an OLS regression model using sparse matrices
+ * Fits ordinary least squares (OLS) regression using sparse matrices.
  *
- * @param X The design matrix with predictors (features) - sparse representation
- * @param y The target/response vector
+ * This function performs OLS regression for sparse feature matrices using
+ * sparse matrix operations. Optionally includes an intercept term by
+ * augmenting the sparse matrix with a dense column of ones.
+ *
+ * @param X Feature matrix (sparse)
+ * @param y Response vector  
  * @param fit_intercept Whether to include an intercept term (default: true)
  *
- * @return std::pair containing:
- *         - double: Intercept term (or 0 if fit_intercept is false)
- *         - Eigen::VectorXd: Coefficient vector
+ * @return std::pair<double, Eigen::VectorXd> containing:
+ *         - first: Intercept value (0.0 if fit_intercept is false)
+ *         - second: Coefficient vector for predictors
  */
 template<typename T>
 std::pair<double, Eigen::VectorXd>
@@ -111,3 +121,6 @@ fitOls(const Eigen::SparseMatrixBase<T>& X,
 
   return { intercept, coeffs };
 }
+
+} // namespace detail
+} // namespace slope

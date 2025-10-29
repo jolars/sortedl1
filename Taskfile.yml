@@ -55,15 +55,21 @@ tasks:
     cmds:
       - echo "Fetching latest libslope release..."
       - mkdir -p tmp
+      - mkdir -p include
       - gh release download --repo jolars/libslope --dir tmp/ --archive=tar.gz --clobber
-      - cd tmp && tar xzf *.tar.gz
+      - cd tmp && tar xzf *.tar.gz --strip-components=1
       - rm -rf src/slope
       - mkdir -p src/slope
-      - cp -r tmp/*/src/slope/* src/slope/
+      - cp -r tmp/src/slope/* src/slope/
       - echo "# WARNING! DO NOT MODIFY FILES IN THIS DIRECTORY" >> src/slope/DO_NOT_MODIFY
       - echo "# These files are automatically updated from https://github.com/jolars/libslope" >> src/slope/DO_NOT_MODIFY
+      - rm -rf include/slope
+      - rm -rf include/slope.h
+      - cp -ri tmp/include ./
       - rm -rf tmp
       - git add src/slope
+      - git add include/slope
+      - git add include/slope.h
       - 'git commit -m "feat: update libslope to {{.VERSION}}" -m "Release: https://github.com/jolars/libslope/releases/tag/{{.VERSION}}"'
     silent: true
 

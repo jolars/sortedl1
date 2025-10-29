@@ -22,7 +22,7 @@ if(OpenMP_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/external)
+include_directories(include ${CMAKE_SOURCE_DIR}/external)
 
 # Add a library using FindPython's tooling (pybind11 also provides a helper like
 # this) python_add_library(_sortedl1 MODULE src/main.cpp WITH_SOABI)

@@ -1,5 +1,5 @@
-#include "poisson.h"
-#include "../constants.h"
+#include <slope/constants.h>
+#include <slope/losses/poisson.h>
 
 namespace slope {
 

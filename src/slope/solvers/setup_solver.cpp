@@ -1,6 +1,6 @@
-#include "hybrid.h"
-#include "pgd.h"
 #include <memory>
+#include <slope/solvers/hybrid.h>
+#include <slope/solvers/pgd.h>
 #include <stdexcept>
 #include <string>
 
