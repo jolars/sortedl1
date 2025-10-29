@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.7.0](https://github.com/jolars/sortedl1/compare/v1.6.0...v1.7.0) (2025-10-29)
+
+### Features
+
+* update libslope to v5.1.1 ([5e0caee](https://github.com/jolars/sortedl1/commit/5e0caeed09a700b80fb374eb3298d20df1b54743))
+* update libslope to v6.0.1 ([d65cd0c](https://github.com/jolars/sortedl1/commit/d65cd0c747bc882d69428830d4a03aa57b194d3f))
+
+### Bug Fixes
+
+* replace deprecated `jupyter_execute_notebooks` ([68d4613](https://github.com/jolars/sortedl1/commit/68d4613473b4df32860579cb9215fb2bd621d653))
+
 ## [1.6.0](https://github.com/jolars/sortedl1/compare/v1.5.0...v1.6.0) (2025-06-24)
 
 ### Features
