@@ -1,12 +1,12 @@
 #include "setup_model.h"
-#include "slope/cv.h"
-#include "slope/slope.h"
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <pybind11/eigen.h>
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <slope/cv.h>
+#include <slope/slope.h>
 
 using namespace pybind11::literals;
 
