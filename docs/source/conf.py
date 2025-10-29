@@ -52,7 +52,7 @@ autosummary_imported_members = True
 # Options for HTML output
 html_theme = "furo"
 html_static_path = ["_static"]
-html_logo = "_static/slope-horizontal.svg"
+html_logo = "_static/slope-logo.png"
 
 # Intersphinx
 intersphinx_mapping = {
