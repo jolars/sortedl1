@@ -71,7 +71,7 @@ myst_enable_extensions = [
 ]
 
 # Myst-NB
-jupyter_execute_notebooks = "auto"
+nb_execution_mode = "auto"
 
 # Linkcode
 linkcode_resolve = make_linkcode_resolve(
