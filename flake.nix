@@ -55,9 +55,9 @@
             in
             [
               pkgs.bashInteractive
-              pkgs.mypy
               pkgs.ruff
               pkgs.jq
+              pkgs.basedpyright
               pkgs.go-task
               pkgs.cmake
               pkgs.eigen
@@ -73,6 +73,7 @@
                 ps.myst-nb
                 ps.myst-parser
                 ps.sphinx-autobuild
+                ps.numpy
               ]))
             ];
         };
