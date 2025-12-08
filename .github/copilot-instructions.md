@@ -176,6 +176,8 @@ Before committing, you should:
 - `sortedl1/__init__.py` - Package exports: Slope, CvResults, PathResults
 - `sortedl1/estimators.py` - Main Slope estimator implementing scikit-learn interface
 - `sortedl1/results.py` - Result classes for cross-validation and regularization paths
+  - `PathResults` - NamedTuple with `coefs`, `intercepts`, `alphas`, `lambdas` fields and a `plot()` method
+  - `CvResults` - NamedTuple with cross-validation results and a `plot()` method
 
 ## Environment Notes
 
