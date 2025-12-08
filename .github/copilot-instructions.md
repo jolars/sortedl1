@@ -71,15 +71,10 @@ For verbose output:
 pytest -v
 ```
 
-For coverage reporting (used in CI):
-```bash
-coverage run -m pytest
-```
-
-**Expected test results**: 11 tests should pass in ~5 seconds. Some warnings about sparse matrices are expected and can be ignored.
+**Expected**: 11 tests pass in ~5 seconds. Sparse matrix warnings are normal.
 
 ### Linting
-The project uses `ruff` for Python linting (configured in `pyproject.toml`):
+Use `ruff` for Python linting (configured in `pyproject.toml`):
 ```bash
 ruff check sortedl1/
 ```
@@ -90,23 +85,11 @@ ruff check sortedl1/
 - Import placement in try/except blocks for optional dependencies
 
 ### Building Documentation
-From the `docs/` directory:
 ```bash
-cd docs
-make html
+cd docs && make html
 ```
 
-**Expected warnings**: 
-- Network-related warnings about intersphinx inventories (numpy, scipy, scikit-learn) are normal in isolated environments
-- ~7 warnings are expected and do not indicate build failure
-- Documentation uses Sphinx with MyST-NB for Jupyter notebook support
-
-**Build time**: ~30-60 seconds. Output is in `docs/build/html/`.
-
-For live documentation development (requires additional setup):
-```bash
-sphinx-autobuild docs/source docs/build --watch sortedl1
-```
+**Expected**: ~7 warnings (intersphinx network issues are normal). Build time: ~30-60 seconds. Output: `docs/build/html/`.
 
 ## Continuous Integration
 
@@ -145,24 +128,14 @@ Before committing, you should:
 ## Code Style and Conventions
 
 ### Python
-- Follow numpy-style docstrings (configured in pyproject.toml)
-- Use type hints where possible
-- Ruff linting configuration in `pyproject.toml` enables extensive checks (flake8-bugbear, isort, etc.)
-- Use `.editorconfig` settings: LF line endings, black profile for Python
+- Numpy-style docstrings, type hints, ruff config in `pyproject.toml` (flake8-bugbear, isort, etc.)
+- `.editorconfig`: LF line endings, black profile
 
 ### C++
-- C++17 standard required (CMAKE_CXX_STANDARD = "17")
-- Mozilla-based clang-format style (see `.clang-format`)
-- OpenMP support when available (optional)
+- C++17 standard, Mozilla clang-format style, optional OpenMP support
 
 ### Commit Messages
-**IMPORTANT**: Use conventional commits format (https://www.conventionalcommits.org/):
-- `feat:` for new features
-- `fix:` for bug fixes
-- `docs:` for documentation changes
-- `chore:` for maintenance tasks
-
-This is required for semantic versioning and automated releases.
+**IMPORTANT**: Use conventional commits (feat:, fix:, docs:, chore:) - required for semantic versioning.
 
 ## Common Development Tasks
 
