@@ -53,6 +53,9 @@ autosummary_imported_members = True
 html_theme = "furo"
 html_static_path = ["_static"]
 html_logo = "_static/slope-logo.png"
+html_css_files = [
+    "css/custom.css",
+]
 
 # Intersphinx
 intersphinx_mapping = {
