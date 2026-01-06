@@ -7,6 +7,7 @@
 
 Home<self>
 getting-started
+user-guide
 api
 changelog
 ```
