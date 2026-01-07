@@ -25,12 +25,11 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Disable building tests for all dependencies
 set(BUILD_TESTING OFF CACHE BOOL "Disable testing" FORCE)
-set(EIGEN_BUILD_TESTING OFF CACHE BOOL "Disable Eigen tests" FORCE)
 
 FetchContent_Declare(
     Eigen3
     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-    GIT_TAG 3.4.1
+    GIT_TAG 3.4.0
     GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(Eigen3)
