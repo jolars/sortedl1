@@ -1,15 +1,11 @@
 cmake_minimum_required(VERSION 3.15...4.0)
 
-# Scikit-build-core sets these values for you, or you can just hard-code the
-# name and version.
 project(
     ${SKBUILD_PROJECT_NAME}
     VERSION ${SKBUILD_PROJECT_VERSION}
     LANGUAGES CXX
 )
 
-# Find the module development requirements (requires FindPython from 3.17 or
-# scikit-build-core's built-in backport)
 set(PYBIND11_FINDPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 
