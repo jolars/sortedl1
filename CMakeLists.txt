@@ -16,43 +16,38 @@ if(OpenMP_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
-include_directories(include ${CMAKE_SOURCE_DIR}/external)
+include_directories(include)
 
-# Add a library using FindPython's tooling (pybind11 also provides a helper like
-# this) python_add_library(_sortedl1 MODULE src/main.cpp WITH_SOABI)
-# target_link_libraries(_sortedl1 PRIVATE pybind11::headers)
+include(FetchContent)
+
+# Force -fPIC for the slope library (required for shared libraries)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Disable building tests for all dependencies
+set(BUILD_TESTING OFF CACHE BOOL "Disable testing" FORCE)
+set(EIGEN_BUILD_TESTING OFF CACHE BOOL "Disable Eigen tests" FORCE)
+
+FetchContent_Declare(
+    Eigen3
+    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+    GIT_TAG 3.4.1
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(Eigen3)
+
+FetchContent_Declare(
+    slope
+    GIT_REPOSITORY https://github.com/jolars/libslope
+    GIT_TAG v6.3.0
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(slope)
 
 pybind11_add_module(
   _sortedl1
   src/main.cpp
   src/setup_model.cpp
-  src/slope/clusters.cpp
-  src/slope/cv.cpp
-  src/slope/folds.cpp
-  src/slope/kkt_check.cpp
-  src/slope/logger.cpp
-  src/slope/losses/loss.cpp
-  src/slope/losses/logistic.cpp
-  src/slope/losses/multinomial.cpp
-  src/slope/losses/poisson.cpp
-  src/slope/losses/quadratic.cpp
-  src/slope/losses/setup_loss.cpp
-  src/slope/math.cpp
-  src/slope/normalize.cpp
-  src/slope/qnorm.cpp
-  src/slope/regularization_sequence.cpp
-  src/slope/score.cpp
-  src/slope/screening.cpp
-  src/slope/slope.cpp
-  src/slope/solvers/hybrid.cpp
-  src/slope/solvers/hybrid_cd.cpp
-  src/slope/solvers/pgd.cpp
-  src/slope/solvers/setup_solver.cpp
-  src/slope/solvers/slope_threshold.cpp
-  src/slope/sorted_l1_norm.cpp
-  src/slope/timer.cpp
-  src/slope/utils.cpp
 )
+target_link_libraries(_sortedl1 PRIVATE slope)
 
-# The install directory is the output (wheel) directory
 install(TARGETS _sortedl1 LIBRARY DESTINATION .)
