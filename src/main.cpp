@@ -231,13 +231,12 @@ PYBIND11_MODULE(_sortedl1,
                 m,
                 py::mod_gil_not_used(),
                 py::multiple_interpreters::per_interpreter_gil())
-                )
-                {
-                  m.def("fit_slope_dense", &fit_slope_dense);
-                  m.def("fit_slope_sparse", &fit_slope_sparse);
-                  m.def("fit_slope_path_dense", &fit_slope_path_dense);
-                  m.def("fit_slope_path_sparse", &fit_slope_path_sparse);
-                  m.def("cv_slope_dense", &cv_slope_dense);
-                  m.def("cv_slope_sparse", &cv_slope_sparse);
-                  m.def("_predict", &_predict);
-                }
+{
+  m.def("fit_slope_dense", &fit_slope_dense);
+  m.def("fit_slope_sparse", &fit_slope_sparse);
+  m.def("fit_slope_path_dense", &fit_slope_path_dense);
+  m.def("fit_slope_path_sparse", &fit_slope_path_sparse);
+  m.def("cv_slope_dense", &cv_slope_dense);
+  m.def("cv_slope_sparse", &cv_slope_sparse);
+  m.def("_predict", &_predict);
+}
