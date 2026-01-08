@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.10", "pybind11"]
+requires = ["scikit-build-core>=0.11", "pybind11>=3.0"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -45,6 +45,9 @@ changelog = "https://github.com/jolars/sortedl1/blob/main/CHANGELOG.md"
 tracker = "https://github.com/jolars/sortedl1/issues"
 
 [project.optional-dependencies]
+plots = ["matplotlib>=3.5.0"]
+
+[dependency-groups]
 docs = [
   "sphinx",
   "furo",
@@ -54,18 +57,50 @@ docs = [
   "matplotlib>=3.5.0",
 ]
 tests = ["pytest", "sphinx"]
-plots = ["matplotlib>=3.5.0"]
+dev = [
+{ include-group = "tests" },
+{ include-group = "docs" },
+  "ruff",
+  "numpy>=1.20",
+    "basedpyright>=1.0.0",
+    "typing-extensions>=4.0.0",
+]
 
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"
 minimum-version = "build-system.requires"
 wheel.expand-macos-universal-tags = true
-wheel.license-files = ["LICENSE"]
-sdist.exclude = [".github"]
+sdist.exclude = [".github", ".pre-commit-config.yaml"]
 
 [tool.scikit-build.cmake.define]
 CMAKE_CXX_STANDARD = "17"
 CMAKE_CXX_STANDARD_REQUIRED = "ON"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+log_level = "INFO"
+filterwarnings = ["error", "ignore::pytest.PytestCacheWarning"]
+testpaths = ["tests"]
+
+[tool.cibuildwheel]
+build-frontend = "build[uv]"
+enable = ["pypy"]
+test-command = "python -m pytest tests"
+test-sources = ["pyproject.toml", "tests"]
+test-groups = ["test"]
+
+[tool.cibuildwheel.pyodide]
+build-frontend = { name = "build", args = ["--exports", "whole_archive"] }
+
+[tool.cibuildwheel.ios]
+build-frontend = "build"
+xbuild-tools = ["cmake", "ninja"]
+
+[tool.cibuildwheel.android]
+build-frontend = "build"
+environment.ANDROID_API_LEVEL = "24"
 
 [tool.ruff.lint]
 extend-select = [
@@ -98,3 +133,11 @@ convention = "numpy"
 
 [tool.mypy]
 plugins = "numpy.typing.mypy_plugin"
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+pythonVersion = "3.9"
+pythonPlatform = "All"
+include = ["qualpal", "tests"]
+exclude = ["build", "dist", ".venv", "**/__pycache__"]
+reportMissingTypeStubs = false

@@ -1,10 +1,5 @@
 version: "3"
 
-vars:
-  LIBSLOPE_API_URL: https://api.github.com/repos/jolars/libslope/releases/latest
-  LIBSLOPE_RELEASE:
-    sh: curl -s {{.LIBSLOPE_API_URL}} | grep "tarball_url" | cut -d '"' -f 4
-
 tasks:
   default:
     deps: [install]
@@ -12,18 +7,18 @@ tasks:
   install:
     desc: Install the package in development mode
     cmds:
-      - pip install -e .[tests,docs]
+      - uv pip install -e --group dev .
 
   build:
     desc: Build distribution packages
     cmds:
       - rm -rf dist
-      - python -m build
+      - uv build
 
   test-pypi:
-    desc: Upload packages to TestPyPI
+    desc: Upload source distribution to TestPyPI (requires UV_PUBLISH_TOKEN or --token)
     cmds:
-      - python -m twine upload --repository testpypi dist/*.tar.gz
+      - uv publish --publish-url https://test.pypi.org/legacy/ dist/*.tar.gz
 
   clean:
     desc: Remove compiled files
