@@ -126,8 +126,9 @@ extend-select = [
   "YTT",    # flake8-2020
 ]
 ignore = [
-  "PLR",    # Design related pylint codes
-  "RUF012", # Would require a lot of ClassVar's
+  "PLR",     # Design related pylint codes
+  "RUF012",  # Would require a lot of ClassVar's
+  "PLC0415", # Lazy imports for optional dependencies (matplotlib)
 ]
 
 [tool.ruff.lint.pydocstyle]

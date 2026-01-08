@@ -28,7 +28,7 @@ class CvResults(NamedTuple):
                 "matplotlib is required for plotting. "
                 + "Install with: pip install sortedl1[plots]"
             )
-            raise ImportError(msg)
+            raise ImportError(msg) from None
 
         n_params = len(self.scores)
 
@@ -141,7 +141,7 @@ class PathResults(NamedTuple):
                 "matplotlib is required for plotting. "
                 + "Install with: pip install sortedl1[plots]"
             )
-            raise ImportError(msg)
+            raise ImportError(msg) from None
 
         n_plots = self.coefs.shape[1]
 

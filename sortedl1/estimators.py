@@ -203,7 +203,7 @@ class Slope(LinearModel):
         alpha_min_ratio: None | np.number = None,
         tol_dev_change: float = 1e-5,
         tol_dev_ratio: float = 0.999,
-        max_clusters: int = None,
+        max_clusters: int | None = None,
         **kwargs,
     ) -> PathResults:
         """
@@ -295,8 +295,8 @@ class Slope(LinearModel):
         predefined_folds=None,
         metric="mse",
         alphas=None,
-        q=[0.1, 0.2],
-        gamma=[1.0],
+        q=None,
+        gamma=None,
         **kwargs,
     ) -> CvResults:
         """
@@ -310,21 +310,27 @@ class Slope(LinearModel):
         y :
             Response vector.
 
-        n_folds : int
+        n_folds : int, default=10
             Number of folds for cross-validation.
 
-        n_repeats : int
+        n_repeats : int, default=1
             Number of times to repeat the cross-validation.
 
-        alphas :
+        predefined_folds : array-like, optional
+            Predefined fold indices for cross-validation.
+
+        metric : str, default="mse"
+            Metric to use for cross-validation.
+
+        alphas : array-like, optional
             An array of lambda values to use for cross-validation. If None,
             the lambda values are computed automatically from a run on the full data set.
 
-        q : array-like
+        q : array-like, default=[0.1, 0.2]
             FDR control parameter for the Sorted L1 Penalty. Must be between 0 and 1.
             Only has effect if `lambda_type` is `"bh"` or `"gaussian"`.
 
-        gamma: array-like
+        gamma : array-like, default=[1.0]
             The relaxation parameter.
 
         **kwargs :
@@ -337,6 +343,11 @@ class Slope(LinearModel):
         """
         X, y = self._validate_data(X, y)
         lam, alphas, params = self._prepare_path_params(alphas, **kwargs)
+
+        if q is None:
+            q = [0.1, 0.2]
+        if gamma is None:
+            gamma = [1.0]
 
         n = X.shape[0]
 
@@ -459,7 +470,7 @@ class Slope(LinearModel):
         y: NDArray[np.number] | list[float] | tuple[float, ...],
     ):
         """Validate and prepare X and y data."""
-        X, y = check_X_y(X, y, accept_sparse=True, order="F", y_numeric=True)
+        X, y = check_X_y(X, y, accept_sparse=["csc"], order="F", y_numeric=True)
         y = np.atleast_1d(y).astype(np.float64)
 
         if y.ndim == 1:
