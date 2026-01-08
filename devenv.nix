@@ -6,6 +6,7 @@
 {
   # https://devenv.sh/packages/
   packages = [
+    pkgs.bashInteractive
     pkgs.cmake
     pkgs.ninja
     pkgs.basedpyright
