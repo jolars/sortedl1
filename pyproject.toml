@@ -56,14 +56,16 @@ docs = [
   "myst-nb",
   "matplotlib>=3.5.0",
 ]
-tests = ["pytest", "sphinx"]
+plots = ["matplotlib>=3.5.0"]
+tests = [{ include-group = "plots" }, "pytest", "sphinx"]
 dev = [
-{ include-group = "tests" },
-{ include-group = "docs" },
+  { include-group = "tests" },
+  { include-group = "docs" },
+  { include-group = "plots" },
   "ruff",
   "numpy>=1.20",
-    "basedpyright>=1.0.0",
-    "typing-extensions>=4.0.0",
+  "basedpyright>=1.0.0",
+  "typing-extensions>=4.0.0",
 ]
 
 [tool.scikit-build]
