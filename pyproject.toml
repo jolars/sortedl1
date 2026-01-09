@@ -88,7 +88,6 @@ testpaths = ["tests"]
 
 [tool.cibuildwheel]
 build-frontend = "build[uv]"
-before-test = "uv pip install --only-binary scipy,numpy scipy numpy pytest"
 test-command = "python -m pytest tests"
 test-sources = ["pyproject.toml", "tests"]
 test-groups = ["tests"]
