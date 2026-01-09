@@ -58,6 +58,7 @@ docs = [
 ]
 plots = ["matplotlib>=3.5.0"]
 tests = [{ include-group = "plots" }, "pytest", "sphinx"]
+tests-wheel = ["pytest", "sphinx"]
 dev = [
   { include-group = "tests" },
   { include-group = "docs" },
@@ -88,9 +89,6 @@ testpaths = ["tests"]
 
 [tool.cibuildwheel]
 build-frontend = "build[uv]"
-test-command = "python -m pytest tests"
-test-sources = ["pyproject.toml", "tests"]
-test-groups = ["tests"]
 
 [tool.cibuildwheel.pyodide]
 build-frontend = { name = "build", args = ["--exports", "whole_archive"] }
