@@ -9,26 +9,16 @@ project(
 set(PYBIND11_FINDPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 
-set(OpenMP_RUNTIME_MSVC "llvm")
-find_package(OpenMP)
-if(OpenMP_FOUND)
-    message(STATUS "OpenMP found: ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-endif()
-
-include_directories(include)
-
-include(FetchContent)
-
 # Force -fPIC for the slope library (required for shared libraries)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Disable building tests for all dependencies
 set(BUILD_TESTING OFF CACHE BOOL "Disable testing" FORCE)
 
+include(FetchContent)
+
 find_package(Eigen3 3.4 QUIET)
 if(NOT Eigen3_FOUND)
-    include(FetchContent)
     FetchContent_Declare(
         Eigen3
         GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
@@ -40,11 +30,10 @@ endif()
 
 find_package(slope QUIET)
 if(NOT slope_FOUND)
-    include(FetchContent)
     FetchContent_Declare(
         slope
         GIT_REPOSITORY https://github.com/jolars/libslope
-        GIT_TAG v6.3.0
+        GIT_TAG e1cad5314fa72a63c423fd45e950a2f7db1478a6
         GIT_SHALLOW TRUE
     )
     FetchContent_MakeAvailable(slope)
@@ -55,6 +44,8 @@ pybind11_add_module(
   src/main.cpp
   src/setup_model.cpp
 )
-target_link_libraries(_sortedl1 PRIVATE slope)
+
+target_link_libraries(_sortedl1 PRIVATE slope::slope)
+target_include_directories(_sortedl1 PRIVATE include)
 
 install(TARGETS _sortedl1 LIBRARY DESTINATION .)
