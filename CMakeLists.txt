@@ -26,21 +26,29 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # Disable building tests for all dependencies
 set(BUILD_TESTING OFF CACHE BOOL "Disable testing" FORCE)
 
-FetchContent_Declare(
-    Eigen3
-    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-    GIT_TAG 3.4.0
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(Eigen3)
+find_package(Eigen3 3.4 QUIET)
+if(NOT Eigen3_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+        Eigen3
+        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+        GIT_TAG 3.4.0
+        GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(Eigen3)
+endif()
 
-FetchContent_Declare(
-    slope
-    GIT_REPOSITORY https://github.com/jolars/libslope
-    GIT_TAG v6.3.0
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(slope)
+find_package(slope QUIET)
+if(NOT slope_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+        slope
+        GIT_REPOSITORY https://github.com/jolars/libslope
+        GIT_TAG v6.3.0
+        GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(slope)
+endif()
 
 pybind11_add_module(
   _sortedl1
