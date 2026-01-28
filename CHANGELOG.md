@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.8.0](https://github.com/jolars/sortedl1/compare/v1.7.0...v1.8.0) (2026-01-28)
+
+### Features
+
+* upgrade to libslope 6.3.0 ([5477dcc](https://github.com/jolars/sortedl1/commit/5477dcc9e53cb422e53a83d2264f5d0d0a005cc4))
+
+### Bug Fixes
+
+* add plots to groups ([3e4d31a](https://github.com/jolars/sortedl1/commit/3e4d31a8e16e5d76664532349c446fc97d0ea453))
+* fix syntax error ([ba11024](https://github.com/jolars/sortedl1/commit/ba1102403fedacd5e9d1766dd47b4292b58fd110))
+* only accept csc sparse format ([76d1768](https://github.com/jolars/sortedl1/commit/76d17685bc7dfc07a033e95b8f9dfd6a09ce3a69))
+* remove license which is not supported anymore ([7526897](https://github.com/jolars/sortedl1/commit/7526897bf1ff9c014d1d05f2923909fb08489544))
+* revert t eigen 3.4.0 ([551b094](https://github.com/jolars/sortedl1/commit/551b0948012425d95b8ba677f0d34356c77a08e7))
+* setup gil properly ([3f12731](https://github.com/jolars/sortedl1/commit/3f1273142d6c29af5b8cbe1c99e1233edb517b12))
+* use `before-test` ([cf622d2](https://github.com/jolars/sortedl1/commit/cf622d2a3c922074fd0b716ee3b8f35bd8e57b1d))
+* use correct test group ([0764df2](https://github.com/jolars/sortedl1/commit/0764df2c5b6ae372c84924012d8266b23831c8e2))
+
 ## [1.7.0](https://github.com/jolars/sortedl1/compare/v1.6.0...v1.7.0) (2025-10-29)
 
 ### Features
