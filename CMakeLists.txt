@@ -32,8 +32,8 @@ find_package(slope QUIET)
 if(NOT slope_FOUND)
     FetchContent_Declare(
         slope
-        GIT_REPOSITORY https://github.com/jolars/libslope
-        GIT_TAG 0877d42729b33d4f10380b10f006b9e8510f0af6
+        GIT_REPOSITORY https://github.com/jolars/libslope.git
+        GIT_TAG v6.5.0
         GIT_SHALLOW TRUE
     )
     FetchContent_MakeAvailable(slope)
