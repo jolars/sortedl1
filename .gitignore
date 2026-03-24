@@ -315,3 +315,4 @@ dist
 .pnp.*
 
 docs/jupyter_execute
+/.pre-commit-config.yaml
