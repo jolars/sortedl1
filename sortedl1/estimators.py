@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TypeVar, final
+from typing import Literal, TypeVar, final, overload
 
 import numpy as np
 from _sortedl1 import (
@@ -286,6 +286,7 @@ class Slope(LinearModel):
             intercepts=result[0], coefs=result[1], lambdas=result[2], alphas=result[3]
         )
 
+    @overload
     def cv(
         self,
         X,
@@ -297,8 +298,40 @@ class Slope(LinearModel):
         alphas=None,
         q=None,
         gamma=None,
+        refit: Literal[False] = False,
         **kwargs,
-    ) -> CvResults:
+    ) -> CvResults: ...
+
+    @overload
+    def cv(
+        self,
+        X,
+        y,
+        n_folds=10,
+        n_repeats=1,
+        predefined_folds=None,
+        metric="mse",
+        alphas=None,
+        q=None,
+        gamma=None,
+        refit: Literal[True] = True,
+        **kwargs,
+    ) -> tuple[CvResults, Slope]: ...
+
+    def cv(
+        self,
+        X,
+        y,
+        n_folds=10,
+        n_repeats=1,
+        predefined_folds=None,
+        metric="mse",
+        alphas=None,
+        q=None,
+        gamma=None,
+        refit: bool = False,
+        **kwargs,
+    ) -> CvResults | tuple[CvResults, Slope]:
         """
         Tune SLOPE with k-folds repeated cross-validation.
 
@@ -333,13 +366,21 @@ class Slope(LinearModel):
         gamma : array-like, default=[1.0]
             The relaxation parameter.
 
+        refit : bool, default=False
+            If True, also fit and return the best model on the full data using
+            the best cross-validated hyperparameters.
+
         **kwargs :
             Additional parameters passed on to the `path` method.
 
         Returns
         -------
-        cv_results : dict
-            A dictionary containing cross-validation results.
+        cv_results : CvResults
+            Cross-validation results.
+
+        best_model : Slope
+            Returned only when `refit=True`. A fitted estimator using the best
+            cross-validated hyperparameters.
         """
         X, y = self._validate_data(X, y)
         lam, alphas, params = self._prepare_path_params(alphas, **kwargs)
@@ -374,7 +415,7 @@ class Slope(LinearModel):
 
         result = cv_slope(X, y, lam, alphas, params)
 
-        return CvResults(
+        cv_results = CvResults(
             best_ind=result[0],
             best_score=result[1],
             best_alpha_ind=result[2],
@@ -385,6 +426,41 @@ class Slope(LinearModel):
             alphas=result[6],
             params=result[7],
         )
+
+        if not refit:
+            return cv_results
+
+        best_ind = int(cv_results.best_ind)
+        best_alpha_ind = int(cv_results.best_alpha_ind)
+        best_params = cv_results.params[best_ind]
+        best_alpha = float(
+            np.asarray(cv_results.alphas[best_ind]).ravel()[best_alpha_ind]
+        )
+
+        best_q = float(best_params.get("q", self.q))
+        best_gamma = float(best_params.get("gamma", 1.0))
+
+        best_model = type(self)(**self.get_params())
+        best_path = best_model.path(
+            X,
+            np.ravel(y),
+            alphas=np.array([best_alpha], dtype=np.float64),
+            q=best_q,
+            gamma=best_gamma,
+        )
+
+        best_model.intercept_ = float(np.asarray(best_path.intercepts).ravel()[0])
+        coefs = np.asarray(best_path.coefs)
+        if coefs.ndim == 3:
+            coefs = coefs[:, :, 0]
+        best_model.sparse_coef_ = sparse.csc_matrix(coefs)
+        best_model.coef_ = np.squeeze(coefs)
+        best_model.lambda_ = best_path.lambdas
+        best_model.alpha_ = best_alpha
+        best_model.n_iter_ = 1
+        best_model.n_features_in_ = X.shape[1]
+
+        return cv_results, best_model
 
     def predict(self, X: ArrayLike | sparse.sparray) -> np.ndarray:
         """

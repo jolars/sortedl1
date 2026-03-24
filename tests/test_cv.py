@@ -68,3 +68,27 @@ def test_cv_summary_and_repr():
     assert "metric=" in rep
     assert "best_score=" in rep
     assert "best_alpha=" in rep
+
+
+def test_cv_refit_returns_best_model():
+    n = 100
+    p = 30
+    rng = default_rng(11)
+    x = rng.standard_normal((n, p))
+    beta = rng.standard_normal((p, 1))
+    y = x @ beta
+
+    model = Slope()
+    cv_res, best_model = model.cv(
+        x,
+        y.ravel(),
+        q=[0.1, 0.2],
+        gamma=[0.0, 1.0],
+        refit=True,
+    )
+
+    assert type(cv_res.metric) is str
+    assert isinstance(best_model, Slope)
+    assert hasattr(best_model, "coef_")
+    assert hasattr(best_model, "intercept_")
+    assert best_model.n_features_in_ == p

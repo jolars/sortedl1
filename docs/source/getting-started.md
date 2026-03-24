@@ -94,6 +94,14 @@ cv_res
 cv_res.summary()
 ```
 
+If you want both cross-validation results and a best model fitted on the full
+data used in cross-validation, use `refit=True`:
+
+```{code-cell}
+cv_res, best_model = model.cv(x, y, q=[0.1], gamma=[0.0, 0.5, 1.0], refit=True)
+best_model.coef_
+```
+
 In this low-dimensional example, we see that there is, unsurprisingly, little
 benefit to regularization.
 
