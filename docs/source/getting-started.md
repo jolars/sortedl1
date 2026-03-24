@@ -57,8 +57,15 @@ res = model.path(x, y)
 ```
 
 Unlike the `fit` method, calling `path()` does not modify the `model` object
-and instead returns a named tuple of class `PathResult`, with the full
+and instead returns a named tuple of class `PathResults`, with the full
 set of coefficients and intercepts for each value of `alpha`.
+
+`PathResults` also includes concise helpers for quick inspection:
+
+```{code-cell}
+res
+res.summary()
+```
 
 It also comes with a `plot()` method to visualize the path of coefficients:
 
@@ -83,7 +90,24 @@ cluster structure from SLOPE).
 ```{code-cell}
 cv_res = model.cv(x, y, q=[0.1], gamma=[0.0,0.5, 1.0])
 fig, ax = cv_res.plot()
+cv_res
+cv_res.summary()
 ```
 
 In this low-dimensional example, we see that there is, unsurprisingly, little
 benefit to regularization.
+
+## Using scikit-learn model selection
+
+The `Slope` estimator can also be used directly with scikit-learn
+model-selection tools such as `GridSearchCV`.
+
+```{code-cell}
+from sklearn.model_selection import GridSearchCV
+
+param_grid = {"alpha": [0.01, 0.1, 1.0], "q": [0.05, 0.1, 0.2]}
+search = GridSearchCV(Slope(), param_grid=param_grid, cv=5)
+search.fit(x, y)
+
+search.best_params_
+```

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import NamedTuple, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -18,6 +18,63 @@ class CvResults(NamedTuple):
     errors: list[NDArray[np.floating]]
     alphas: list[NDArray[np.floating]]
     params: list[dict[str, str | float | int]]
+
+    @property
+    def n_param_sets(self) -> int:
+        """Number of parameter combinations evaluated in cross-validation."""
+        return len(self.scores)
+
+    @property
+    def best_alpha(self) -> float:
+        """Best alpha value selected by cross-validation."""
+        if not self.alphas:
+            return float("nan")
+
+        best_ind = int(self.best_ind)
+        best_alpha_ind = int(self.best_alpha_ind)
+
+        if best_ind < 0 or best_ind >= len(self.alphas):
+            return float("nan")
+
+        alpha_values = np.asarray(self.alphas[best_ind]).ravel()
+        if best_alpha_ind < 0 or best_alpha_ind >= alpha_values.size:
+            return float("nan")
+
+        return float(alpha_values[best_alpha_ind])
+
+    def summary(self, as_str: bool = False) -> dict[str, object] | str:
+        """Return a compact summary of cross-validation results."""
+        out: dict[str, object] = {
+            "metric": self.metric,
+            "n_param_sets": self.n_param_sets,
+            "best_ind": int(self.best_ind),
+            "best_alpha_ind": int(self.best_alpha_ind),
+            "best_score": float(self.best_score),
+            "best_alpha": self.best_alpha,
+            "n_alphas_per_param": [int(np.asarray(a).size) for a in self.alphas],
+            "param_keys": sorted(self.params[0].keys()) if self.params else [],
+        }
+
+        if as_str:
+            return "CvResults(" + ", ".join(f"{k}={v}" for k, v in out.items()) + ")"
+
+        return out
+
+    def __repr__(self) -> str:
+        s = cast(dict[str, object], self.summary())
+        return (
+            "CvResults("
+            f"metric={s['metric']!r}, "
+            f"n_param_sets={s['n_param_sets']}, "
+            f"best_score={s['best_score']:.6g}, "
+            f"best_alpha={s['best_alpha']:.6g}, "
+            f"best_ind={s['best_ind']}, "
+            f"best_alpha_ind={s['best_alpha_ind']}"
+            ")"
+        )
+
+    def __str__(self) -> str:
+        return repr(self)
 
     def plot(self, **kwargs):
         """Plot cross-validation results."""
@@ -131,6 +188,79 @@ class PathResults(NamedTuple):
     intercepts: NDArray[np.floating]
     alphas: NDArray[np.floating]
     lambdas: NDArray[np.floating]
+
+    @property
+    def n_alphas(self) -> int:
+        """Number of alpha values in the fitted path."""
+        return int(np.asarray(self.alphas).size)
+
+    @property
+    def n_features(self) -> int:
+        """Number of features in the path coefficients."""
+        return int(self.coefs.shape[0])
+
+    @property
+    def n_targets(self) -> int:
+        """Number of target responses in the path coefficients."""
+        coefs = np.asarray(self.coefs)
+        if coefs.ndim <= 2:
+            return 1
+        return int(coefs.shape[1])
+
+    @property
+    def alpha_range(self) -> tuple[float, float]:
+        """Smallest and largest alpha value in the path."""
+        alphas = np.asarray(self.alphas).ravel()
+        if alphas.size == 0:
+            return (float("nan"), float("nan"))
+        return float(np.min(alphas)), float(np.max(alphas))
+
+    def summary(self, as_str: bool = False) -> dict[str, object] | str:
+        """Return a compact summary of path results."""
+        coefs = np.asarray(self.coefs)
+
+        if coefs.ndim == 3:
+            first_alpha_coefs = coefs[:, :, 0]
+            last_alpha_coefs = coefs[:, :, -1]
+        elif coefs.ndim == 2:
+            first_alpha_coefs = coefs[:, 0]
+            last_alpha_coefs = coefs[:, -1]
+        else:
+            first_alpha_coefs = coefs
+            last_alpha_coefs = coefs
+
+        alpha_min, alpha_max = self.alpha_range
+        out: dict[str, object] = {
+            "n_alphas": self.n_alphas,
+            "n_features": self.n_features,
+            "n_targets": self.n_targets,
+            "alpha_min": alpha_min,
+            "alpha_max": alpha_max,
+            "coef_shape": tuple(coefs.shape),
+            "intercepts_shape": tuple(np.asarray(self.intercepts).shape),
+            "lambda_shape": tuple(np.asarray(self.lambdas).shape),
+            "nnz_first_alpha": int(np.count_nonzero(first_alpha_coefs)),
+            "nnz_last_alpha": int(np.count_nonzero(last_alpha_coefs)),
+        }
+
+        if as_str:
+            return "PathResults(" + ", ".join(f"{k}={v}" for k, v in out.items()) + ")"
+
+        return out
+
+    def __repr__(self) -> str:
+        s = cast(dict[str, object], self.summary())
+        return (
+            "PathResults("
+            f"n_alphas={s['n_alphas']}, "
+            f"n_features={s['n_features']}, "
+            f"n_targets={s['n_targets']}, "
+            f"alpha_range=({s['alpha_min']:.6g}, {s['alpha_max']:.6g})"
+            ")"
+        )
+
+    def __str__(self) -> str:
+        return repr(self)
 
     def plot(self, **kwargs):
         """Plot the SLOPE path."""
