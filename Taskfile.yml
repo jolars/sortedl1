@@ -41,3 +41,8 @@ tasks:
     desc: Auto-build documentation on changes
     cmds:
       - sphinx-autobuild docs/source docs/build --watch sortedl1
+
+  release:
+    desc: Release the package
+    cmds:
+      - gh workflow run release.yml
