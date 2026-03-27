@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/jolars/sortedl1/compare/v1.9.0...v1.10.0) (2026-03-27)
+
+### Features
+
+* add result summaries and sklearn docs examples ([a636186](https://github.com/jolars/sortedl1/commit/a6361861178376c6995f2a0b4fe372e15113b5e0))
+* att `refit` parameter to `cv()` for Slope models ([a082bb3](https://github.com/jolars/sortedl1/commit/a082bb37ddfce1ee5ef17cfa1f1e9d131ff51dfa))
+
 ## [1.9.0](https://github.com/jolars/sortedl1/compare/v1.8.0...v1.9.0) (2026-01-29)
 
 ### Features
