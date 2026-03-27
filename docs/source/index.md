@@ -11,7 +11,8 @@ api
 changelog
 ```
 
-Welcome to the documentation for **sortedl1**! This package provides estimators for fitting generalized linear models regularized with the sorted l1 norm.
+Welcome to the documentation for **sortedl1**! This package provides estimators
+for fitting generalized linear models regularized with the sorted l1 norm.
 
 ## Installing
 
