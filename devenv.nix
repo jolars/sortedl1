@@ -9,7 +9,6 @@
     pkgs.bashInteractive
     pkgs.cmake
     pkgs.ninja
-    pkgs.basedpyright
     pkgs.ruff
     pkgs.go-task
     pkgs.eigen
