@@ -19,6 +19,12 @@ jobs:
       pages: write
       id-token: write
 
+  build-artifacts:
+    uses: ./.github/workflows/build-artifacts.yml
+    permissions:
+      actions: write
+      contents: read
+
   docs:
     name: Document
     needs: [build-and-test]
@@ -54,7 +60,7 @@ jobs:
         uses: actions/deploy-pages@v5
 
   upload_pypi:
-    needs: [build-and-test, docs]
+    needs: [build-and-test, build-artifacts, docs]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
