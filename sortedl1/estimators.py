@@ -23,6 +23,9 @@ from sklearn.utils.validation import (
 
 from .results import CvResults, PathResults
 
+_CLASSIFICATION_LOSSES = frozenset({"logistic", "multinomial"})
+_REGRESSION_LOSSES = frozenset({"quadratic", "poisson"})
+
 
 @final
 class Slope(LinearModel):
@@ -144,8 +147,18 @@ class Slope(LinearModel):
         self.screening = screening
 
     def __sklearn_tags__(self):
+        from sklearn.utils._tags import ClassifierTags, RegressorTags
+
         tags = super().__sklearn_tags__()
         tags.input_tags.sparse = True
+        if self.loss in _CLASSIFICATION_LOSSES:
+            tags.estimator_type = "classifier"
+            tags.classifier_tags = ClassifierTags()
+            tags.regressor_tags = None
+        else:
+            tags.estimator_type = "regressor"
+            tags.regressor_tags = RegressorTags()
+            tags.classifier_tags = None
         return tags
 
     DType = TypeVar("DType", bound=np.number)
@@ -481,6 +494,20 @@ class Slope(LinearModel):
         out = _predict(eta, self.loss)
 
         return np.ravel(out)
+
+    def score(
+        self,
+        X: ArrayLike | sparse.sparray,
+        y: ArrayLike,
+        sample_weight: ArrayLike | None = None,
+    ) -> float:
+        """Return R^2 for regression losses or accuracy for classification losses."""
+        from sklearn.metrics import accuracy_score, r2_score
+
+        y_pred = self.predict(X)
+        if self.loss in _CLASSIFICATION_LOSSES:
+            return accuracy_score(y, y_pred, sample_weight=sample_weight)
+        return r2_score(y, y_pred, sample_weight=sample_weight)
 
     def _get_common_params(self, **additional_params):
         """Get common parameters shared between fit and path methods."""
