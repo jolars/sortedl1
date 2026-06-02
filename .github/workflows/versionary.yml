@@ -1,0 +1,29 @@
+name: Versionary
+
+on:
+  workflow_run:
+    workflows: [Test]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  versionary:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - id: versionary
+        uses: jolars/versionary@v0
+        with:
+          github-token: ${{ secrets.RELEASE_TOKEN }}
