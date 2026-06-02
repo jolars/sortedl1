@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.11.0](https://github.com/jolars/sortedl1/compare/v1.10.0...v1.11.0) (2026-06-02)
+
+### Features
+- add `score` and `set_score_request` methods to `Slope` ([`5f53a08`](https://github.com/jolars/sortedl1/commit/5f53a0851b6da4b56d9251cfb90fdfbff2755674)), closes [#67](https://github.com/jolars/sortedl1/issues/67)
+
 ## [1.10.0](https://github.com/jolars/sortedl1/compare/v1.9.0...v1.10.0) (2026-03-27)
 
 ### Features
