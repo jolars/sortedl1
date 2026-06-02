@@ -1,7 +1,8 @@
 # sortedl1 <a href="https://jolars.github.io/sortedl1/"><img src="https://github.com/jolars/sortedl1/raw/main/docs/source/_static/slope-logo.png" align="right" width="139" /></a>
 
 [![Tests](https://github.com/jolars/sortedl1/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jolars/sortedl1/actions/workflows/test.yml)
-[![PyPI version](https://badge.fury.io/py/sortedl1.svg)](https://badge.fury.io/py/sortedl1)
+[![PyPI
+version](https://badge.fury.io/py/sortedl1.svg)](https://badge.fury.io/py/sortedl1)
 [![codecov](https://codecov.io/gh/jolars/sortedl1/graph/badge.svg?token=tMVGB2LHcM)](https://codecov.io/gh/jolars/sortedl1)
 
 **sortedl1** is a python package for Sorted L-One Penalized Estimation (SLOPE).
@@ -20,7 +21,8 @@ You can also install the latest development version via pip by calling
 pip install git+https://github.com/jolars/sortedl1
 ```
 
-Alternatively, you can clone the repository and install the package locally by running
+Alternatively, you can clone the repository and install the package locally by
+running
 
 ```python
 pip install .
@@ -59,9 +61,13 @@ print(model.coef_)
 
 ## Contributing
 
-The backbone of the package is written in C++ and developed in a separate repository at <https://github.com/jolars/libslope>. So if you have any issues with the package other than such that are specific to the python interface, please report them there. But feel free to request features here.
+The backbone of the package is written in C++ and developed in a separate
+repository at <https://github.com/jolars/libslope>. So if you have any issues
+with the package other than such that are specific to the python interface,
+please report them there. But feel free to request features here.
 
-When writing commit messages, please use the [conventional commits format](https://www.conventionalcommits.org/en/v1.0.0/).
+When writing commit messages, please use the [conventional commits
+format](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ## Versioning
 
