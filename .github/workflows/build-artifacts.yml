@@ -44,7 +44,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
-      - uses: pypa/cibuildwheel@v3.4
+      - uses: pypa/cibuildwheel@v4.0
 
       - name: Verify clean directory
         run: git diff --exit-code
