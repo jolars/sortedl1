@@ -33,7 +33,7 @@ if(NOT slope_FOUND)
     FetchContent_Declare(
         slope
         GIT_REPOSITORY https://github.com/jolars/libslope.git
-        GIT_TAG v6.5.0
+        GIT_TAG v6.5.2
         GIT_SHALLOW TRUE
     )
     FetchContent_MakeAvailable(slope)

@@ -94,7 +94,7 @@ def test_logistic():
 
     coef = model.coef_
 
-    coef_true = np.array([0.0, 1.148466, -1.171151, 0.342722, -0.409017])
+    coef_true = np.array([0.0, 1.148454, -1.171135, 0.342720, -0.409014])
 
     np.testing.assert_array_almost_equal(coef, coef_true)
 
