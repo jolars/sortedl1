@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.11.2](https://github.com/jolars/sortedl1/compare/v1.11.1...v1.11.2) (2026-08-28)
+
+### Bug Fixes
+- declare openmp runtime for MSVC ([`fe4e23d`](https://github.com/jolars/sortedl1/commit/fe4e23dc41a3f95891245ce0ff4ff569674b1cab))
+- update to libslope 6.5.3 ([`8762ecc`](https://github.com/jolars/sortedl1/commit/8762ecc32a2883ea72f8c5710d0f5e7b843a4c25))
+
 ## [1.11.1](https://github.com/jolars/sortedl1/compare/v1.11.0...v1.11.1) (2026-08-27)
 
 ### Bug Fixes
