@@ -1,8 +1,8 @@
-# Copilot Instructions for sortedl1
+# Agent Instructions for sortedl1
 
 ## Repository Overview
 
-**sortedl1** is a Python package for Sorted L-One Penalized Estimation (SLOPE), providing scikit-learn compatible estimators. The project is a hybrid Python/C++ codebase with Python bindings using pybind11.
+sortedl1 is a Python package for Sorted L-One Penalized Estimation (SLOPE), providing scikit-learn compatible estimators. The project is a hybrid Python/C++ codebase with Python bindings using pybind11.
 
 - **Languages**: Python 3.10+, C++17
 - **Size**: Small-to-medium (core Python code in `sortedl1/`, C++ implementation in `src/`)
