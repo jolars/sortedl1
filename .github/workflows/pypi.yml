@@ -2,6 +2,16 @@ name: PyPi
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_to:
+        description: "Where to publish the built distributions"
+        type: choice
+        required: false
+        default: none
+        options:
+          - none
+          - testpypi
+          - pypi
   release:
     types:
       - published
@@ -56,11 +66,57 @@ jobs:
           path: "docs/build/html/"
 
       - name: Deploy to GitHub Pages
+        if: ${{ github.event_name == 'release' || inputs.publish_to == 'pypi' }}
         id: deployment
         uses: actions/deploy-pages@v5
 
+  # Validates whatever was built, on every trigger, so that a run that
+  # publishes nothing still exercises the pipeline end to end.
+  check-dist:
+    name: Check distributions
+    needs: [build-artifacts]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: cibw-*
+          merge-multiple: true
+          path: dist
+
+      - name: Check metadata
+        run: pipx run twine check dist/*
+
+      - name: List distributions
+        run: ls -l dist
+
+  upload_testpypi:
+    if: ${{ inputs.publish_to == 'testpypi' }}
+    needs: [build-and-test, build-artifacts, docs, check-dist]
+    runs-on: ubuntu-latest
+    environment: testpypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: cibw-*
+          merge-multiple: true
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          # TestPyPI rejects a version that is already there, which would
+          # otherwise make every rerun of an unchanged version fail.
+          skip-existing: true
+
   upload_pypi:
-    needs: [build-and-test, build-artifacts, docs]
+    if: ${{ github.event_name == 'release' || inputs.publish_to == 'pypi' }}
+    needs: [build-and-test, build-artifacts, docs, check-dist]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
