@@ -78,6 +78,10 @@ sdist.exclude = [".github", ".pre-commit-config.yaml"]
 [tool.scikit-build.cmake.define]
 CMAKE_CXX_STANDARD = "17"
 CMAKE_CXX_STANDARD_REQUIRED = "ON"
+# MSVC's LLVM OpenMP runtime needs libomp140.<arch>.dll, which Microsoft does
+# not make redistributable and which the arm64 runners do not ship at all.
+# vcomp140.dll comes with the Visual C++ redistributable instead.
+OpenMP_RUNTIME_MSVC = "vcomp"
 
 [tool.pytest.ini_options]
 minversion = "8.0"
