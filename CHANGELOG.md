@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.11.3](https://github.com/jolars/sortedl1/compare/v1.11.2...v1.11.3) (2026-08-30)
+
+### Bug Fixes
+- handle interrupts in native solves ([`832c8ae`](https://github.com/jolars/sortedl1/commit/832c8ae10ee4cd17e1020d4094e55db7c9c7fbe2)), fixes [#78](https://github.com/jolars/sortedl1/issues/78)
+
 ## [1.11.2](https://github.com/jolars/sortedl1/compare/v1.11.1...v1.11.2) (2026-08-28)
 
 ### Bug Fixes
