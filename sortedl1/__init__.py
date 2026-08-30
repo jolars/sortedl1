@@ -5,4 +5,4 @@ from .results import CvResults, PathResults
 
 __all__ = ["CvResults", "PathResults", "Slope"]
 
-__version__ = "1.11.2"
+__version__ = "1.11.3"
