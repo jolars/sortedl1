@@ -12,6 +12,24 @@ using namespace pybind11::literals;
 
 namespace py = pybind11;
 
+namespace {
+
+bool
+check_python_interrupt()
+{
+  return PyErr_CheckSignals() != 0;
+}
+
+void
+throw_if_python_error()
+{
+  if (PyErr_Occurred() != nullptr) {
+    throw py::error_already_set();
+  }
+}
+
+}
+
 template<typename T>
 pybind11::tuple
 fit_slope_path(T& x,
@@ -40,7 +58,9 @@ fit_slope_path(T& x,
     model.setAlphaMinRatio(alpha_min_ratio);
   }
 
-  slope::SlopePath path = model.path(x, y, alpha, lambda);
+  slope::SlopePath path =
+    model.path(x, y, alpha, lambda, check_python_interrupt);
+  throw_if_python_error();
 
   std::vector<Eigen::SparseMatrix<double>> coefs = path.getCoefs();
   auto intercepts = path.getIntercepts();
@@ -82,7 +102,15 @@ fit_slope(T& x,
           const py::dict& args)
 {
   slope::Slope model = setup_model(args);
-  slope::SlopeFit res = model.fit(x, y, alpha, lambda);
+  Eigen::ArrayXd alphas(1);
+  alphas(0) = alpha;
+
+  // `Slope::fit()` indexes the path before control returns to the binding,
+  // which is unsafe when an interrupt arrives before the first fit is created.
+  slope::SlopePath path =
+    model.path(x, y, alphas, lambda, check_python_interrupt);
+  throw_if_python_error();
+  const slope::SlopeFit& res = path(0);
 
   return py::make_tuple(res.getIntercepts(),
                         res.getCoefs(),
