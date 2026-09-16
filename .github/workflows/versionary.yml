@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_sha }}
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
 
       - id: versionary
         uses: jolars/versionary@v1
