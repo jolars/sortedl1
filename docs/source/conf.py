@@ -4,9 +4,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "exts"))
 
-from github_link import make_linkcode_resolve  # noqa: E402
+from github_link import make_linkcode_resolve
 
-from sortedl1 import __version__  # noqa: E402
+from sortedl1 import __version__
 
 # Project information
 project = "sortedl1"

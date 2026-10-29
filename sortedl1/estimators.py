@@ -112,7 +112,7 @@ class Slope(LinearModel):
 
     def __init__(
         self,
-        lam: None | ArrayLike = None,
+        lam: ArrayLike | None = None,
         alpha: float = 1.0,
         fit_intercept: bool = True,
         loss: str = "quadratic",
@@ -211,9 +211,9 @@ class Slope(LinearModel):
         self,
         X: NDArray[np.number] | sparse.csc_array,
         y: NDArray[np.number] | list[float] | tuple[float, ...],
-        alphas: None | NDArray[np.number] = None,
+        alphas: NDArray[np.number] | None = None,
         path_length: int = 100,
-        alpha_min_ratio: None | np.number = None,
+        alpha_min_ratio: np.number | None = None,
         tol_dev_change: float = 1e-5,
         tol_dev_ratio: float = 0.999,
         max_clusters: int | None = None,
@@ -533,9 +533,9 @@ class Slope(LinearModel):
 
     def _prepare_path_params(
         self,
-        alphas: None | NDArray[np.number] = None,
+        alphas: NDArray[np.number] | None = None,
         path_length: int = 100,
-        alpha_min_ratio: None | np.number = None,
+        alpha_min_ratio: np.number | None = None,
         tol_dev_change: float = 1e-5,
         tol_dev_ratio: float = 0.999,
         max_clusters: int | None = None,
