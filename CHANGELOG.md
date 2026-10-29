@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.11.4](https://github.com/jolars/sortedl1/compare/v1.11.3...v1.11.4) (2026-10-29)
+
+### Bug Fixes
+
+- fetch Eigen archive to avoid clone failures ([`f4b0e05`](https://github.com/jolars/sortedl1/commit/f4b0e05493cae4b83c1b3c889cab9d915be0a7ae))
+- use latest Python 3.13 patch in CI ([`894021e`](https://github.com/jolars/sortedl1/commit/894021ef688dcc5b9c5b8b0a1a42c37e620c1f56))
+
+### Performance Improvements
+
+- upgrade Eigen to 5.0.1 ([`8913f65`](https://github.com/jolars/sortedl1/commit/8913f65096f4777cbef084f8b0e94c419b7b2d4d))
+
 ## [1.11.3](https://github.com/jolars/sortedl1/compare/v1.11.2...v1.11.3) (2026-08-30)
 
 ### Bug Fixes
