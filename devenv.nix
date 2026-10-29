@@ -35,7 +35,7 @@
 
   # https://devenv.sh/git-hooks/
   git-hooks.hooks = {
-    ruff.enable = true;
+    # ruff.enable = true;
     ruff-format.enable = true;
   };
 
