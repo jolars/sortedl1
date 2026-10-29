@@ -11,7 +11,7 @@
     pkgs.ninja
     pkgs.ruff
     pkgs.go-task
-    pkgs.eigen
+    pkgs.eigen_5
   ];
 
   # https://devenv.sh/languages/

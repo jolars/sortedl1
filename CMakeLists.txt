@@ -17,14 +17,17 @@ set(BUILD_TESTING OFF CACHE BOOL "Disable testing" FORCE)
 
 include(FetchContent)
 
-find_package(Eigen3 3.4 QUIET)
+find_package(Eigen3 5.0.1 QUIET)
 if(NOT Eigen3_FOUND)
     FetchContent_Declare(
         Eigen3
-        URL https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
-        URL_HASH SHA256=8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72
+        URL https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz
+        URL_HASH SHA256=e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec
     )
+    # libslope needs Eigen's CMake package even when Eigen is a subproject.
+    set(EIGEN_BUILD_CMAKE_PACKAGE ON)
     FetchContent_MakeAvailable(Eigen3)
+    set(Eigen3_DIR "${eigen3_BINARY_DIR}")
 endif()
 
 find_package(slope QUIET)
