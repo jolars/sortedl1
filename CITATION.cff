@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+message: If you use this software, please cite the paper in preferred-citation.
+  For reproducibility, also cite the archived software release you used.
+type: software
+title: 'sortedl1: Sorted L1 Penalized Estimation in Python'
+authors:
+  - given-names: Johan
+    family-names: Larsson
+    email: johanlarsson@outlook.com
+    affiliation: University of Copenhagen
+    orcid: https://orcid.org/0000-0002-4029-5945
+  - given-names: Mathurin
+    family-names: Massias
+    email: mathurin.massias@gmail.com
+  - given-names: Quentin
+    family-names: Klopfenstein
+  - given-names: Jonas
+    family-names: Wallin
+    email: jonas.wallin@stat.lu.se
+  - given-names: Malgorzata
+    family-names: Bogdan
+doi: 10.5281/zenodo.17478879
+url: https://jolars.github.io/sortedl1/
+repository-code: https://github.com/jolars/sortedl1
+license: GPL-3.0-only
+preferred-citation:
+  type: article
+  title: Efficient Solvers for SLOPE in R, Python, Julia, and C++
+  authors:
+    - family-names: Larsson
+      given-names: Johan
+      orcid: https://orcid.org/0000-0002-4029-5945
+    - family-names: Bogdan
+      given-names: Małgorzata
+    - family-names: Grzesiak
+      given-names: Krystyna
+    - family-names: Massias
+      given-names: Mathurin
+    - family-names: Wallin
+      given-names: Jonas
+  year: 2025
+  month: 11
+  date-published: '2025-11-04'
+  journal: arXiv
+  doi: 10.48550/arXiv.2511.02430
+  url: https://arxiv.org/abs/2511.02430

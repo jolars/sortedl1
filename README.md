@@ -4,6 +4,8 @@
 [![PyPI
 version](https://badge.fury.io/py/sortedl1.svg)](https://badge.fury.io/py/sortedl1)
 [![codecov](https://codecov.io/gh/jolars/sortedl1/graph/badge.svg?token=tMVGB2LHcM)](https://codecov.io/gh/jolars/sortedl1)
+[![Software
+DOI](https://img.shields.io/badge/Software_DOI-10.5281%2Fzenodo.17478879-blue)](https://doi.org/10.5281/zenodo.17478879)
 
 **sortedl1** is a python package for Sorted L-One Penalized Estimation (SLOPE).
 
@@ -58,6 +60,19 @@ model.fit(x, y)
 # Print the coefficients
 print(model.coef_)
 ```
+
+## Citation
+
+If you use sortedl1 in your research, please cite [Efficient Solvers for SLOPE
+in R, Python, Julia, and C++](https://doi.org/10.48550/arXiv.2511.02430).
+
+For reproducibility, also cite the software release you used. Select that
+release in the [Zenodo archive](https://doi.org/10.5281/zenodo.17478879) and
+export its citation. The concept DOI `10.5281/zenodo.17478879` identifies
+sortedl1 across all releases.
+
+Machine-readable software metadata and the preferred paper citation are
+available in [CITATION.cff](CITATION.cff).
 
 ## Contributing
 
