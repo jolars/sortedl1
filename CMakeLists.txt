@@ -30,12 +30,12 @@ if(NOT Eigen3_FOUND)
     set(Eigen3_DIR "${eigen3_BINARY_DIR}")
 endif()
 
-find_package(slope QUIET)
+find_package(slope 6.7.0 QUIET)
 if(NOT slope_FOUND)
     FetchContent_Declare(
         slope
         GIT_REPOSITORY https://github.com/jolars/libslope.git
-        GIT_TAG v6.5.3
+        GIT_TAG v6.7.0
         GIT_SHALLOW TRUE
     )
     FetchContent_MakeAvailable(slope)
