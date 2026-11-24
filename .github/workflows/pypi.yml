@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pages: write
-      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -65,10 +65,16 @@ jobs:
         with:
           path: "docs/build/html/"
 
-      - name: Deploy to GitHub Pages
-        if: ${{ github.event_name == 'release' || inputs.publish_to == 'pypi' }}
-        id: deployment
-        uses: actions/deploy-pages@v5
+  deploy-docs:
+    name: Deploy documentation
+    if: ${{ github.event_name == 'release' || inputs.publish_to == 'pypi' }}
+    needs: [docs]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/deploy-pages@v5
 
   # Validates whatever was built, on every trigger, so that a run that
   # publishes nothing still exercises the pipeline end to end.
@@ -116,7 +122,7 @@ jobs:
 
   upload_pypi:
     if: ${{ github.event_name == 'release' || inputs.publish_to == 'pypi' }}
-    needs: [build-and-test, build-artifacts, docs, check-dist]
+    needs: [build-and-test, build-artifacts, deploy-docs, check-dist]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
